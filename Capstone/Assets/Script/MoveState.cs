@@ -4,7 +4,6 @@ public class MoveState : StateBase
 {
     private Rigidbody2D rb;
     private PlayerScript player;
-    private float moveSpeed = 5f;
 
     public MoveState(PlayerScript player, Rigidbody2D rb)
     {
@@ -22,7 +21,7 @@ public class MoveState : StateBase
     public override void Update()
     {
         float moveInput = Input.GetAxisRaw("Horizontal"); // -1(左), 0, 1(右)
-        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+        rb.linearVelocity = new Vector2(moveInput * player.moveSpeed, rb.linearVelocity.y);
     }
 
     public override void Exit()

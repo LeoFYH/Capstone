@@ -4,14 +4,10 @@ public class JumpState : StateBase
 {
     private Rigidbody2D rb;
     private PlayerScript player;
-    private float maxJumpForce = 14f;
-    private float minJumpForce = 2f;
     private float chargeTime = 0f;
-    private float maxChargeTime = 2f;
     private bool isCharging = false;
     private bool hasJumped = false;
     private bool canDoubleJump = true; // 是否可以二段跳
-    private float doubleJumpForce = 8f; // 二段跳力度
 
     public JumpState(PlayerScript player, Rigidbody2D rb)
     {
@@ -34,23 +30,22 @@ public class JumpState : StateBase
     {
         // 空中左右微调
         float moveInput = Input.GetAxisRaw("Horizontal");
-        float airMoveSpeed = 2f;
         if (Mathf.Abs(moveInput) > 0.01f)
         {
-            rb.linearVelocity = new Vector2(moveInput * airMoveSpeed, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(moveInput * player.airMoveSpeed, rb.linearVelocity.y);
         }
 
         // 蓄力跳逻辑
         if (isCharging)
         {
             chargeTime += Time.deltaTime;
-            if (chargeTime > maxChargeTime)
-                chargeTime = maxChargeTime;
+            if (chargeTime > player.maxChargeTime)
+                chargeTime = player.maxChargeTime;
 
             if (Input.GetKeyUp(KeyCode.Space))
             {
-                float t = Mathf.Clamp01(chargeTime / maxChargeTime);
-                float jumpForce = Mathf.Lerp(minJumpForce, maxJumpForce, t);
+                float t = Mathf.Clamp01(chargeTime / player.maxChargeTime);
+                float jumpForce = Mathf.Lerp(player.minJumpForce, player.maxJumpForce, t);
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
                 isCharging = false;
                 hasJumped = true;
@@ -59,7 +54,7 @@ public class JumpState : StateBase
         // 二段跳逻辑
         else if (hasJumped && canDoubleJump && Input.GetKeyDown(KeyCode.Space))
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, doubleJumpForce);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.doubleJumpForce);
             canDoubleJump = false; // 只能二段跳一次
             Debug.Log("二段跳！");
         }

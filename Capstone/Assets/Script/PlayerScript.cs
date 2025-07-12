@@ -2,8 +2,19 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+    [Header("状态机")]
     public E stateMachine;
     private Rigidbody2D rb;
+
+    [Header("跳跃设置")]
+    public float maxJumpForce = 14f;
+    public float minJumpForce = 2f;
+    public float doubleJumpForce = 8f;
+    public float maxChargeTime = 2f;
+
+    [Header("移动设置")]
+    public float moveSpeed = 5f;
+    public float airMoveSpeed = 2f;
 
     void Start()
     {
