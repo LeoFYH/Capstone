@@ -4,12 +4,14 @@ public class JumpState : StateBase
 {
     private Rigidbody2D rb;
     private PlayerScript player;
-    private float maxJumpForce = 14f; // 最大跳跃力
-    private float minJumpForce = 2f; // 最小跳跃力
+    private float maxJumpForce = 14f;
+    private float minJumpForce = 2f;
     private float chargeTime = 0f;
     private float maxChargeTime = 2f;
     private bool isCharging = false;
     private bool hasJumped = false;
+    private bool canDoubleJump = true; // 是否可以二段跳
+    private float doubleJumpForce = 8f; // 二段跳力度
 
     public JumpState(PlayerScript player, Rigidbody2D rb)
     {
@@ -24,6 +26,7 @@ public class JumpState : StateBase
         isCharging = true;
         chargeTime = 0f;
         hasJumped = false;
+        canDoubleJump = true; // 每次进入Jump状态都重置二段跳
         Debug.Log("开始蓄力跳跃");
     }
 
@@ -31,10 +34,13 @@ public class JumpState : StateBase
     {
         // 空中左右微调
         float moveInput = Input.GetAxisRaw("Horizontal");
-        float airMoveSpeed = 2f; // 空中漂移速度，可自行调整
-        rb.linearVelocity = new Vector2(moveInput * airMoveSpeed, rb.linearVelocity.y);
+        float airMoveSpeed = 2f;
+        if (Mathf.Abs(moveInput) > 0.01f)
+        {
+            rb.linearVelocity = new Vector2(moveInput * airMoveSpeed, rb.linearVelocity.y);
+        }
 
-        // 蓄力跳逻辑（保持不变）
+        // 蓄力跳逻辑
         if (isCharging)
         {
             chargeTime += Time.deltaTime;
@@ -49,6 +55,13 @@ public class JumpState : StateBase
                 isCharging = false;
                 hasJumped = true;
             }
+        }
+        // 二段跳逻辑
+        else if (hasJumped && canDoubleJump && Input.GetKeyDown(KeyCode.Space))
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, doubleJumpForce);
+            canDoubleJump = false; // 只能二段跳一次
+            Debug.Log("二段跳！");
         }
         // 跳出后检测落地，落地后切回Idle
         else if (hasJumped && player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
