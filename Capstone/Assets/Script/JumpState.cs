@@ -32,7 +32,9 @@ public class JumpState : StateBase
         float moveInput = Input.GetAxisRaw("Horizontal");
         if (Mathf.Abs(moveInput) > 0.01f)
         {
-            rb.linearVelocity = new Vector2(moveInput * player.airMoveSpeed, rb.linearVelocity.y);
+            // 使用airMoveSpeed而不是直接操作刚体
+            float targetVelocityX = moveInput * player.airMoveSpeed;
+            rb.linearVelocity = new Vector2(targetVelocityX, rb.linearVelocity.y);
         }
 
         // 蓄力跳逻辑
@@ -51,12 +53,11 @@ public class JumpState : StateBase
                 hasJumped = true;
             }
         }
-        // 二段跳逻辑
+        // 二段跳逻辑 - 切换到DoubleJumpState
         else if (hasJumped && canDoubleJump && Input.GetKeyDown(KeyCode.Space))
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.doubleJumpForce);
             canDoubleJump = false; // 只能二段跳一次
-            Debug.Log("二段跳！");
+            player.stateMachine.SwitchState("DoubleJump");
         }
         // 跳出后检测落地，落地后切回Idle
         else if (hasJumped && player.IsGrounded() && rb.linearVelocity.y <= 0.01f)

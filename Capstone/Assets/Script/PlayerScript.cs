@@ -23,6 +23,7 @@ public class PlayerScript : MonoBehaviour
         stateMachine.AddState("Idle", new IdleState());
         stateMachine.AddState("Jump", new JumpState(this, rb));
         stateMachine.AddState("Move", new MoveState(this, rb));
+        stateMachine.AddState("DoubleJump", new DoubleJumpState(this, rb));
         stateMachine.SwitchState("Idle");
     }
 
