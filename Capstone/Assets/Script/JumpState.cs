@@ -40,6 +40,13 @@ public class JumpState : StateBase
         // 蓄力跳逻辑
         if (isCharging)
         {
+            // 蓄力时使用正常移动速度
+            if (Mathf.Abs(moveInput) > 0.01f)
+            {
+                float targetVelocityX = moveInput * player.moveSpeed;
+                rb.linearVelocity = new Vector2(targetVelocityX, rb.linearVelocity.y);
+            }
+            
             chargeTime += Time.deltaTime;
             if (chargeTime > player.maxChargeTime)
                 chargeTime = player.maxChargeTime;
