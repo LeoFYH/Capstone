@@ -6,8 +6,9 @@ public class WallRideState : StateBase
     private Rigidbody2D rb;
     private PlayerScript player;
     private float normalGravity;
-    private float onWallGravity;
+    private float onWallGravity = 0.1f;
 
+    private float lockedDirection = 0f; 
 
 
     public WallRideState(PlayerScript player, Rigidbody2D rb)
@@ -21,14 +22,29 @@ public class WallRideState : StateBase
 
     public override void Enter()
     {
-        Debug.Log("进入WallRide状态");
+        float input = Input.GetAxisRaw("Horizontal");
+        if (Mathf.Abs(input) > 0.01f)
+        {
+            lockedDirection = Mathf.Sign(input);
+        }
+        else
+        {
+            lockedDirection = Mathf.Sign(rb.linearVelocity.x);
+        }
+
         normalGravity = rb.gravityScale;
         rb.gravityScale = onWallGravity;
+
     }
 
     public override void Update()
     {
-        // WallRide状态下的逻辑
+
+        if (player.currentWall == null || !player.isEHeld)
+        {
+            player.stateMachine.SwitchState("Jump");
+            return;
+        }
     }
 
     public override void Exit()

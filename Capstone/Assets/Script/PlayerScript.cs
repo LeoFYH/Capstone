@@ -20,9 +20,12 @@ public class PlayerScript : MonoBehaviour
     [Header("轨道设置")]
     public Track currentTrack; // 当前接触的轨道
     public float grindJumpIgnoreTime = 0.2f; // 轨道跳后短时间内禁止重新吸附
+    public bool isNearTrack = false;
     [HideInInspector]
     public float grindJumpTimer = 0f;
-
+    [Header("Wall Setting")]
+    public Wall currentWall;
+    public bool isNearWall = false;
     [Header("Button Check")]
     public bool isEHeld = false;
 
@@ -36,7 +39,9 @@ public class PlayerScript : MonoBehaviour
         stateMachine.AddState("Move", new MoveState(this, rb));
         stateMachine.AddState("DoubleJump", new DoubleJumpState(this, rb));
         stateMachine.AddState("Grind", new GrindState(this, rb));
-        stateMachine.AddState("GJump", new GrindState(this, rb));
+        stateMachine.AddState("GJump", new GJumpState(this, rb));
+        stateMachine.AddState("Grab", new GrabbingState(this, rb));
+        stateMachine.AddState("WallRide", new WallRideState(this, rb));
         stateMachine.SwitchState("Idle");
     }
 
@@ -55,17 +60,22 @@ public class PlayerScript : MonoBehaviour
         {
             isEHeld = true;
 
-            Track nearbyTrack = DetectNearbyPole();
-            if (nearbyTrack != null || grindJumpTimer <= 0f)
+            if (isNearTrack && grindJumpTimer <= 0f)
             {
-                currentTrack = nearbyTrack;  
-                stateMachine.SwitchState("Grind"); // 卡杆状态
                 Debug.Log("AAAA");
+                stateMachine.SwitchState("Grind");
+
+            }
+            else if (isNearWall)
+            {
+                Debug.Log("CCCC");
+                stateMachine.SwitchState("WallRide");
             }
             else
             {
-                stateMachine.SwitchState("GrabBoard"); // 抓板状态
                 Debug.Log("BBB");
+                stateMachine.SwitchState("Grab");
+
             }
         }
 
@@ -113,28 +123,41 @@ public class PlayerScript : MonoBehaviour
 
 
     //////////////////////////////////Track logic//////////////////////////////
-    public Track DetectNearbyPole(float radius = 1.5f)
-    {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
+    //public Track DetectNearbyPole(float radius = 1.5f, float maxDistance = 0.8f)
+    //{
+    //    Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
 
-        foreach (var hit in hits)
-        {
-            if (hit.isTrigger)
-            {
-                Track track = hit.GetComponent<Track>();
-                if (track != null) 
-                {
-                    return track;
-                }
-            }
-        }
+    //    Track closestTrack = null;
+    //    float closestDistance = Mathf.Infinity;
 
-        return null;
-    }
+    //    foreach (var hit in hits)
+    //    {
+    //        if (hit.isTrigger)
+    //        {
+    //            Track track = hit.GetComponent<Track>();
+    //            if (track != null)
+    //            {
+    //                float dist = Vector2.Distance(transform.position, track.transform.position);
+    //                if (dist < closestDistance)
+    //                {
+    //                    closestDistance = dist;
+    //                    closestTrack = track;
+    //                }
+    //            }
+    //        }
+    //    }
+
+    //    if (closestTrack != null && closestDistance <= maxDistance)
+    //    {
+    //        return closestTrack;
+    //    }
+
+    //    return null; // 超过距离，视为没有轨道
+    //}
 
     public IEnumerator SwitchToStateDelayed(string stateName)
     {
-        yield return null; 
+        yield return null;
         stateMachine.SwitchState(stateName);
     }
 
@@ -144,8 +167,54 @@ public class PlayerScript : MonoBehaviour
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, 1.5f);
     }
-    ///////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////Trigger/////////////////////////////////////////////
+    /// <summary>
+    /// 所有的trigger都在这里
+    /// </summary>
+    /// <param name="other"></param>
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.isTrigger)
+        {
+            Track track = other.GetComponent<Track>();
+            if (track != null)
+            {
+                currentTrack = track;
+                isNearTrack = true;
+            }
+
+            Wall wall = other.GetComponent<Wall>();
+            if (wall != null)
+            { 
+                currentWall = wall;
+                isNearWall = true;
+            }
 
 
+        }
+    }
 
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.isTrigger)
+        {
+            Track track = other.GetComponent<Track>();
+            if (track != null && track == currentTrack)
+            {
+                isNearTrack = false;
+                currentTrack = null;
+            }
+
+            Wall wall = other.GetComponent<Wall>();
+            if (wall != null)
+            {
+                currentWall = null;
+                isNearWall = false;
+            }
+        }
+
+
+        //////////////////////////////////////////////////////////////////////////////
+    }
 }

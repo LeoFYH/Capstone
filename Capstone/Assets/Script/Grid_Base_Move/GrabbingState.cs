@@ -13,7 +13,7 @@ public class GrabbingState : StateBase
         this.rb = rb;
     }
 
-    public override string GetStateName() => "Grabbing";
+    public override string GetStateName() => "Grab";
 
 
     public override void Enter()
@@ -24,6 +24,21 @@ public class GrabbingState : StateBase
 
     public override void Update()
     {
+        Debug.Log("Keep Grabbing");
+
+        if (player.isEHeld == false)
+        {
+            player.stateMachine.SwitchState("Idle");
+            return;
+        }
+        //else if (player.isEHeld == true && player.DetectNearbyPole() != null)
+        //{
+        //    player.currentTrack = player.DetectNearbyPole();
+        //    player.stateMachine.SwitchState("Grind");
+           
+        //}
+
+
         // WallRide×´Ì¬ÏÂµÄÂß¼­
         // add combo point
     }

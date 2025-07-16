@@ -7,6 +7,8 @@ public class GrindState : StateBase
     private float speed;
     private Vector2 direction;
     private bool isJumping = false;
+    private float normalG;
+
     public GrindState(PlayerScript player, Rigidbody2D rb)
     {
         this.player = player;
@@ -20,11 +22,11 @@ public class GrindState : StateBase
         Debug.Log("E Grind");
         Vector2 velocity = rb.linearVelocity;
         speed = velocity.magnitude;
-
+        normalG = rb.gravityScale;
         if (speed < 0.1f)
         {
             Vector2 trackDir = player.currentTrack.GetTrackDirection();
-            direction = new Vector2(trackDir.x, 0).normalized; 
+            direction = new Vector2(trackDir.x, 0).normalized;
             speed = player.moveSpeed;
         }
         else
@@ -39,8 +41,15 @@ public class GrindState : StateBase
 
     public override void Update()
     {
-        if (isJumping)
+        if (player.currentTrack == null || !player.isEHeld)
+        {
+            player.stateMachine.SwitchState("Jump");
             return;
+        }
+
+
+        if (isJumping) return;
+
 
         Vector2 moveDelta = direction * speed * Time.deltaTime;
         Vector3 pos = player.transform.position;
@@ -50,10 +59,9 @@ public class GrindState : StateBase
 
         rb.linearVelocity = new Vector2(direction.x * speed, 0);
 
-        if (!IsOnTrack() || !player.isEHeld)
-        {
-            player.stateMachine.SwitchState("Jump");
-        }
+
+
+
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -62,10 +70,15 @@ public class GrindState : StateBase
             rb.gravityScale = 1f;
             rb.linearVelocity = new Vector2(direction.x * speed, 10f);
             player.grindJumpTimer = player.grindJumpIgnoreTime;
-            player.StartCoroutine(player.SwitchToStateDelayed("GJump"));
 
-            //if (player.isEHeld)
-            //    player.StartCoroutine(player.SwitchToStateDelayed("GrabBoard"));
+            if (player.isEHeld)
+            {
+                player.StartCoroutine(player.SwitchToStateDelayed("Grab"));
+            }
+            else
+            {
+                player.StartCoroutine(player.SwitchToStateDelayed("GJump"));
+            }
         }
     }
 
@@ -77,29 +90,10 @@ public class GrindState : StateBase
         player.transform.position = playerPos;
     }
 
-    private bool IsOnTrack()
-    {
-        Vector2 boxSize = new Vector2(1f, 1f);
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(player.transform.position, boxSize, 0f);
-        foreach (var col in colliders)
-        {
-            if (col.isTrigger)
-            {
-                var track = col.GetComponent<Track>();
-                if (track != null && track == player.currentTrack)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public override void Exit()
     {
-        rb.gravityScale = 1f;
+        rb.gravityScale = normalG;
         isJumping = false;
-        //rb.linearVelocity = direction * speed;
-        Debug.Log("Exit");
+        Debug.Log("Exit Grind");
     }
-} 
+}
