@@ -31,41 +31,51 @@ public class MoveState : StateBase
         
         // 根据输入计算目标速度
         float targetVelocityX = moveInput * maxSpeed;
-        
-        // 使用加速度/减速度平滑过渡到目标速度
+
         if (Mathf.Abs(moveInput) > 0.1f)
         {
-            // 有输入时加速
-            if (currentVelocityX < targetVelocityX)
+            // 是否是转向：当前速度方向和输入方向相反
+            bool isTurning = Mathf.Sign(currentVelocityX) != Mathf.Sign(moveInput) && Mathf.Abs(currentVelocityX) > 0.1f;
+
+            if (isTurning)
             {
-                currentVelocityX += acceleration * Time.deltaTime;
-                if (currentVelocityX > targetVelocityX)
-                    currentVelocityX = targetVelocityX;
+                // 转向时使用更大的减速
+                currentVelocityX -= Mathf.Sign(currentVelocityX) * deceleration * Time.deltaTime;
+
+                // 如果已经减速到0了，再开始按新方向加速
+                if (Mathf.Sign(currentVelocityX) != Mathf.Sign(rb.linearVelocity.x))
+                {
+                    currentVelocityX = 0f;
+                }
             }
-            else if (currentVelocityX > targetVelocityX)
+            else
             {
-                currentVelocityX -= acceleration * Time.deltaTime;
-                if (currentVelocityX < targetVelocityX)
-                    currentVelocityX = targetVelocityX;
+                // 正常加速
+                currentVelocityX += moveInput * acceleration * Time.deltaTime;
             }
+
+            // 限制最大速度
+            currentVelocityX = Mathf.Clamp(currentVelocityX, -maxSpeed, maxSpeed);
         }
         else
         {
-            // 无输入时减速
-            if (currentVelocityX > 0)
+            // 无输入时减速至0
+            if (Mathf.Abs(currentVelocityX) > 0.1f)
             {
-                currentVelocityX -= deceleration * Time.deltaTime;
-                if (currentVelocityX < 0)
-                    currentVelocityX = 0;
+                currentVelocityX -= Mathf.Sign(currentVelocityX) * deceleration * Time.deltaTime;
+
+                // 防止反向滑出
+                if (Mathf.Sign(currentVelocityX) != Mathf.Sign(rb.linearVelocity.x))
+                {
+                    currentVelocityX = 0f;
+                }
             }
-            else if (currentVelocityX < 0)
+            else
             {
-                currentVelocityX += deceleration * Time.deltaTime;
-                if (currentVelocityX > 0)
-                    currentVelocityX = 0;
+                currentVelocityX = 0f;
             }
         }
-        
+
         // 应用计算出的速度
         rb.linearVelocity = new Vector2(currentVelocityX, rb.linearVelocity.y);
     }
