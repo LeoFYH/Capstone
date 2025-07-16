@@ -7,8 +7,8 @@ public class JumpState : StateBase
     private float chargeTime = 0f;
     private bool isCharging = false;
     private bool hasJumped = false;
-    private bool canDoubleJump = true; // 是否可以二段跳
-
+    public bool canDoubleJump = true; // 是否可以二段跳
+    private float initialHorizontalVelocity;
     public JumpState(PlayerScript player, Rigidbody2D rb)
     {
         this.player = player;
@@ -23,6 +23,7 @@ public class JumpState : StateBase
         chargeTime = 0f;
         hasJumped = false;
         canDoubleJump = true; // 每次进入Jump状态都重置二段跳
+        initialHorizontalVelocity = rb.linearVelocityX;
         // Debug.Log("开始蓄力跳跃");
     }
 
@@ -30,23 +31,22 @@ public class JumpState : StateBase
     {
         // 空中左右微调
         float moveInput = Input.GetAxisRaw("Horizontal");
-        if (Mathf.Abs(moveInput) > 0.01f)
-        {
-            // 使用airMoveSpeed而不是直接操作刚体
-            float targetVelocityX = moveInput * player.airMoveSpeed;
-            rb.linearVelocity = new Vector2(targetVelocityX, rb.linearVelocity.y);
-        }
+        //if (Mathf.Abs(moveInput) > 0.01f)
+        //{
+        //    // 使用airMoveSpeed而不是直接操作刚体
+        //    float targetVelocityX = moveInput * player.airMoveSpeed;
+        //    rb.linearVelocity = new Vector2(targetVelocityX, rb.linearVelocity.y);
+        //}
 
         // 蓄力跳逻辑
         if (isCharging)
         {
-            // 蓄力时使用正常移动速度
             if (Mathf.Abs(moveInput) > 0.01f)
             {
                 float targetVelocityX = moveInput * player.moveSpeed;
                 rb.linearVelocity = new Vector2(targetVelocityX, rb.linearVelocity.y);
             }
-            
+
             chargeTime += Time.deltaTime;
             if (chargeTime > player.maxChargeTime)
                 chargeTime = player.maxChargeTime;
@@ -55,7 +55,7 @@ public class JumpState : StateBase
             {
                 float t = Mathf.Clamp01(chargeTime / player.maxChargeTime);
                 float jumpForce = Mathf.Lerp(player.minJumpForce, player.maxJumpForce, t);
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                rb.linearVelocity = new Vector2(initialHorizontalVelocity, jumpForce); // 完整继承初始速度
                 isCharging = false;
                 hasJumped = true;
             }
@@ -70,6 +70,20 @@ public class JumpState : StateBase
         else if (hasJumped && player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
         {
             player.stateMachine.SwitchState("Idle");
+        }
+        else if (hasJumped)
+        {
+            float vx = rb.linearVelocityX;
+
+            // 判断是否与当前运动方向相反
+            if (Mathf.Abs(moveInput) > 0.01f && Mathf.Sign(moveInput) != Mathf.Sign(vx))
+            {
+                rb.AddForce(Vector2.right * moveInput * player.airControlForce, ForceMode2D.Force);
+
+                // 控制最大水平速度
+                float max = player.maxAirHorizontalSpeed;
+                rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocityX, -max, max), rb.linearVelocityY);
+            }
         }
     }
 

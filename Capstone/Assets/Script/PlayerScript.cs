@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using System.Collections;
 public class PlayerScript : MonoBehaviour
 {
     [Header("状态机")]
@@ -14,10 +14,18 @@ public class PlayerScript : MonoBehaviour
 
     [Header("移动设置")]
     public float moveSpeed = 5f;
-    public float airMoveSpeed = 2f;
-    
+    //public float airMoveSpeed = 2f;
+    public float airControlForce = 5f;     // 空中加速力
+    public float maxAirHorizontalSpeed = 10f;
     [Header("轨道设置")]
     public Track currentTrack; // 当前接触的轨道
+    public float grindJumpIgnoreTime = 0.2f; // 轨道跳后短时间内禁止重新吸附
+    [HideInInspector]
+    public float grindJumpTimer = 0f;
+
+    [Header("Button Check")]
+    public bool isEHeld = false;
+
 
     void Start()
     {
@@ -28,31 +36,8 @@ public class PlayerScript : MonoBehaviour
         stateMachine.AddState("Move", new MoveState(this, rb));
         stateMachine.AddState("DoubleJump", new DoubleJumpState(this, rb));
         stateMachine.AddState("Grind", new GrindState(this, rb));
+        stateMachine.AddState("GJump", new GrindState(this, rb));
         stateMachine.SwitchState("Idle");
-    }
-
-    // 检测玩家周围isTrigger并且带有Track脚本的Collider
-    public void CheckTriggerAndTrack()
-    {
-        // 使用正方形检测，大小为1x1
-        Vector2 boxSize = new Vector2(1f, 1f);
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(transform.position, boxSize, 0f);
-        foreach (var col in colliders)
-        {
-            if (col.isTrigger)
-            {
-                var track = col.GetComponent<Track>();
-                if (track != null)
-                {
-                    Debug.Log($"检测到Trigger并且有Track脚本: {col.name}");
-                    currentTrack = track; // 设置当前轨道
-                    // 自动进入滑轨状态
-                    stateMachine.SwitchState("Grind");
-                    return;
-                }
-            }
-        }
-        currentTrack = null; // 清除当前轨道
     }
 
     void Update()
@@ -65,6 +50,44 @@ public class PlayerScript : MonoBehaviour
             return;
         }
 
+        /////////////////////////////////E//////////////////////////////////////
+        if (Input.GetKeyDown(KeyCode.E) && !IsGrounded())
+        {
+            isEHeld = true;
+
+            Track nearbyTrack = DetectNearbyPole();
+            if (nearbyTrack != null || grindJumpTimer <= 0f)
+            {
+                currentTrack = nearbyTrack;  
+                stateMachine.SwitchState("Grind"); // 卡杆状态
+                Debug.Log("AAAA");
+            }
+            else
+            {
+                stateMachine.SwitchState("GrabBoard"); // 抓板状态
+                Debug.Log("BBB");
+            }
+        }
+
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            isEHeld = false;
+        }
+        //////////////////////////////////////////////////////////////
+        if (grindJumpTimer > 0f)
+        {
+            grindJumpTimer -= Time.deltaTime;
+        }
+
+
+
+        ////////////////////////////Space///////////////////////////////
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+        {
+            stateMachine.SwitchState("Jump");
+            return;
+        }
+        ////////////////////////////////////////////////////////////
         string currentState = stateMachine.GetCurrentStateName();
         float moveInput = Input.GetAxisRaw("Horizontal");
 
@@ -78,9 +101,6 @@ public class PlayerScript : MonoBehaviour
         {
             stateMachine.SwitchState("Idle");
         }
-
-        CheckTriggerAndTrack();
-        
     }
 
     // 判断是否在地面上
@@ -89,4 +109,43 @@ public class PlayerScript : MonoBehaviour
         // 这里简单示例，实际项目建议用射线检测
         return Mathf.Abs(rb.linearVelocity.y) < 0.01f;
     }
+
+
+
+    //////////////////////////////////Track logic//////////////////////////////
+    public Track DetectNearbyPole(float radius = 1.5f)
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
+
+        foreach (var hit in hits)
+        {
+            if (hit.isTrigger)
+            {
+                Track track = hit.GetComponent<Track>();
+                if (track != null) 
+                {
+                    return track;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public IEnumerator SwitchToStateDelayed(string stateName)
+    {
+        yield return null; 
+        stateMachine.SwitchState(stateName);
+    }
+
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, 1.5f);
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+
+
+
 }

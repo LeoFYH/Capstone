@@ -2,10 +2,11 @@ using UnityEngine;
 
 public class GrindState : StateBase
 {
-    private Rigidbody2D rb;
     private PlayerScript player;
-    private float grindTime = 0f; // 滑轨时间
-
+    private Rigidbody2D rb;
+    private float speed;
+    private Vector2 direction;
+    private bool isJumping = false;
     public GrindState(PlayerScript player, Rigidbody2D rb)
     {
         this.player = player;
@@ -16,41 +17,68 @@ public class GrindState : StateBase
 
     public override void Enter()
     {
-        grindTime = 0f;
+        Debug.Log("E Grind");
+        Vector2 velocity = rb.linearVelocity;
+        speed = velocity.magnitude;
+
+        if (speed < 0.1f)
+        {
+            Vector2 trackDir = player.currentTrack.GetTrackDirection();
+            direction = new Vector2(trackDir.x, 0).normalized; 
+            speed = player.moveSpeed;
+        }
+        else
+        {
+            direction = new Vector2(velocity.x, 0).normalized;
+        }
+
+        rb.gravityScale = 0f;
+        rb.linearVelocity = new Vector2(direction.x * speed, 0);
+        SnapPlayerToTrack();
     }
 
     public override void Update()
     {
-        // 检查是否还能检测到滑轨
-        if (!IsNearTrack())
-        {
-            player.stateMachine.SwitchState("Idle");
+        if (isJumping)
             return;
+
+        Vector2 moveDelta = direction * speed * Time.deltaTime;
+        Vector3 pos = player.transform.position;
+        pos.x += moveDelta.x;
+        pos.y = player.currentTrack.GetTrackPosition().y;
+        player.transform.position = pos;
+
+        rb.linearVelocity = new Vector2(direction.x * speed, 0);
+
+        if (!IsOnTrack() || !player.isEHeld)
+        {
+            player.stateMachine.SwitchState("Jump");
         }
 
-        // 滑轨时间增加
-        grindTime += Time.deltaTime;
-        
-        // 如果滑轨时间超过3秒，退出滑轨状态
-        // if (grindTime >= 3f)
-        // {
-        //     player.stateMachine.SwitchState("Idle");
-        //     return;
-        // }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("G Jump");
+            isJumping = true;
+            rb.gravityScale = 1f;
+            rb.linearVelocity = new Vector2(direction.x * speed, 10f);
+            player.grindJumpTimer = player.grindJumpIgnoreTime;
+            player.StartCoroutine(player.SwitchToStateDelayed("GJump"));
 
-        // 玩家自动向前移动，使用moveSpeed但速度与正常移动一致
-        Vector3 newPosition = player.transform.position + Vector3.right * (player.moveSpeed * 0.5f) * Time.deltaTime;
-        player.transform.position = newPosition;
-        
-        // 滑轨时禁用重力
-        rb.gravityScale = 0f;
-        rb.linearVelocity = Vector2.zero;
+            //if (player.isEHeld)
+            //    player.StartCoroutine(player.SwitchToStateDelayed("GrabBoard"));
+        }
     }
 
-    // 检查是否在轨道附近
-    private bool IsNearTrack()
+    private void SnapPlayerToTrack()
     {
-        // 使用正方形检测，大小为1x1
+        Vector3 trackPos = player.currentTrack.GetTrackPosition();
+        Vector3 playerPos = player.transform.position;
+        playerPos.y = trackPos.y;
+        player.transform.position = playerPos;
+    }
+
+    private bool IsOnTrack()
+    {
         Vector2 boxSize = new Vector2(1f, 1f);
         Collider2D[] colliders = Physics2D.OverlapBoxAll(player.transform.position, boxSize, 0f);
         foreach (var col in colliders)
@@ -58,7 +86,7 @@ public class GrindState : StateBase
             if (col.isTrigger)
             {
                 var track = col.GetComponent<Track>();
-                if (track != null)
+                if (track != null && track == player.currentTrack)
                 {
                     return true;
                 }
@@ -69,12 +97,9 @@ public class GrindState : StateBase
 
     public override void Exit()
     {
-        // 恢复重力
         rb.gravityScale = 1f;
-        
-        // 给玩家一个向前的速度，创造滑出去的感觉
-        rb.linearVelocity = new Vector2(8f, rb.linearVelocity.y);
-        
-        Debug.Log("退出滑轨状态");
+        isJumping = false;
+        //rb.linearVelocity = direction * speed;
+        Debug.Log("Exit");
     }
 } 

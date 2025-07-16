@@ -24,10 +24,10 @@ public class DoubleJumpState : StateBase
     {
         // 空中左右微调
         float moveInput = Input.GetAxisRaw("Horizontal");
-        if (Mathf.Abs(moveInput) > 0.01f)
-        {
-            rb.linearVelocity = new Vector2(moveInput * player.airMoveSpeed, rb.linearVelocity.y);
-        }
+        //if (Mathf.Abs(moveInput) > 0.01f)
+        //{
+        //    rb.linearVelocity = new Vector2(moveInput * player.airMoveSpeed, rb.linearVelocity.y);
+        //}
         
         // 检测落地，落地后切回Idle
         if (player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
