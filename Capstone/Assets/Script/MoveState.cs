@@ -21,7 +21,7 @@ public class MoveState : StateBase
 
     public override void Enter()
     {
-        Debug.Log("进入Move状态");
+        // Debug.Log("进入Move状态");
         currentVelocityX = rb.linearVelocity.x; // 保持当前水平速度
     }
 
@@ -75,6 +75,6 @@ public class MoveState : StateBase
         // 离开移动状态时停止水平速度
         //rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
         //currentVelocityX = 0f;
-        Debug.Log("退出Move状态");
+        // Debug.Log("退出Move状态");
     }
 } 

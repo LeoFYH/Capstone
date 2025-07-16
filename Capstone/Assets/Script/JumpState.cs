@@ -23,7 +23,7 @@ public class JumpState : StateBase
         chargeTime = 0f;
         hasJumped = false;
         canDoubleJump = true; // 每次进入Jump状态都重置二段跳
-        Debug.Log("开始蓄力跳跃");
+        // Debug.Log("开始蓄力跳跃");
     }
 
     public override void Update()
@@ -68,6 +68,6 @@ public class JumpState : StateBase
 
     public override void Exit()
     {
-        Debug.Log("退出Jump状态");
+        // Debug.Log("退出Jump状态");
     }
 } 

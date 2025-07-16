@@ -17,7 +17,7 @@ public class DoubleJumpState : StateBase
     {
         // 直接跳起来
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.doubleJumpForce);
-        Debug.Log("二段跳！");
+        // Debug.Log("二段跳！");
     }
 
     public override void Update()
@@ -38,6 +38,6 @@ public class DoubleJumpState : StateBase
 
     public override void Exit()
     {
-        Debug.Log("退出DoubleJump状态");
+        // Debug.Log("退出DoubleJump状态");
     }
 } 

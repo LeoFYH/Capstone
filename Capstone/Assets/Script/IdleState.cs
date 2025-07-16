@@ -6,7 +6,7 @@ public class IdleState : StateBase
 
     public override void Enter()
     {
-        Debug.Log("进入Idle状态");
+        // Debug.Log("进入Idle状态");
     }
 
     public override void Update()
@@ -16,6 +16,6 @@ public class IdleState : StateBase
 
     public override void Exit()
     {
-        Debug.Log("退出Idle状态");
+        // Debug.Log("退出Idle状态");
     }
 } 
