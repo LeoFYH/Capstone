@@ -28,8 +28,11 @@ public class PlayerScript : MonoBehaviour
     public bool isNearWall = false;
     [Header("Button Check")]
     public bool isEHeld = false;
-
-
+    public bool isWHeld = false;
+    [Header("Life Setting")]
+    public bool canBeHurt;
+    [Header("Combat Setting")]
+    public bool isPowerGrinding;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
