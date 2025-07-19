@@ -19,6 +19,11 @@ public class PlayerScript : MonoBehaviour
     public float maxAirHorizontalSpeed = 10f;
     [Header("轨道设置")]
     public Track currentTrack; // 当前接触的轨道
+    
+    [Header("空中设置")]
+    public bool isInAir = false; // 是否在空中
+    public float airTime = 0f; // 空中时间
+    public int airCombo = 0; // 空中连击数
     public float grindJumpIgnoreTime = 0.2f; // 轨道跳后短时间内禁止重新吸附
     public bool isNearTrack = false;
     [HideInInspector]
@@ -40,8 +45,8 @@ public class PlayerScript : MonoBehaviour
         stateMachine.AddState("Idle", new IdleState());
         stateMachine.AddState("Jump", new JumpState(this, rb));
         stateMachine.AddState("Move", new MoveState(this, rb));
-        stateMachine.AddState("DoubleJump", new DoubleJumpState(this, rb));
         stateMachine.AddState("Grind", new GrindState(this, rb));
+        stateMachine.AddState("Air", new AirState(this, rb));
         stateMachine.AddState("GJump", new GJumpState(this, rb));
         stateMachine.AddState("Grab", new GrabbingState(this, rb));
         stateMachine.AddState("WallRide", new WallRideState(this, rb));

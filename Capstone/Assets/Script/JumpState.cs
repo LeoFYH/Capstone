@@ -7,7 +7,6 @@ public class JumpState : StateBase
     private float chargeTime = 0f;
     private bool isCharging = false;
     private bool hasJumped = false;
-    public bool canDoubleJump = true; // 是否可以二段跳
     private float initialHorizontalVelocity;
     public JumpState(PlayerScript player, Rigidbody2D rb)
     {
@@ -22,7 +21,6 @@ public class JumpState : StateBase
         isCharging = true;
         chargeTime = 0f;
         hasJumped = false;
-        canDoubleJump = true; // 每次进入Jump状态都重置二段跳
         initialHorizontalVelocity = rb.linearVelocityX;
         // Debug.Log("开始蓄力跳跃");
     }
@@ -60,13 +58,12 @@ public class JumpState : StateBase
                 hasJumped = true;
             }
         }
-        // 二段跳逻辑 - 切换到DoubleJumpState
-        else if (hasJumped && canDoubleJump && Input.GetKeyDown(KeyCode.Space))
+        // 跳出后切换到空中状态
+        else if (hasJumped && !player.IsGrounded())
         {
-            canDoubleJump = false; // 只能二段跳一次
-            player.stateMachine.SwitchState("DoubleJump");
+            player.stateMachine.SwitchState("Air");
         }
-        // 跳出后检测落地，落地后切回Idle
+        // 落地后切回Idle
         else if (hasJumped && player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
         {
             player.stateMachine.SwitchState("Idle");

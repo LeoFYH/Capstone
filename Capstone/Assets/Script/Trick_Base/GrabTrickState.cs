@@ -6,7 +6,6 @@ public class GrabTrickState : StateBase
     private PlayerScript player;
     private float TrickTime;
     private float TrickTimeMax = 3f;
-    private float comboPoint;
     public GrabTrickState(PlayerScript player, Rigidbody2D rb)
     {
         this.player = player;
@@ -19,6 +18,9 @@ public class GrabTrickState : StateBase
     {
         player.canBeHurt = true;
         TrickTime = TrickTimeMax;
+        
+        // 添加抓板技巧分数
+        ScoreManager.Instance.AddTrickScore(2);
     }
 
     public override void Update()

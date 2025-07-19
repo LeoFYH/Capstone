@@ -37,6 +37,9 @@ public class GrindState : StateBase
         rb.gravityScale = 0f;
         rb.linearVelocity = new Vector2(direction.x * speed, 0);
         SnapPlayerToTrack();
+        
+        // 开始滑轨计分
+        ScoreManager.Instance.StartGrindScoring();
     }
 
     public override void Update()
@@ -95,5 +98,8 @@ public class GrindState : StateBase
         rb.gravityScale = normalG;
         isJumping = false;
         Debug.Log("Exit Grind");
+        
+        // 结束滑轨计分
+        ScoreManager.Instance.EndGrindScoring();
     }
 }
