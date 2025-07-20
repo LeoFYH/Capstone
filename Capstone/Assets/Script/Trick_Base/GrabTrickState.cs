@@ -19,8 +19,7 @@ public class GrabTrickState : StateBase
         player.canBeHurt = true;
         TrickTime = TrickTimeMax;
         
-        // 添加抓板技巧分数
-        ScoreManager.Instance.AddTrickScore(2);
+
     }
 
     public override void Update()
@@ -28,12 +27,14 @@ public class GrabTrickState : StateBase
         TrickTime -= Time.deltaTime;
         if (TrickTime <= 0)
         {
-            /////////////Need a state///////////
+            player.stateMachine.SwitchState("AirState");
         }
     }
 
     public override void Exit()
     {
         player.canBeHurt = false;
+        // 添加抓板技巧分数
+        ScoreManager.Instance.AddTrickScore(2);
     }
 }

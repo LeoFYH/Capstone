@@ -19,21 +19,22 @@ public class TrickState : StateBase
         player.canBeHurt = true;
         TrickTime = TrickTimeMax;
         
-        // 添加翻转技巧分数
-        ScoreManager.Instance.AddTrickScore(3);
+
     }
 
     public override void Update()
     {
         TrickTime -= Time.deltaTime;
         if (TrickTime <= 0)
-        { 
-           /////////////Need a state///////////
+        {
+            player.stateMachine.SwitchState("AirState");
         }
     }
 
     public override void Exit()
     {
         player.canBeHurt = false;
+        // 添加翻转技巧分数
+        ScoreManager.Instance.AddTrickScore(3);
     }
 }

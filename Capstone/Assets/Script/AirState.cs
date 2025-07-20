@@ -52,7 +52,7 @@ public class AirState : StateBase
             PerformDoubleJump();
         }
         // 空中技巧输入检测
-        else if (Input.GetKeyDown(KeyCode.J))
+        else if (Input.GetKeyDown(KeyCode.W))
         {
             // 基础技巧
             PerformBasicTrick();
@@ -61,11 +61,6 @@ public class AirState : StateBase
         {
             // 抓板技巧
             PerformGrabTrick();
-        }
-        else if (Input.GetKeyDown(KeyCode.L))
-        {
-            // 翻转技巧
-            PerformFlipTrick();
         }
 
         // 检测落地
@@ -115,17 +110,7 @@ public class AirState : StateBase
     }
 
     // 执行翻转技巧
-    private void PerformFlipTrick()
-    {
-        player.airCombo++;
-        Debug.Log($"执行翻转技巧！连击数: {player.airCombo}");
-        
-        // 添加技巧分数
-        ScoreManager.Instance.AddTrickScore(1);
-        
-        // 切换到翻转技巧状态
-        player.stateMachine.SwitchState("Trick");
-    }
+
 
     // 执行二段跳
     private void PerformDoubleJump()

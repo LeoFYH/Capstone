@@ -41,8 +41,8 @@ public class PowerGrindState : StateBase
 
 
         if (!player.isWHeld || Mathf.Abs(rb.linearVelocity.x) <= 0.5f)
-        { 
-            //Exit
+        {
+            player.stateMachine.SwitchState("Idle");
         }
 
         if (Input.GetKeyDown(KeyCode.Space))

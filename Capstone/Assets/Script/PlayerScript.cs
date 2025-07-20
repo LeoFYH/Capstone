@@ -38,6 +38,8 @@ public class PlayerScript : MonoBehaviour
     public bool canBeHurt;
     [Header("Combat Setting")]
     public bool isPowerGrinding;
+    private bool isCheckingReverseWindow = false;
+    public float reverseInputWindow = 0.2f;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -50,6 +52,8 @@ public class PlayerScript : MonoBehaviour
         stateMachine.AddState("GJump", new GJumpState(this, rb));
         stateMachine.AddState("Grab", new GrabbingState(this, rb));
         stateMachine.AddState("WallRide", new WallRideState(this, rb));
+        stateMachine.AddState("Reverse", new ReverseState(this, rb));
+        stateMachine.AddState("PowerGrind", new PowerGrindState(this, rb));
         stateMachine.SwitchState("Idle");
     }
 
@@ -99,6 +103,27 @@ public class PlayerScript : MonoBehaviour
 
 
 
+        //////////////////////W///////////////////////////////////////
+        string currentState = stateMachine.GetCurrentStateName();
+        float moveInput = Input.GetAxisRaw("Horizontal");
+
+        if (Input.GetKeyDown(KeyCode.W) && IsGrounded())
+        {
+            isWHeld = true;
+
+            if (!isCheckingReverseWindow)
+            {
+                StartCoroutine(CheckReverseWindow());
+            }
+        }
+
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            isWHeld = false;
+        }
+        //////////////////////////////////////////////////////////////
+
+
         ////////////////////////////Space///////////////////////////////
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
@@ -106,8 +131,7 @@ public class PlayerScript : MonoBehaviour
             return;
         }
         ////////////////////////////////////////////////////////////
-        string currentState = stateMachine.GetCurrentStateName();
-        float moveInput = Input.GetAxisRaw("Horizontal");
+
 
         // Idle时有输入才切Move
         if (currentState == "Idle" && Mathf.Abs(moveInput) > 0.01f && IsGrounded())
@@ -203,6 +227,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.isTrigger)
@@ -224,5 +249,41 @@ public class PlayerScript : MonoBehaviour
 
 
         //////////////////////////////////////////////////////////////////////////////
+        
+
     }
+
+    private IEnumerator CheckReverseWindow()
+    {
+        isCheckingReverseWindow = true;
+
+        float timer = 0f;
+        bool reverseTriggered = false;
+        float originalDirection = Mathf.Sign(rb.linearVelocity.x);
+
+        while (timer < reverseInputWindow)
+        {
+            float input = Input.GetAxisRaw("Horizontal");
+
+            if (Mathf.Abs(input) > 0.01f && Mathf.Sign(input) != originalDirection)
+            {
+                Debug.Log("Reverse");
+                stateMachine.SwitchState("Reverse");
+                reverseTriggered = true;
+                break;
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        if (!reverseTriggered)
+        {
+            Debug.Log("PG");
+            stateMachine.SwitchState("PowerGrind");
+        }
+
+        isCheckingReverseWindow = false;
+    }
+
 }
