@@ -46,21 +46,31 @@ public class AirState : StateBase
             }
         }
 
+        // 检测技巧输入并切换到 TrickState
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            //新的trickstate注册方法，带动作名
+            player.stateMachine.SwitchState("Trick", "TrickA");
+            return;
+        }
+        
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            //新的trickstate注册方法，带动作名，自动在StateMachine里调用trickstate的settrickname方法来传入特技名称
+            player.stateMachine.SwitchState("Trick", "TrickB");
+            return;
+        }
+
         // 二段跳检测
         if (Input.GetKeyDown(KeyCode.Space) && canDoubleJump)
         {
-            PerformDoubleJump();
-        }
-        // 空中技巧输入检测
-        else if (Input.GetKeyDown(KeyCode.W))
-        {
-            // 基础技巧
-            PerformBasicTrick();
-        }
-        else if (Input.GetKeyDown(KeyCode.K))
-        {
-            // 抓板技巧
-            PerformGrabTrick();
+            // 直接执行二段跳
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.doubleJumpForce);//没用doublejump状态机
+            canDoubleJump = false; // 禁用二段跳
+            Debug.Log("二段跳！");
+            
+            // 添加二段跳分数
+            ScoreManager.Instance.AddTrickScore(1);
         }
 
         // 检测落地
@@ -81,45 +91,5 @@ public class AirState : StateBase
     {
         player.isInAir = false;
         Debug.Log("退出空中状态");
-    }
-
-    // 执行基础技巧
-    private void PerformBasicTrick()
-    {
-        player.airCombo++;
-        Debug.Log($"执行基础技巧！连击数: {player.airCombo}");
-        
-        // 添加技巧分数
-        ScoreManager.Instance.AddTrickScore(1);
-        
-        // 可以在这里添加视觉效果或音效
-        // 例如：旋转玩家、播放动画等
-    }
-
-    // 执行抓板技巧
-    private void PerformGrabTrick()
-    {
-        player.airCombo++;
-        Debug.Log($"执行抓板技巧！连击数: {player.airCombo}");
-        
-        // 添加技巧分数
-        ScoreManager.Instance.AddTrickScore(1);
-        
-        // 切换到抓板技巧状态
-        player.stateMachine.SwitchState("GrabTrick");
-    }
-
-    // 执行翻转技巧
-
-
-    // 执行二段跳
-    private void PerformDoubleJump()
-    {
-        canDoubleJump = false; // 禁用二段跳
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.doubleJumpForce);
-        Debug.Log("二段跳！");
-        
-        // 添加二段跳分数
-        ScoreManager.Instance.AddTrickScore(1);
     }
 } 

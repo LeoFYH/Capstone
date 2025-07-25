@@ -30,8 +30,14 @@ public class E
         }
     }
     
-    // 切换到指定状态
+    // 切换到指定状态（无参数）
     public void SwitchState(string stateName)
+    {
+        SwitchState(stateName, null);
+    }
+    
+    // 切换到指定状态（带参数）
+    public void SwitchState(string stateName, object data)
     {
         if (states.ContainsKey(stateName))
         {
@@ -46,7 +52,12 @@ public class E
             // 切换到新状态
             currentState = states[stateName];
             
-            // 进入新状态
+            // 进入新状态（传递数据）
+            if (currentState is TrickState trickState && data is string trickName)
+            {
+                //调用trickstate的settrickname方法来传入特技名称
+                trickState.SetTrickName(trickName);
+            }
             currentState.Enter();
             
             // 触发状态切换事件
@@ -98,10 +109,6 @@ public class E
     // 清除所有状态
     public void ClearStates()
     {
-        if (currentState != null)
-        {
-            currentState.Exit();
-        }
         states.Clear();
         currentState = null;
     }

@@ -49,11 +49,13 @@ public class PlayerScript : MonoBehaviour
         stateMachine.AddState("Move", new MoveState(this, rb));
         stateMachine.AddState("Grind", new GrindState(this, rb));
         stateMachine.AddState("Air", new AirState(this, rb));
+        stateMachine.AddState("Trick", new TrickState(this, rb));
         stateMachine.AddState("GJump", new GJumpState(this, rb));
         stateMachine.AddState("Grab", new GrabbingState(this, rb));
         stateMachine.AddState("WallRide", new WallRideState(this, rb));
         stateMachine.AddState("Reverse", new ReverseState(this, rb));
         stateMachine.AddState("PowerGrind", new PowerGrindState(this, rb));
+        
         stateMachine.SwitchState("Idle");
     }
 
@@ -268,7 +270,7 @@ public class PlayerScript : MonoBehaviour
             if (Mathf.Abs(input) > 0.01f && Mathf.Sign(input) != originalDirection)
             {
                 Debug.Log("Reverse");
-                stateMachine.SwitchState("Reverse");
+                //stateMachine.SwitchState("Reverse");
                 reverseTriggered = true;
                 break;
             }
