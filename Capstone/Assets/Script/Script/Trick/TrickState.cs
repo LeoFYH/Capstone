@@ -79,7 +79,15 @@ public class TrickState : StateBase
 
     public override void Update()
     {
-        // 只处理计时器，不检测输入
+        // 检测落地，如果落地则立即退出技巧状态
+        if (player.IsGrounded())
+        {
+            Debug.Log("技巧执行中落地，强制退出技巧状态");
+            player.stateMachine.SwitchState("Idle");
+            return;
+        }
+
+        // 处理计时器
         if (trickTimer > 0)
         {
             trickTimer -= Time.deltaTime;
@@ -89,12 +97,25 @@ public class TrickState : StateBase
     private IEnumerator ReturnToAirAfterTrick()
     {
         yield return new WaitForSeconds(currentTrick.duration);
-        player.stateMachine.SwitchState("Air");
+        
+        // 检查是否已经落地，如果落地则不切换到空中状态
+        if (!player.IsGrounded())
+        {
+            player.stateMachine.SwitchState("Air");
+        }
+        else
+        {
+            player.stateMachine.SwitchState("Idle");
+        }
     }
 
     public override void Exit()
     {
-        
+        // 调用当前技巧的 Exit 方法
+        if (currentTrick != null)
+        {
+            currentTrick.Exit(player);
+        }
         
         // 清除技巧名称和实例
         currentTrickName = null;

@@ -17,9 +17,21 @@ public class TrickA : TrickBase
         AddScore();
     }
 
+    public override void Exit(PlayerScript player)
+    {
+        
+        SpriteRenderer spriteRenderer = player.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.white;
+        }
+        Debug.Log("TrickA 退出，重置颜色");
+    }
+
     protected override void PlayAnimation(PlayerScript player)
     {
-       
+        // TrickA 的特殊动画：快速旋转
+        player.transform.Rotate(0, 0, 360f);
     }
 
     protected override void PlayEffects(PlayerScript player)
@@ -34,6 +46,6 @@ public class TrickA : TrickBase
 
     protected override void AddScore()
     {
-        //ScoreManager.Instance.AddTrickScore(scoreValue);
+        ScoreManager.Instance.AddTrickScore(scoreValue);
     }
 } 

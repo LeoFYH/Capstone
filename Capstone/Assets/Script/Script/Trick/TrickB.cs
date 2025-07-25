@@ -17,6 +17,17 @@ public class TrickB : TrickBase
         AddScore();
     }
 
+    public override void Exit(PlayerScript player)
+    {
+       
+        SpriteRenderer spriteRenderer = player.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.white;
+        }
+        Debug.Log("TrickB 退出，重置颜色");
+    }
+
     protected override void PlayAnimation(PlayerScript player)
     {
        
@@ -34,6 +45,6 @@ public class TrickB : TrickBase
 
     protected override void AddScore()
     {
-        //ScoreManager.Instance.AddTrickScore(scoreValue);
+        ScoreManager.Instance.AddTrickScore(scoreValue);
     }
 } 
