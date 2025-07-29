@@ -15,7 +15,13 @@ public class ScoreManager : MonoBehaviour
     public float grindTime = 0f; // 滑轨时间
     public float lastScoreChangeTime = 0f; // 最后一次分数变化时间
     public int lastScore = 0; // 上一次的分数
-    
+
+    [Header("战斗")]
+    public float curretBulletTime; //现在的子弹时间剩余资源
+    public float bulletTimeMax; //最大的子弹时间
+    public float bulletTimeBoost; //额外的子弹时间上限
+    public float bulletRecoverTime; //恢复到满的时间
+
     private static ScoreManager instance;
     public static ScoreManager Instance
     {
