@@ -39,7 +39,7 @@ public class GrindState : StateBase
         SnapPlayerToTrack();
         
         // 开始滑轨计分
-        ScoreManager.Instance.StartGrindScoring();
+        //ScoreManager.Instance.StartGrindScoring();
     }
 
     public override void Update()
@@ -100,6 +100,6 @@ public class GrindState : StateBase
         Debug.Log("Exit Grind");
         
         // 结束滑轨计分
-        ScoreManager.Instance.EndGrindScoring();
+        //ScoreManager.Instance.EndGrindScoring();
     }
 }

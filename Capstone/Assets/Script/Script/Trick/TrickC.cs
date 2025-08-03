@@ -25,7 +25,7 @@ public class TrickC : TrickBase
         {
             spriteRenderer.color = Color.white;
         }
-        Debug.Log("TrickC ÍË³ö£¬ÖØÖÃÑÕÉ«");
+        Debug.Log("TrickC é€€å‡ºï¼Œé‡ç½®é¢œè‰²");
     }
 
     protected override void PlayAnimation(PlayerScript player)
@@ -35,7 +35,7 @@ public class TrickC : TrickBase
 
     protected override void PlayEffects(PlayerScript player)
     {
-        // TrickC µÄÌØÊâĞ§¹û£º¸Ä±äÑÕÉ«
+        // TrickC çš„ç‰¹æ®Šæ•ˆæœï¼šæ”¹å˜é¢œè‰²
         SpriteRenderer spriteRenderer = player.GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
         {
@@ -45,6 +45,9 @@ public class TrickC : TrickBase
 
     protected override void AddScore()
     {
-        ScoreManager.Instance.AddTrickScore(scoreValue);
+        // ç›´æ¥è°ƒç”¨TrickScoreï¼Œä¸éœ€è¦é€šè¿‡PlayerScript
+        TrickScore.Instance.AddTrickScore(this);
+        
+        Debug.Log($"TrickC å®Œæˆï¼åˆ†æ•°: {scoreValue}");
     }
 }

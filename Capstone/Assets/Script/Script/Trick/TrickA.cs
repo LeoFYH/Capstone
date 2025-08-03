@@ -46,6 +46,9 @@ public class TrickA : TrickBase
 
     protected override void AddScore()
     {
-        ScoreManager.Instance.AddTrickScore(scoreValue);
+        // 直接调用TrickScore，不需要通过PlayerScript
+        TrickScore.Instance.AddTrickScore(this);
+        
+        Debug.Log($"TrickA 完成！分数: {scoreValue}");
     }
 } 

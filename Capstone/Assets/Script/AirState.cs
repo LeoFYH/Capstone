@@ -69,8 +69,8 @@ public class AirState : StateBase
             canDoubleJump = false; // 禁用二段跳
             Debug.Log("二段跳！");
             
-            // 添加二段跳分数
-            ScoreManager.Instance.AddTrickScore(1);
+            // 添加二段跳分数 - 暂时注释掉
+            //ScoreManager.Instance.AddTrickScore(1);
         }
 
         // 检测落地
