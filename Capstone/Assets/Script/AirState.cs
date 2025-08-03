@@ -83,6 +83,9 @@ public class AirState : StateBase
                 // 这里可以添加连击奖励逻辑
             }
             
+            // 正常落地时立即打印技巧列表并开始5秒倒计时清零
+            TrickScore.Instance.OnPlayerLanded();
+            
             player.stateMachine.SwitchState("Idle");
         }
     }

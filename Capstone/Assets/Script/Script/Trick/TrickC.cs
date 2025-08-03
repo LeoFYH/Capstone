@@ -5,7 +5,7 @@ public class TrickC : TrickBase
     public TrickC()
     {
         trickName = "TrickC";
-        duration = 3f;
+        duration = 2.0f;
         scoreValue = 300;
     }
 

@@ -8,6 +8,7 @@ public class TrickState : StateBase
     private float trickTimer;
     private string currentTrickName;
     private TrickBase currentTrick;
+    private bool isPerformingTrick = false;
 
     public TrickState(PlayerScript player, Rigidbody2D rb)
     {
@@ -31,9 +32,6 @@ public class TrickState : StateBase
         {
             // 创建技巧实例并执行
             CreateAndPerformTrick();
-            
-            // 开始协程，技巧结束后返回空中状态
-            player.StartCoroutine(ReturnToAirAfterTrick());
         }
         else
         {
@@ -88,6 +86,10 @@ public class TrickState : StateBase
         
         // 设置计时器
         trickTimer = currentTrick.duration;
+        isPerformingTrick = true;
+        
+        // 清除技巧名称，准备接收下一个技巧
+        currentTrickName = null;
     }
 
     public override void Update()
@@ -95,9 +97,28 @@ public class TrickState : StateBase
         // 检测落地，如果落地则立即退出技巧状态
         if (player.IsGrounded())
         {
-            Debug.Log("技巧执行中落地，强制退出技巧状态");
+            // 立即清空技巧列表和分数
+            TrickScore.Instance.ResetTrickScore();
+            Debug.Log("技巧执行中落地，立即清空技巧列表！");
+            
+            
+            
             player.stateMachine.SwitchState("Idle");
             return;
+        }
+
+        // 检测新的技巧输入
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            // 立即执行新技巧
+            currentTrickName = "TrickA";
+            CreateAndPerformTrick();
+        }
+        else if (Input.GetKeyDown(KeyCode.K))
+        {
+            // 立即执行新技巧
+            currentTrickName = "TrickB";
+            CreateAndPerformTrick();
         }
 
         // 处理计时器
@@ -105,20 +126,11 @@ public class TrickState : StateBase
         {
             trickTimer -= Time.deltaTime;
         }
-    }
-
-    private IEnumerator ReturnToAirAfterTrick()
-    {
-        yield return new WaitForSeconds(currentTrick.duration);
-        
-        // 检查是否已经落地，如果落地则不切换到空中状态
-        if (!player.IsGrounded())
+        else if (isPerformingTrick)
         {
+            // 技巧完成，退出技巧状态
+            isPerformingTrick = false;
             player.stateMachine.SwitchState("Air");
-        }
-        else
-        {
-            player.stateMachine.SwitchState("Idle");
         }
     }
 
@@ -133,5 +145,6 @@ public class TrickState : StateBase
         // 清除技巧名称和实例
         currentTrickName = null;
         currentTrick = null;
+        isPerformingTrick = false;
     }
 } 

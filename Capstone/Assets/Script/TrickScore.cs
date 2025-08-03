@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class TrickScore : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class TrickScore : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public List<TrickInfo> trickInfos = new List<TrickInfo>();
     public int totalScore;
+    private bool isResetting = false;
    
     private void Awake()
     {
@@ -60,6 +62,30 @@ public class TrickScore : MonoBehaviour
     {
         trickInfos.Clear();
         totalScore = 0;
+    }
+
+    // 落地后立即打印技巧列表，然后等待5秒清零
+    public void OnPlayerLanded()
+    {
+        if (!isResetting && trickInfos.Count > 0)
+        {
+            Debug.Log("=== 玩家落地，技巧列表 ===");
+            PrintAllTricks();
+            Debug.Log("5秒后清零技巧列表...");
+            
+            // 开始协程，等待5秒后清零
+            StartCoroutine(ResetAfterDelay(5f));
+        }
+    }
+
+    private IEnumerator ResetAfterDelay(float delay)
+    {
+        isResetting = true;
+        yield return new WaitForSeconds(delay);
+        
+        Debug.Log("技巧列表已清零");
+        ResetTrickScore();
+        isResetting = false;
     }
 
     // 打印所有技巧信息
