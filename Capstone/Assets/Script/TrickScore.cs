@@ -44,7 +44,7 @@ public class TrickScore : MonoBehaviour
     {
         trickInfos.Add(new TrickInfo(trickBase));
         totalScore += trickBase.scoreValue;
-        Debug.Log($"添加技巧: {trickBase.trickName}, 分数: {trickBase.scoreValue}");
+        // Debug.Log($"添加技巧: {trickBase.trickName}, 分数: {trickBase.scoreValue}");
     }
     
     public void RemoveTrickScore(TrickBase trickBase)
@@ -69,9 +69,9 @@ public class TrickScore : MonoBehaviour
     {
         if (!isResetting && trickInfos.Count > 0)
         {
-            Debug.Log("=== 玩家落地，技巧列表 ===");
+            // Debug.Log("=== 玩家落地，技巧列表 ===");
             PrintAllTricks();
-            Debug.Log("5秒后清零技巧列表...");
+            // Debug.Log("5秒后清零技巧列表...");
             
             // 开始协程，等待5秒后清零
             StartCoroutine(ResetAfterDelay(5f));
@@ -83,7 +83,7 @@ public class TrickScore : MonoBehaviour
         isResetting = true;
         yield return new WaitForSeconds(delay);
         
-        Debug.Log("技巧列表已清零");
+        // Debug.Log("技巧列表已清零");
         ResetTrickScore();
         isResetting = false;
     }
@@ -91,14 +91,14 @@ public class TrickScore : MonoBehaviour
     // 打印所有技巧信息
     public void PrintAllTricks()
     {
-        Debug.Log("=== 技巧列表 ===");
+        // Debug.Log("=== 技巧列表 ===");
         for (int i = 0; i < trickInfos.Count; i++)
         {
             TrickInfo info = trickInfos[i];
-            Debug.Log($"{i + 1}. {info.trickName} - 分数: {info.trickScore}");
+            // Debug.Log($"{i + 1}. {info.trickName} - 分数: {info.trickScore}");
         }
-        Debug.Log($"总技巧分数: {totalScore}");
-        Debug.Log("================");
+        // Debug.Log($"总技巧分数: {totalScore}");
+        // Debug.Log("================");
     }
 }
 

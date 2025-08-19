@@ -16,13 +16,13 @@ public class GrabbingState : StateBase
 
     public override void Enter()
     {
-        Debug.Log("进入Grabbing状态");
+        // Debug.Log("进入Grabbing状态");
         //can be damage
     }
 
     public override void Update()
     {
-        Debug.Log("Keep Grabbing");
+        // Debug.Log("Keep Grabbing");
 
         if (player.isEHeld == false)
         {
@@ -42,7 +42,7 @@ public class GrabbingState : StateBase
 
     public override void Exit()
     {
-        Debug.Log("退出Grabbing状态");
+        // Debug.Log("退出Grabbing状态");
         //exit can be damage
     }
 }

@@ -44,6 +44,13 @@ namespace SkateGame
         [Header("Button Check")]
         public bool isEHeld = false;
         public bool isWHeld = false;
+        private bool hasJumpedThisFrame = false; // 防止同一帧重复跳跃
+        
+        [Header("Ground Detection")]
+        public LayerMask groundLayer = 1; // 地面层级
+        private bool wasGrounded = false; // 上一帧是否着地
+        private float jumpBufferTime = 0.1f; // 跳跃缓冲时间
+        private float jumpBufferTimer = 0f; // 跳跃缓冲计时器
         
         [Header("Life Setting")]
         public bool canBeHurt;
@@ -55,7 +62,7 @@ namespace SkateGame
         
         protected override void InitializeController()
         {
-            Debug.Log("玩家控制器初始化完成");
+            // Debug.Log("玩家控制器初始化完成");
             
             // 获取组件
             rb = GetComponent<Rigidbody2D>();
@@ -88,16 +95,54 @@ namespace SkateGame
                 grindJumpTimer -= Time.deltaTime;
             }
             
+            // 更新跳跃缓冲计时器
+            if (jumpBufferTimer > 0f)
+            {
+                jumpBufferTimer -= Time.deltaTime;
+            }
+            
+            // 重置跳跃标志
+            hasJumpedThisFrame = false;
+            
+            // 更新着地状态
+            wasGrounded = IsGrounded();
+            
             // 检测输入并发送事件
             DetectInput();
         }
         
         private void DetectInput()
         {
-            // 跳跃输入
-            if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+            // 获取当前状态和移动输入
+            string currentState = stateMachine.GetCurrentStateName();
+            float moveInput = Input.GetAxisRaw("Horizontal");
+            
+            // 跳跃输入检测 - 只负责状态切换
+            if (Input.GetKeyDown(KeyCode.Space) && !hasJumpedThisFrame)
             {
-                this.SendEvent<JumpInputEvent>();
+                if (wasGrounded)
+                {
+                    // Debug.Log("Space键按下 - 切换到Jump状态");
+                    hasJumpedThisFrame = true; // 设置标志防止重复跳跃
+                    stateMachine.SwitchState("Jump");
+                    return; // 跳跃后直接返回，不处理其他输入
+                }
+                else
+                {
+                    // 如果不在着地状态，启动跳跃缓冲
+                    jumpBufferTimer = jumpBufferTime;
+                    // Debug.Log("Space键按下但未着地，启动跳跃缓冲");
+                }
+            }
+            
+            // 检查跳跃缓冲
+            if (jumpBufferTimer > 0f && wasGrounded && !hasJumpedThisFrame)
+            {
+                // Debug.Log("跳跃缓冲触发 - 切换到Jump状态");
+                hasJumpedThisFrame = true;
+                jumpBufferTimer = 0f; // 清除缓冲
+                stateMachine.SwitchState("Jump");
+                return;
             }
             
             // 轨道输入
@@ -139,10 +184,7 @@ namespace SkateGame
                 this.SendEvent<TrickBInputEvent>();
             }
             
-            // 移动状态切换
-            string currentState = stateMachine.GetCurrentStateName();
-            float moveInput = Input.GetAxisRaw("Horizontal");
-            
+            // 移动状态切换（基于移动输入）
             if (currentState == "Idle" && Mathf.Abs(moveInput) > 0.01f && IsGrounded())
             {
                 stateMachine.SwitchState("Move");
@@ -156,8 +198,55 @@ namespace SkateGame
         // 提供给状态机使用的方法
         public bool IsGrounded()
         {
-            if (rb == null) return false;
-            return Mathf.Abs(rb.linearVelocity.y) < 0.01f;
+            if (rb == null) 
+            {
+                Debug.LogWarning("IsGrounded: rb为空");
+                return false;
+            }
+            
+            // 使用多个射线检测来提高准确性
+            Vector2 rayStart = transform.position;
+            Vector2 rayDirection = Vector2.down;
+            float rayDistance = 1.2f; // 稍微增加距离
+            
+            // 主射线检测
+            RaycastHit2D hit = Physics2D.Raycast(rayStart, rayDirection, rayDistance, groundLayer);
+            
+            // 如果主射线没检测到，尝试左右偏移的射线
+            if (hit.collider == null)
+            {
+                Vector2 leftRayStart = rayStart + Vector2.left * 0.3f;
+                Vector2 rightRayStart = rayStart + Vector2.right * 0.3f;
+                
+                RaycastHit2D leftHit = Physics2D.Raycast(leftRayStart, rayDirection, rayDistance, groundLayer);
+                RaycastHit2D rightHit = Physics2D.Raycast(rightRayStart, rayDirection, rayDistance, groundLayer);
+                
+                if (leftHit.collider != null)
+                {
+                    hit = leftHit;
+                }
+                else if (rightHit.collider != null)
+                {
+                    hit = rightHit;
+                }
+            }
+            
+            bool grounded = hit.collider != null;
+            
+            // 只在状态变化时打印调试信息
+            if (grounded != wasGrounded)
+            {
+                if (grounded)
+                {
+                    // Debug.Log($"IsGrounded: 着地检测成功, 碰撞物体 = {hit.collider.name}");
+                }
+                else
+                {
+                    // Debug.Log("IsGrounded: 离开地面");
+                }
+            }
+            
+            return grounded;
         }
         
         public Rigidbody2D GetRigidbody()
@@ -179,7 +268,7 @@ namespace SkateGame
 
             float timer = 0f;
             bool reverseTriggered = false;
-            float originalDirection = Mathf.Sign(rb.linearVelocity.x);
+                         float originalDirection = Mathf.Sign(rb.velocity.x);
 
             while (timer < reverseInputWindow)
             {
@@ -187,7 +276,7 @@ namespace SkateGame
 
                 if (Mathf.Abs(input) > 0.01f && Mathf.Sign(input) != originalDirection)
                 {
-                    Debug.Log("Reverse");
+                    // Debug.Log("Reverse");
                     this.SendEvent<ReverseInputEvent>();
                     reverseTriggered = true;
                     break;
@@ -199,7 +288,7 @@ namespace SkateGame
 
             if (!reverseTriggered)
             {
-                Debug.Log("PG");
+                // Debug.Log("PG");
                 this.SendEvent<PowerGrindInputEvent>();
             }
 

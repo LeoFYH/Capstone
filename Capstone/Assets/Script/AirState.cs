@@ -1,5 +1,6 @@
 using UnityEngine;
 using SkateGame;
+using QFramework;
 
 public class AirState : StateBase
 {
@@ -23,7 +24,7 @@ public class AirState : StateBase
         player.airTime = 0f;
         player.airCombo = 0;
         canDoubleJump = true; // 重置二段跳
-        Debug.Log("进入空中状态");
+        // Debug.Log("进入空中状态");
     }
 
     public override void Update()
@@ -31,21 +32,9 @@ public class AirState : StateBase
         // 更新空中时间
         player.airTime += Time.deltaTime;
         
-        // 空中移动控制
+        // Air状态下发送移动事件
         float moveInput = Input.GetAxisRaw("Horizontal");
-        
-        if (Mathf.Abs(moveInput) > 0.01f)
-        {
-            // 使用力来移动，而不是直接设置速度
-            rb.AddForce(Vector2.right * moveInput * airControlForce, ForceMode2D.Force);
-            
-            // 限制最大水平速度
-            float currentVelocityX = rb.linearVelocity.x;
-            if (Mathf.Abs(currentVelocityX) > maxAirHorizontalSpeed)
-            {
-                rb.linearVelocity = new Vector2(Mathf.Sign(currentVelocityX) * maxAirHorizontalSpeed, rb.linearVelocity.y);
-            }
-        }
+        player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
 
         // 检测技巧输入并切换到 TrickState
         if (Input.GetKeyDown(KeyCode.J))
@@ -66,9 +55,9 @@ public class AirState : StateBase
         if (Input.GetKeyDown(KeyCode.Space) && canDoubleJump)
         {
             // 直接执行二段跳
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.doubleJumpForce);//没用doublejump状态机
+            rb.velocity = new Vector2(rb.velocity.x, player.doubleJumpForce);//没用doublejump状态机
             canDoubleJump = false; // 禁用二段跳
-            Debug.Log("二段跳！");
+            // Debug.Log("二段跳！");
             
             // 添加二段跳分数 - 暂时注释掉
             //ScoreManager.Instance.AddTrickScore(1);
@@ -80,7 +69,7 @@ public class AirState : StateBase
             // 落地时根据连击数给予奖励
             if (player.airCombo > 0)
             {
-                Debug.Log($"空中连击完成！连击数: {player.airCombo}");
+                // Debug.Log($"空中连击完成！连击数: {player.airCombo}");
                 // 这里可以添加连击奖励逻辑
             }
             
@@ -94,6 +83,6 @@ public class AirState : StateBase
     public override void Exit()
     {
         player.isInAir = false;
-        Debug.Log("退出空中状态");
+        // Debug.Log("退出空中状态");
     }
 } 

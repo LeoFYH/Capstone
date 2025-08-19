@@ -20,8 +20,8 @@ public class GrindState : StateBase
 
     public override void Enter()
     {
-        Debug.Log("E Grind");
-        Vector2 velocity = rb.linearVelocity;
+        // Debug.Log("E Grind");
+        Vector2 velocity = rb.velocity;
         speed = velocity.magnitude;
         normalG = rb.gravityScale;
         if (speed < 0.1f)
@@ -36,7 +36,7 @@ public class GrindState : StateBase
         }
 
         rb.gravityScale = 0f;
-        rb.linearVelocity = new Vector2(direction.x * speed, 0);
+        rb.velocity = new Vector2(direction.x * speed, 0);
         SnapPlayerToTrack();
         
         // 开始滑轨计分
@@ -60,7 +60,7 @@ public class GrindState : StateBase
         pos.y = player.currentTrack.GetTrackPosition().y;
         player.transform.position = pos;
 
-        rb.linearVelocity = new Vector2(direction.x * speed, 0);
+        rb.velocity = new Vector2(direction.x * speed, 0);
 
 
 
@@ -68,10 +68,10 @@ public class GrindState : StateBase
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("G Jump");
+            // Debug.Log("G Jump");
             isJumping = true;
             rb.gravityScale = 1f;
-            rb.linearVelocity = new Vector2(direction.x * speed, 10f);
+            rb.velocity = new Vector2(direction.x * speed, 10f);
             player.grindJumpTimer = player.grindJumpIgnoreTime;
 
             if (player.isEHeld)
@@ -97,7 +97,7 @@ public class GrindState : StateBase
     {
         rb.gravityScale = normalG;
         isJumping = false;
-        Debug.Log("Exit Grind");
+        // Debug.Log("Exit Grind");
         
         // 结束滑轨计分
         //ScoreManager.Instance.EndGrindScoring();

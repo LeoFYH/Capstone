@@ -53,7 +53,7 @@ namespace SkateGame
             trickModel.CurrentTricks.Value.Add(trickInfo);
             scoreModel.TotalScore.Value += trick.scoreValue;
             
-            Debug.Log($"添加技巧: {trick.trickName}, 分数: {trick.scoreValue}");
+            // Debug.Log($"添加技巧: {trick.trickName}, 分数: {trick.scoreValue}");
         }
 
         public void ResetTrickScore()
@@ -100,7 +100,7 @@ namespace SkateGame
         private void OnPlayerLanded(PlayerLandedEvent evt)
         {
             ResetTrickScore();
-            Debug.Log("玩家落地，清空技巧分数");
+            // Debug.Log("玩家落地，清空技巧分数");
         }
     }
 }

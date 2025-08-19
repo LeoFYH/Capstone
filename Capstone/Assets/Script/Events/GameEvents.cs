@@ -60,4 +60,15 @@ namespace SkateGame
     public struct ReverseInputEvent
     {
     }
+    
+    // 跳跃执行事件
+    public struct JumpExecuteEvent
+    {
+    }
+    
+    // 移动输入事件
+    public struct MoveInputEvent
+    {
+        public float HorizontalInput;
+    }
 }

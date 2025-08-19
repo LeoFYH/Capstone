@@ -20,13 +20,13 @@ public class PowerGrindState : StateBase
     {
         player.isPowerGrinding = true;
 
-        direction = Mathf.Sign(rb.linearVelocity.x);
+        direction = Mathf.Sign(rb.velocity.x);
         if (direction == 0) direction = 1f;
     }
 
     public override void Update()
     {
-        float vx = rb.linearVelocity.x;
+        float vx = rb.velocity.x;
 
         // 逐渐减少的速度，保持方向不变
         float newVx = vx - direction * deceleration * Time.deltaTime;
@@ -37,10 +37,10 @@ public class PowerGrindState : StateBase
             newVx = 0;
         }
 
-        rb.linearVelocity = new Vector2(newVx, rb.linearVelocity.y);
+        rb.velocity = new Vector2(newVx, rb.velocity.y);
 
 
-        if (!player.isWHeld || Mathf.Abs(rb.linearVelocity.x) <= 0.5f)
+        if (!player.isWHeld || Mathf.Abs(rb.velocity.x) <= 0.5f)
         {
             player.stateMachine.SwitchState("Idle");
         }

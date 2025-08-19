@@ -19,7 +19,7 @@ namespace SkateGame
         
         protected override void InitializeController()
         {
-            Debug.Log("UI控制器初始化完成");
+            // Debug.Log("UI控制器初始化完成");
             
             // 监听模型变化
             this.GetModel<IScoreModel>().TotalScore.Register(OnScoreChanged);

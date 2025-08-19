@@ -22,7 +22,7 @@ namespace SkateGame
             // 监听输入事件
             this.RegisterEvent<TrickAInputEvent>(OnTrickAInput);
             this.RegisterEvent<TrickBInputEvent>(OnTrickBInput);
-            this.RegisterEvent<JumpInputEvent>(OnJumpInput);
+            this.RegisterEvent<JumpExecuteEvent>(OnJumpExecute);
             this.RegisterEvent<GrindInputEvent>(OnGrindInput);
             this.RegisterEvent<PowerGrindInputEvent>(OnPowerGrindInput);
             this.RegisterEvent<ReverseInputEvent>(OnReverseInput);
@@ -75,7 +75,7 @@ namespace SkateGame
             {
                 // 直接切换到技巧状态，传递技巧名称
                 playerController.stateMachine.SwitchState("Trick", "TrickA");
-                Debug.Log("处理技巧A输入");
+                 // Debug.Log("处理技巧A输入");
             }
         }
 
@@ -85,16 +85,39 @@ namespace SkateGame
             {
                 // 直接切换到技巧状态，传递技巧名称
                 playerController.stateMachine.SwitchState("Trick", "TrickB");
-                Debug.Log("处理技巧B输入");
+                                 // Debug.Log("处理技巧B输入");
             }
         }
 
-        private void OnJumpInput(JumpInputEvent evt)
+        private void OnJumpExecute(JumpExecuteEvent evt)
         {
-            if (playerController != null && playerController.IsGrounded())
+            // Debug.Log("PlayerSystem接收到JumpExecuteEvent - 执行跳跃");
+            if (playerController != null)
             {
-                playerController.stateMachine.SwitchState("Jump");
-                Debug.Log("处理跳跃输入");
+                // 系统层执行跳跃逻辑
+                var rb = playerController.GetRigidbody();
+                if (rb != null)
+                {
+                    // 获取当前水平速度
+                    float currentHorizontalVelocity = rb.velocity.x;
+                    
+                    // 执行跳跃
+                    float jumpForce = playerController.maxJumpForce;
+                    rb.velocity = new Vector2(currentHorizontalVelocity, jumpForce);
+                    
+                    // Debug.Log($"系统执行跳跃 - 使用跳跃力: {jumpForce}");
+                    
+                    // 立即切换到Air状态
+                    playerController.stateMachine.SwitchState("Air");
+                }
+                else
+                {
+                    Debug.LogError("Rigidbody2D为空！");
+                }
+            }
+            else
+            {
+                Debug.LogError("playerController为空！");
             }
         }
 
@@ -105,17 +128,17 @@ namespace SkateGame
                 if (playerController.isNearTrack && playerController.grindJumpTimer <= 0f)
                 {
                     playerController.stateMachine.SwitchState("Grind");
-                    Debug.Log("切换到轨道状态");
+                    // Debug.Log("切换到轨道状态");
                 }
                 else if (playerController.isNearWall)
                 {
                     playerController.stateMachine.SwitchState("WallRide");
-                    Debug.Log("切换到墙壁骑行状态");
+                    // Debug.Log("切换到墙壁骑行状态");
                 }
                 else
                 {
                     playerController.stateMachine.SwitchState("Grab");
-                    Debug.Log("切换到抓取状态");
+                    // Debug.Log("切换到抓取状态");
                 }
             }
         }
@@ -125,7 +148,7 @@ namespace SkateGame
             if (playerController != null && playerController.IsGrounded())
             {
                 playerController.stateMachine.SwitchState("PowerGrind");
-                Debug.Log("切换到强力轨道状态");
+                // Debug.Log("切换到强力轨道状态");
             }
         }
         
@@ -134,13 +157,13 @@ namespace SkateGame
             if (playerController != null && playerController.IsGrounded())
             {
                 playerController.stateMachine.SwitchState("Reverse");
-                Debug.Log("切换到反向状态");
+                // Debug.Log("切换到反向状态");
             }
         }
 
         private void OnStateChanged(StateChangedEvent evt)
         {
-            Debug.Log($"状态切换: {evt.FromState} -> {evt.ToState}");
+            // Debug.Log($"状态切换: {evt.FromState} -> {evt.ToState}");
         }
     }
 }

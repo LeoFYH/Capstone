@@ -1,5 +1,6 @@
 using UnityEngine;
 using SkateGame;
+using QFramework;
 
 public class JumpState : StateBase
 {
@@ -19,71 +20,49 @@ public class JumpState : StateBase
 
     public override void Enter()
     {
+        // Debug.Log("JumpState.Enter() - 开始跳跃");
         isCharging = true;
         chargeTime = 0f;
         hasJumped = false;
-        initialHorizontalVelocity = rb.linearVelocity.x;
-        // Debug.Log("开始蓄力跳跃");
+        initialHorizontalVelocity = rb.velocity.x;
+        // Debug.Log($"初始水平速度: {initialHorizontalVelocity}");
+        
+        // 立即发送跳跃执行事件
+        player.SendEvent<JumpExecuteEvent>();
     }
 
     public override void Update()
     {
-        // 空中左右微调
-        float moveInput = Input.GetAxisRaw("Horizontal");
-        //if (Mathf.Abs(moveInput) > 0.01f)
-        //{
-        //    // 使用airMoveSpeed而不是直接操作刚体
-        //    float targetVelocityX = moveInput * player.airMoveSpeed;
-        //    rb.velocity = new Vector2(targetVelocityX, rb.velocity.y);
-        //}
-
-        // 蓄力跳逻辑
+        // 蓄力跳逻辑（现在只是计时，移动由移动系统处理）
         if (isCharging)
         {
-            if (Mathf.Abs(moveInput) > 0.01f)
-            {
-                float targetVelocityX = moveInput * player.moveSpeed;
-                rb.linearVelocity = new Vector2(targetVelocityX, rb.linearVelocity.y);
-            }
-
             chargeTime += Time.deltaTime;
             if (chargeTime > player.maxChargeTime)
                 chargeTime = player.maxChargeTime;
-
-            if (Input.GetKeyUp(KeyCode.Space))
-            {
-                float t = Mathf.Clamp01(chargeTime / player.maxChargeTime);
-                float jumpForce = Mathf.Lerp(player.minJumpForce, player.maxJumpForce, t);
-                rb.linearVelocity = new Vector2(initialHorizontalVelocity, jumpForce); // 完整继承初始速度
-                isCharging = false;
-                hasJumped = true;
-            }
         }
-        // 跳出后切换到空中状态
-        else if (hasJumped && !player.IsGrounded())
-        {
-            player.stateMachine.SwitchState("Air");
-        }
-        // 落地后切回Idle
-        else if (hasJumped && player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
-        {
-            player.stateMachine.SwitchState("Idle");
-        }
-        else if (hasJumped)
-        {
-            float vx = rb.linearVelocity.x;
-
-            // 判断是否与当前运动方向相反
-            if (Mathf.Abs(moveInput) > 0.01f && Mathf.Sign(moveInput) != Mathf.Sign(vx))
-            {
-                rb.AddForce(Vector2.right * moveInput * player.airControlForce, ForceMode2D.Force);
-
-                // 控制最大水平速度
-                float max = player.maxAirHorizontalSpeed;
-                rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -max, max), rb.linearVelocity.y);
-            }
-        }
+        
+        // Jump状态下发送移动事件
+        float moveInput = Input.GetAxisRaw("Horizontal");
+        player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
     }
+    ///
+    /// //
+    
+    // 公共方法，供InputController调用执行跳跃
+    //错了 应该写进系统逻辑 state只管发信号给系统
+    // public void ExecuteJump()
+    // {
+    //     Debug.Log($"执行跳跃 - 使用固定跳跃力: {player.maxJumpForce}");
+    //     float jumpForce = player.maxJumpForce;
+    //     rb.velocity = new Vector2(initialHorizontalVelocity, jumpForce); // 完整继承初始速度
+    //     Debug.Log($"设置速度: ({initialHorizontalVelocity}, {jumpForce})");
+    //     isCharging = false;
+    //     hasJumped = true;
+    //     Debug.Log("跳跃执行完成");
+        
+    //     // 立即切换到Air状态，这样空中移动就能正常工作
+    //     player.stateMachine.SwitchState("Air");
+    // }
 
     public override void Exit()
     {

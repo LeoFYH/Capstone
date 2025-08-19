@@ -21,7 +21,7 @@ public class TrickState : StateBase
 
     public override void Enter()
     {
-        Debug.Log($"进入技巧状态，技巧名称: {currentTrickName}");
+        // Debug.Log($"进入技巧状态，技巧名称: {currentTrickName}");
         
         // 如果没有设置技巧名称，检测输入决定技巧
         if (string.IsNullOrEmpty(currentTrickName))
@@ -45,7 +45,7 @@ public class TrickState : StateBase
     public void SetTrickName(string trickName)
     {
         currentTrickName = trickName;
-        Debug.Log($"设置技巧名称: {trickName}");
+        // Debug.Log($"设置技巧名称: {trickName}");
     }
 
     private void DetectTrickInput()
@@ -63,7 +63,7 @@ public class TrickState : StateBase
 
     private void CreateAndPerformTrick()
     {
-        Debug.Log($"创建技巧: {currentTrickName}");
+        // Debug.Log($"创建技巧: {currentTrickName}");
         
         // 根据技巧名称创建对应的技巧实例
         switch (currentTrickName)
@@ -100,7 +100,7 @@ public class TrickState : StateBase
         {
             // 立即清空技巧列表和分数
             TrickScore.Instance.ResetTrickScore();
-            Debug.Log("技巧执行中落地，立即清空技巧列表！");
+            // Debug.Log("技巧执行中落地，立即清空技巧列表！");
             
             
             

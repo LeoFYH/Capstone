@@ -18,14 +18,14 @@ public class GJumpState : StateBase
 
     public override void Enter()
     {
-        Debug.Log("GJ");
+        // Debug.Log("GJ");
         hasJumped = true;
         canDoubleJump = true;
 
         rb.gravityScale = 1f;
 
-        Vector2 currentVelocity = rb.linearVelocity;
-        rb.linearVelocity = new Vector2(currentVelocity.x, player.maxJumpForce);
+        Vector2 currentVelocity = rb.velocity;
+        rb.velocity = new Vector2(currentVelocity.x, player.maxJumpForce);
     }
 
     public override void Update()
@@ -39,7 +39,7 @@ public class GJumpState : StateBase
 
 
             float max = player.maxAirHorizontalSpeed;
-                            rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -max, max), rb.linearVelocity.y);
+                            rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, -max, max), rb.velocity.y);
         }
 
 
@@ -49,7 +49,7 @@ public class GJumpState : StateBase
             player.stateMachine.SwitchState("DoubleJump");
         }
 
-        if (player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
+        if (player.IsGrounded() && rb.velocity.y <= 0.01f)
         {
             player.stateMachine.SwitchState("Idle");
         }

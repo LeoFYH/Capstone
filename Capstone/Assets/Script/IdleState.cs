@@ -1,5 +1,6 @@
 using UnityEngine;
 using SkateGame;
+using QFramework;
 
 public class IdleState : StateBase
 {
@@ -17,11 +18,15 @@ public class IdleState : StateBase
     public override void Enter()
     {
         // Debug.Log("进入Idle状态");
+        ///
+        /// 
     }
 
     public override void Update()
     {
-        // Idle状态下的逻辑
+        // Idle状态下发送移动事件（即使没有移动输入）
+        float moveInput = Input.GetAxisRaw("Horizontal");
+        player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
     }
 
     public override void Exit()

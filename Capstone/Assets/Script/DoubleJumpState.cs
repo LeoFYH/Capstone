@@ -17,7 +17,7 @@ public class DoubleJumpState : StateBase
     public override void Enter()
     {
         // 直接跳起来
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.doubleJumpForce);
+        rb.velocity = new Vector2(rb.velocity.x, player.doubleJumpForce);
         // Debug.Log("二段跳！");
     }
 
@@ -31,7 +31,7 @@ public class DoubleJumpState : StateBase
         //}
         
         // 检测落地，落地后切回Idle
-        if (player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
+        if (player.IsGrounded() && rb.velocity.y <= 0.01f)
         {
             player.stateMachine.SwitchState("Idle");
         }

@@ -12,7 +12,7 @@ public class TrickA : TrickBase
 
     public override void PerformTrick(InputController player)
     {
-        Debug.Log("执行技巧A");
+        // Debug.Log("执行技巧A");
         PlayAnimation(player);
         PlayEffects(player);
         AddScore();
@@ -20,17 +20,17 @@ public class TrickA : TrickBase
 
     public override void Exit(InputController player)
     {
-        Debug.Log("退出技巧A");
+        // Debug.Log("退出技巧A");
     }
 
     protected override void PlayAnimation(InputController player)
     {
-        Debug.Log("播放技巧A动画");
+        // Debug.Log("播放技巧A动画");
     }
 
     protected override void PlayEffects(InputController player)
     {
-        Debug.Log("播放技巧A特效");
+        // Debug.Log("播放技巧A特效");
     }
 
     protected override void AddScore()
