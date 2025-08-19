@@ -1,24 +1,22 @@
 using UnityEngine;
+using SkateGame;
 
 public class WallRideState : StateBase
 {
-    
+    private InputController player;
     private Rigidbody2D rb;
-    private PlayerScript player;
     private float normalGravity;
     private float onWallGravity = 0.1f;
 
     private float lockedDirection = 0f; 
 
-
-    public WallRideState(PlayerScript player, Rigidbody2D rb)
+    public WallRideState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
     }
 
     public override string GetStateName() => "WallRide";
-
 
     public override void Enter()
     {
@@ -34,7 +32,6 @@ public class WallRideState : StateBase
 
         normalGravity = rb.gravityScale;
         rb.gravityScale = onWallGravity;
-
     }
 
     public override void Update()
@@ -43,13 +40,12 @@ public class WallRideState : StateBase
         if (player.currentWall == null || !player.isEHeld)
         {
             player.stateMachine.SwitchState("Jump");
-            return;
         }
     }
 
     public override void Exit()
     {
         rb.gravityScale = normalGravity;
-        Debug.Log("�˳�WallRide״̬");
+        Debug.Log("退出WallRide状态");
     }
 }

@@ -1,14 +1,15 @@
 using UnityEngine;
+using SkateGame;
 
 public class JumpState : StateBase
 {
     private Rigidbody2D rb;
-    private PlayerScript player;
+    private InputController player;
     private float chargeTime = 0f;
     private bool isCharging = false;
     private bool hasJumped = false;
     private float initialHorizontalVelocity;
-    public JumpState(PlayerScript player, Rigidbody2D rb)
+    public JumpState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
@@ -21,7 +22,7 @@ public class JumpState : StateBase
         isCharging = true;
         chargeTime = 0f;
         hasJumped = false;
-        initialHorizontalVelocity = rb.linearVelocityX;
+        initialHorizontalVelocity = rb.linearVelocity.x;
         // Debug.Log("开始蓄力跳跃");
     }
 
@@ -33,7 +34,7 @@ public class JumpState : StateBase
         //{
         //    // 使用airMoveSpeed而不是直接操作刚体
         //    float targetVelocityX = moveInput * player.airMoveSpeed;
-        //    rb.linearVelocity = new Vector2(targetVelocityX, rb.linearVelocity.y);
+        //    rb.velocity = new Vector2(targetVelocityX, rb.velocity.y);
         //}
 
         // 蓄力跳逻辑
@@ -70,7 +71,7 @@ public class JumpState : StateBase
         }
         else if (hasJumped)
         {
-            float vx = rb.linearVelocityX;
+            float vx = rb.linearVelocity.x;
 
             // 判断是否与当前运动方向相反
             if (Mathf.Abs(moveInput) > 0.01f && Mathf.Sign(moveInput) != Mathf.Sign(vx))
@@ -79,7 +80,7 @@ public class JumpState : StateBase
 
                 // 控制最大水平速度
                 float max = player.maxAirHorizontalSpeed;
-                rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocityX, -max, max), rb.linearVelocityY);
+                rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -max, max), rb.linearVelocity.y);
             }
         }
     }

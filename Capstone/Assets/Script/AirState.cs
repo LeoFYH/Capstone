@@ -1,14 +1,15 @@
 using UnityEngine;
+using SkateGame;
 
 public class AirState : StateBase
 {
     private Rigidbody2D rb;
-    private PlayerScript player;
+    private InputController player;
     private float airControlForce = 10f; // 空中控制力
     private float maxAirHorizontalSpeed = 8f; // 最大空中水平速度
     private bool canDoubleJump = true; // 是否可以二段跳
 
-    public AirState(PlayerScript player, Rigidbody2D rb)
+    public AirState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;

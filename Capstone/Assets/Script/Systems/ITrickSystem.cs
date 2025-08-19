@@ -25,11 +25,14 @@ namespace SkateGame
             var trickModel = this.GetModel<ITrickModel>();
             trickModel.CurrentTrickName.Value = trickName;
             
+            // 获取玩家控制器
+            InputController playerController = Object.FindFirstObjectByType<InputController>();
+            
             // 创建技巧实例
             TrickBase trick = CreateTrick(trickName);
-            if (trick != null)
+            if (trick != null && playerController != null)
             {
-                trick.PerformTrick(null); // 这里需要传入PlayerScript
+                trick.PerformTrick(playerController);
                 trickModel.IsPerformingTrick.Value = true;
                 trickModel.TrickTimer.Value = trick.duration;
                 

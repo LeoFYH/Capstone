@@ -15,14 +15,14 @@ namespace SkateGame
         public LayerMask trackLayer = 1;
         public LayerMask wallLayer = 1;
         
-        private PlayerScript player;
+        private InputController player;
         private Rigidbody2D rb;
         
         protected override void InitializeController()
         {
             Debug.Log("碰撞检测控制器初始化完成");
             
-            player = GetComponent<PlayerScript>();
+            player = GetComponent<InputController>();
             rb = GetComponent<Rigidbody2D>();
         }
         

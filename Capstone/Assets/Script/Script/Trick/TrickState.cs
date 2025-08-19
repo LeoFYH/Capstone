@@ -1,16 +1,17 @@
 using UnityEngine;
 using System.Collections;
+using SkateGame;
 
 public class TrickState : StateBase
 {
-    private PlayerScript player;
+    private InputController player;
     private Rigidbody2D rb;
     private float trickTimer;
     private string currentTrickName;
     private TrickBase currentTrick;
     private bool isPerformingTrick = false;
 
-    public TrickState(PlayerScript player, Rigidbody2D rb)
+    public TrickState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;

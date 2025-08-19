@@ -1,53 +1,40 @@
 using UnityEngine;
+using SkateGame;
 
 public class TrickC : TrickBase
 {
     public TrickC()
     {
         trickName = "TrickC";
-        duration = 2.0f;
-        scoreValue = 300;
+        duration = 2.5f;
+        scoreValue = 200;
     }
 
-    public override void PerformTrick(PlayerScript player)
+    public override void PerformTrick(InputController player)
     {
-        base.PerformTrick(player);
+        Debug.Log("执行技巧C");
         PlayAnimation(player);
         PlayEffects(player);
         AddScore();
     }
 
-    public override void Exit(PlayerScript player)
+    public override void Exit(InputController player)
     {
-
-        SpriteRenderer spriteRenderer = player.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = Color.white;
-        }
-        Debug.Log("TrickC 退出，重置颜色");
+        Debug.Log("退出技巧C");
     }
 
-    protected override void PlayAnimation(PlayerScript player)
+    protected override void PlayAnimation(InputController player)
     {
-
+        Debug.Log("播放技巧C动画");
     }
 
-    protected override void PlayEffects(PlayerScript player)
+    protected override void PlayEffects(InputController player)
     {
-        // TrickC 的特殊效果：改变颜色
-        SpriteRenderer spriteRenderer = player.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = Color.yellow;
-        }
+        Debug.Log("播放技巧C特效");
     }
 
     protected override void AddScore()
     {
-        // 直接调用TrickScore，不需要通过PlayerScript
         TrickScore.Instance.AddTrickScore(this);
-        
-        Debug.Log($"TrickC 完成！分数: {scoreValue}");
     }
 }

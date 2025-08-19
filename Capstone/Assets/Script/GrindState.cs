@@ -1,15 +1,16 @@
 using UnityEngine;
+using SkateGame;
 
 public class GrindState : StateBase
 {
-    private PlayerScript player;
+    private InputController player;
     private Rigidbody2D rb;
     private float speed;
     private Vector2 direction;
     private bool isJumping = false;
     private float normalG;
 
-    public GrindState(PlayerScript player, Rigidbody2D rb)
+    public GrindState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
@@ -47,7 +48,6 @@ public class GrindState : StateBase
         if (player.currentTrack == null || !player.isEHeld)
         {
             player.stateMachine.SwitchState("Jump");
-            return;
         }
 
 

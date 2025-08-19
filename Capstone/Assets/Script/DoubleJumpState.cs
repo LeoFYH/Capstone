@@ -1,11 +1,12 @@
 using UnityEngine;
+using SkateGame;
 
 public class DoubleJumpState : StateBase
 {
+    private InputController player;
     private Rigidbody2D rb;
-    private PlayerScript player;
     
-    public DoubleJumpState(PlayerScript player, Rigidbody2D rb)
+    public DoubleJumpState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;

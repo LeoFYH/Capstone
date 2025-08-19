@@ -1,13 +1,14 @@
 using UnityEngine;
+using SkateGame;
 
 public class GJumpState : StateBase
 {
+    private InputController player;
     private Rigidbody2D rb;
-    private PlayerScript player;
     private bool hasJumped = false;
     public bool canDoubleJump = true;
 
-    public GJumpState(PlayerScript player, Rigidbody2D rb)
+    public GJumpState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
@@ -38,7 +39,7 @@ public class GJumpState : StateBase
 
 
             float max = player.maxAirHorizontalSpeed;
-            rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocityX, -max, max), rb.linearVelocityY);
+                            rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -max, max), rb.linearVelocity.y);
         }
 
 
@@ -48,7 +49,7 @@ public class GJumpState : StateBase
             player.stateMachine.SwitchState("DoubleJump");
         }
 
-        if (player.IsGrounded() && rb.linearVelocityY <= 0.01f)
+        if (player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
         {
             player.stateMachine.SwitchState("Idle");
         }

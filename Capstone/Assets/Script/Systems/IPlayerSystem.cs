@@ -12,13 +12,20 @@ namespace SkateGame
 
     public class PlayerSystem : AbstractSystem, IPlayerSystem, ICanSendCommand
     {
+        private InputController playerController;
+        
         protected override void OnInit()
         {
+            // 获取玩家控制器
+            playerController = Object.FindFirstObjectByType<InputController>();
+            
             // 监听输入事件
             this.RegisterEvent<TrickAInputEvent>(OnTrickAInput);
             this.RegisterEvent<TrickBInputEvent>(OnTrickBInput);
             this.RegisterEvent<JumpInputEvent>(OnJumpInput);
             this.RegisterEvent<GrindInputEvent>(OnGrindInput);
+            this.RegisterEvent<PowerGrindInputEvent>(OnPowerGrindInput);
+            this.RegisterEvent<ReverseInputEvent>(OnReverseInput);
             
             // 监听状态切换事件
             this.RegisterEvent<StateChangedEvent>(OnStateChanged);
@@ -49,8 +56,6 @@ namespace SkateGame
             }
         }
 
-
-
         public void CheckGrounded()
         {
             // 检查玩家是否着地的逻辑
@@ -66,26 +71,71 @@ namespace SkateGame
         // 输入事件处理
         private void OnTrickAInput(TrickAInputEvent evt)
         {
-            this.SendCommand(new PerformTrickCommand { TrickName = "TrickA" });
-            Debug.Log("处理技巧A输入");
+            if (playerController != null && !playerController.IsGrounded())
+            {
+                // 直接切换到技巧状态，传递技巧名称
+                playerController.stateMachine.SwitchState("Trick", "TrickA");
+                Debug.Log("处理技巧A输入");
+            }
         }
 
         private void OnTrickBInput(TrickBInputEvent evt)
         {
-            this.SendCommand(new PerformTrickCommand { TrickName = "TrickB" });
-            Debug.Log("处理技巧B输入");
+            if (playerController != null && !playerController.IsGrounded())
+            {
+                // 直接切换到技巧状态，传递技巧名称
+                playerController.stateMachine.SwitchState("Trick", "TrickB");
+                Debug.Log("处理技巧B输入");
+            }
         }
 
         private void OnJumpInput(JumpInputEvent evt)
         {
-            // 处理跳跃逻辑
-            Debug.Log("处理跳跃输入");
+            if (playerController != null && playerController.IsGrounded())
+            {
+                playerController.stateMachine.SwitchState("Jump");
+                Debug.Log("处理跳跃输入");
+            }
         }
 
         private void OnGrindInput(GrindInputEvent evt)
         {
-            // 处理轨道逻辑
-            Debug.Log("处理轨道输入");
+            if (playerController != null && !playerController.IsGrounded())
+            {
+                if (playerController.isNearTrack && playerController.grindJumpTimer <= 0f)
+                {
+                    playerController.stateMachine.SwitchState("Grind");
+                    Debug.Log("切换到轨道状态");
+                }
+                else if (playerController.isNearWall)
+                {
+                    playerController.stateMachine.SwitchState("WallRide");
+                    Debug.Log("切换到墙壁骑行状态");
+                }
+                else
+                {
+                    playerController.stateMachine.SwitchState("Grab");
+                    Debug.Log("切换到抓取状态");
+                }
+            }
+        }
+        
+        private void OnPowerGrindInput(PowerGrindInputEvent evt)
+        {
+            if (playerController != null && playerController.IsGrounded())
+            {
+                playerController.stateMachine.SwitchState("PowerGrind");
+                Debug.Log("切换到强力轨道状态");
+            }
+        }
+        
+        private void OnReverseInput(ReverseInputEvent evt)
+        {
+            if (playerController != null && playerController.IsGrounded())
+            {
+                playerController.stateMachine.SwitchState("Reverse");
+                Debug.Log("切换到反向状态");
+            }
         }
 
         private void OnStateChanged(StateChangedEvent evt)

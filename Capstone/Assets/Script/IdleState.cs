@@ -1,7 +1,17 @@
 using UnityEngine;
+using SkateGame;
 
 public class IdleState : StateBase
 {
+    private InputController player;
+    private Rigidbody2D rb;
+
+    public IdleState(InputController player, Rigidbody2D rb)
+    {
+        this.player = player;
+        this.rb = rb;
+    }
+
     public override string GetStateName() => "Idle";
 
     public override void Enter()

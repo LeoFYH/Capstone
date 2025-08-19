@@ -1,14 +1,14 @@
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
+using SkateGame;
 
 public class PowerGrindState : StateBase
 {
     private Rigidbody2D rb;
-    private PlayerScript player;
-    private float deceleration = 1f; // Ã¿ÃëËÙ¶È¼õÉÙµÄÁ¿
+    private InputController player;
+    private float deceleration = 1f; // æ¯ç§’é€Ÿåº¦å‡å°‘çš„é‡
     private float direction;
 
-    public PowerGrindState(PlayerScript player, Rigidbody2D rb)
+    public PowerGrindState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
@@ -28,10 +28,10 @@ public class PowerGrindState : StateBase
     {
         float vx = rb.linearVelocity.x;
 
-        // ¼ÆËãĞÂµÄËÙ¶È£¨²»ÔÊĞí·´Ïò£©
+        // é€æ¸å‡å°‘çš„é€Ÿåº¦ï¼Œä¿æŒæ–¹å‘ä¸å˜
         float newVx = vx - direction * deceleration * Time.deltaTime;
 
-        // ·ÀÖ¹Ô½¼õÔ½·´Ïò
+        // é˜²æ­¢è¶Šè¿‡é›¶ç‚¹
         if (Mathf.Sign(newVx) != direction || Mathf.Abs(newVx) < 0.01f)
         {
             newVx = 0;

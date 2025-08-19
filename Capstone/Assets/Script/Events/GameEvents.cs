@@ -50,4 +50,14 @@ namespace SkateGame
     public struct TrickBInputEvent
     {
     }
+    
+    // 强力轨道输入事件
+    public struct PowerGrindInputEvent
+    {
+    }
+    
+    // 反向输入事件
+    public struct ReverseInputEvent
+    {
+    }
 }

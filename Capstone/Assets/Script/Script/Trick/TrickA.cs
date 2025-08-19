@@ -1,54 +1,40 @@
 using UnityEngine;
+using SkateGame;
 
 public class TrickA : TrickBase
 {
     public TrickA()
     {
         trickName = "TrickA";
-        duration = 0.3f;
-        scoreValue = 10;
+        duration = 1.5f;
+        scoreValue = 100;
     }
 
-    public override void PerformTrick(PlayerScript player)
+    public override void PerformTrick(InputController player)
     {
-        base.PerformTrick(player);
+        Debug.Log("执行技巧A");
         PlayAnimation(player);
         PlayEffects(player);
         AddScore();
     }
 
-    public override void Exit(PlayerScript player)
+    public override void Exit(InputController player)
     {
-        
-        SpriteRenderer spriteRenderer = player.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = Color.white;
-        }
-        Debug.Log("TrickA 退出，重置颜色");
+        Debug.Log("退出技巧A");
     }
 
-    protected override void PlayAnimation(PlayerScript player)
+    protected override void PlayAnimation(InputController player)
     {
-        // TrickA 的特殊动画：快速旋转
-        player.transform.Rotate(0, 0, 360f);
+        Debug.Log("播放技巧A动画");
     }
 
-    protected override void PlayEffects(PlayerScript player)
+    protected override void PlayEffects(InputController player)
     {
-        // TrickA 的特殊效果：改变颜色
-        SpriteRenderer spriteRenderer = player.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = Color.red;
-        }
+        Debug.Log("播放技巧A特效");
     }
 
     protected override void AddScore()
     {
-        // 直接调用TrickScore，不需要通过PlayerScript
         TrickScore.Instance.AddTrickScore(this);
-        
-        Debug.Log($"TrickA 完成！分数: {scoreValue}");
     }
 } 

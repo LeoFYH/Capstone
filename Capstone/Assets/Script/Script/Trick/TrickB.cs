@@ -1,53 +1,40 @@
 using UnityEngine;
+using SkateGame;
 
 public class TrickB : TrickBase
 {
     public TrickB()
     {
         trickName = "TrickB";
-        duration = 3.0f;
-        scoreValue = 15;
+        duration = 2.0f;
+        scoreValue = 150;
     }
 
-    public override void PerformTrick(PlayerScript player)
+    public override void PerformTrick(InputController player)
     {
-        base.PerformTrick(player);
+        Debug.Log("执行技巧B");
         PlayAnimation(player);
         PlayEffects(player);
         AddScore();
     }
 
-    public override void Exit(PlayerScript player)
+    public override void Exit(InputController player)
     {
-       
-        SpriteRenderer spriteRenderer = player.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = Color.white;
-        }
-        Debug.Log("TrickB 退出，重置颜色");
+        Debug.Log("退出技巧B");
     }
 
-    protected override void PlayAnimation(PlayerScript player)
+    protected override void PlayAnimation(InputController player)
     {
-       
+        Debug.Log("播放技巧B动画");
     }
 
-    protected override void PlayEffects(PlayerScript player)
+    protected override void PlayEffects(InputController player)
     {
-        // TrickB 的特殊效果：改变颜色
-        SpriteRenderer spriteRenderer = player.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = Color.blue;
-        }
+        Debug.Log("播放技巧B特效");
     }
 
     protected override void AddScore()
     {
-        // 直接调用TrickScore，不需要通过PlayerScript
         TrickScore.Instance.AddTrickScore(this);
-        
-        Debug.Log($"TrickB 完成！分数: {scoreValue}");
     }
 } 

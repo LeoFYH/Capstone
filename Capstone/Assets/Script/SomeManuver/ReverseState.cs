@@ -1,11 +1,12 @@
 using UnityEngine;
+using SkateGame;
 
 public class ReverseState : StateBase
 {
+    private InputController player;
     private Rigidbody2D rb;
-    private PlayerScript player;
 
-    public ReverseState(PlayerScript player, Rigidbody2D rb)
+    public ReverseState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
@@ -25,7 +26,6 @@ public class ReverseState : StateBase
     {
 
     }
-
 
     public override void Exit()
     {
