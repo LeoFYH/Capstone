@@ -11,7 +11,7 @@ public class TrickScore : MonoBehaviour
         {
             if (instance == null)
             {
-                instance = FindObjectOfType<TrickScore>();
+                instance = FindFirstObjectByType<TrickScore>();
                 if (instance == null)
                 {
                     GameObject go = new GameObject("TrickScore");
