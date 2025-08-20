@@ -47,11 +47,13 @@ public class GJumpState : StateBase
         {
             canDoubleJump = false;
             player.stateMachine.SwitchState("DoubleJump");
+            Debug.Log("DoubleJump88888888888!");
         }
 
         if (player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
         {
             player.stateMachine.SwitchState("Idle");
+            Debug.Log("2222:" + player.stateMachine.GetCurrentStateName());
         }
     }
 

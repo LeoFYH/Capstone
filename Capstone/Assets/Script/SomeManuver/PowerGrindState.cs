@@ -43,6 +43,7 @@ public class PowerGrindState : StateBase
         if (!player.isWHeld || Mathf.Abs(rb.linearVelocity.x) <= 0.5f)
         {
             player.stateMachine.SwitchState("Idle");
+            Debug.Log("2222:" + player.stateMachine.GetCurrentStateName());
         }
 
         if (Input.GetKeyDown(KeyCode.Space))

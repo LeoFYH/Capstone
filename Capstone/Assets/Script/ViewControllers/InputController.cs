@@ -117,35 +117,37 @@ namespace SkateGame
             // 获取当前状态和移动输入
             string currentState = stateMachine.GetCurrentStateName();
             float moveInput = Input.GetAxisRaw("Horizontal");
-            
+
             // 跳跃输入检测 - 只负责状态切换
             // 在Air状态下不处理空格键，让AirState自己处理二段跳
-            if (Input.GetKeyDown(KeyCode.Space) && !hasJumpedThisFrame && currentState != "Air")
+            Debug.Log("hasJumpedThisFrame:" + !hasJumpedThisFrame + "currentstate: " + currentState + "wasground" + wasGrounded);
+            if (Input.GetKeyDown(KeyCode.Space) && currentState != "Air")
             {
                 if (wasGrounded)
                 {
-                    // Debug.Log("Space键按下 - 切换到Jump状态");
+                     Debug.Log("Space键按下 - 切换到Jump状态" + "currentState:" + currentState);
                     hasJumpedThisFrame = true; // 设置标志防止重复跳跃
                     stateMachine.SwitchState("Jump");
+                  
                     return; // 跳跃后直接返回，不处理其他输入
                 }
-                else
-                {
-                    // 如果不在着地状态，启动跳跃缓冲
-                    jumpBufferTimer = jumpBufferTime;
-                    // Debug.Log("Space键按下但未着地，启动跳跃缓冲");
-                }
+                //else
+                //{
+                //    // 如果不在着地状态，启动跳跃缓冲
+                //    jumpBufferTimer = jumpBufferTime;
+                //     Debug.Log("Space键按下但未着地，启动跳跃缓冲");
+                //}
             }
             
             // 检查跳跃缓冲
-            if (jumpBufferTimer > 0f && wasGrounded && !hasJumpedThisFrame)
-            {
-                // Debug.Log("跳跃缓冲触发 - 切换到Jump状态");
-                hasJumpedThisFrame = true;
-                jumpBufferTimer = 0f; // 清除缓冲
-                stateMachine.SwitchState("Jump");
-                return;
-            }
+            //if (jumpBufferTimer > 0f && wasGrounded && !hasJumpedThisFrame)
+            //{
+            //    Debug.Log("跳跃缓冲触发 - 切换到Jump状态");
+            //    hasJumpedThisFrame = true;
+            //    jumpBufferTimer = 0f; // 清除缓冲
+            //    stateMachine.SwitchState("Jump");
+            //    return;
+            //}
             
             // 轨道输入 - E键只用于滑轨，不用于技巧
             if (Input.GetKeyDown(KeyCode.E))
@@ -197,10 +199,12 @@ namespace SkateGame
             if (currentState == "Idle" && Mathf.Abs(moveInput) > 0.01f && IsGrounded())
             {
                 stateMachine.SwitchState("Move");
+               
             }
             else if (currentState == "Move" && Mathf.Abs(moveInput) <= 0.01f && IsGrounded())
             {
                 stateMachine.SwitchState("Idle");
+                Debug.Log("2222:" + currentState);
             }
         }
         
@@ -216,7 +220,7 @@ namespace SkateGame
             // 使用多个射线检测来提高准确性
             Vector2 rayStart = transform.position;
             Vector2 rayDirection = Vector2.down;
-            float rayDistance = 0.8f; // 减少检测距离，避免误判
+            float rayDistance = 0.35f; // 减少检测距离，避免误判
             
             // 主射线检测
             RaycastHit2D hit = Physics2D.Raycast(rayStart, rayDirection, rayDistance, groundLayer);

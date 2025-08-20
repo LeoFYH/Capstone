@@ -113,6 +113,7 @@ public class TrickState : StateBase
             player.SendEvent<PlayerLandedEvent>(new PlayerLandedEvent());
             
             player.stateMachine.SwitchState("Idle");
+            Debug.Log("2222:" + player.stateMachine.GetCurrentStateName());
             return;
         }
 

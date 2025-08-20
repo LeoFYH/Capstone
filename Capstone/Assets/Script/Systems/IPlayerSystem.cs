@@ -101,6 +101,7 @@ namespace SkateGame
             }
         }
 
+        
         private void OnJumpExecute(JumpExecuteEvent evt)
         {
             Debug.Log("PlayerSystem接收到JumpExecuteEvent - 执行跳跃");

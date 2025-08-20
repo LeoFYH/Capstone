@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 using QFramework;
+using UnityEngine.UI;
 
 namespace SkateGame
 {
@@ -12,8 +13,13 @@ namespace SkateGame
     public class UIController : ViewerControllerBase
     {
             [Header("TextMeshPro UI组件")]
-    public TextMeshProUGUI trickInfoText;      // 技巧信息显示（包含名称、数量、分数）
-        
+    public Text trickInfoText;      // 技巧信息显示（包含名称、数量、分数）
+
+
+        protected override void Start()
+        {
+            base.Start();
+        }
         protected override void InitializeController()
         {
             Debug.Log("UIController initialized - Using TextMeshPro to display trick information");

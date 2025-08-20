@@ -24,7 +24,7 @@ public class AirState : StateBase
         player.airTime = 0f;
         player.airCombo = 0;
         canDoubleJump = true; // 重置二段跳
-        // Debug.Log("进入空中状态");
+         Debug.Log("进入空中状态");
     }
 
     public override void Update()
@@ -61,8 +61,9 @@ public class AirState : StateBase
         }
 
         // 检测落地
-        if (player.IsGrounded())
+        if (player.IsGrounded() && player.isInAir)
         {
+            player.isInAir = false;
             // 落地时根据连击数给予奖励
             if (player.airCombo > 0)
             {
@@ -71,15 +72,16 @@ public class AirState : StateBase
             }
             
             // 发送玩家落地事件，让系统处理
-            player.SendEvent<PlayerLandedEvent>(new PlayerLandedEvent());
+            //player.SendEvent<PlayerLandedEvent>(new PlayerLandedEvent());
             
             player.stateMachine.SwitchState("Idle");
+            Debug.Log("2222:" + player.stateMachine.GetCurrentStateName());
         }
     }
 
     public override void Exit()
     {
         player.isInAir = false;
-        // Debug.Log("退出空中状态");
+        Debug.Log("退出空中状态");
     }
 } 

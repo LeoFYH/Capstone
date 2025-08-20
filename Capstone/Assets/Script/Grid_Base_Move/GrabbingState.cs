@@ -27,6 +27,7 @@ public class GrabbingState : StateBase
         if (player.isEHeld == false)
         {
             player.stateMachine.SwitchState("Idle");
+            Debug.Log("2222:" + player.stateMachine.GetCurrentStateName());
         }
         //else if (player.isEHeld == true && player.DetectNearbyPole() != null)
         //{

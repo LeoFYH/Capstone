@@ -24,14 +24,16 @@ namespace SkateGame
         protected virtual void Update()
         {
             if (!isActive) return;
-            
+
+            // 执行实时检测
+            OnRealTimeUpdate();
             // 控制更新频率
             if (Time.time - lastUpdateTime < updateInterval) return;
             lastUpdateTime = Time.time;
             
-            // 执行实时检测
-            OnRealTimeUpdate();
+          
         }
+
         
         /// <summary>
         /// 初始化控制器
