@@ -7,30 +7,30 @@ public class TrickA : TrickBase
     {
         trickName = "TrickA";
         duration = 1.5f;
-        scoreValue = 100;
+        scoreValue = 20;
     }
 
     public override void PerformTrick(InputController player)
     {
-        // Debug.Log("执行技巧A");
+        Debug.Log("执行技巧A");
         PlayAnimation(player);
         PlayEffects(player);
-        AddScore();
+        // 不再在这里调用AddScore，分数由系统层处理
     }
 
     public override void Exit(InputController player)
     {
-        // Debug.Log("退出技巧A");
+        Debug.Log("退出技巧A");
     }
 
     protected override void PlayAnimation(InputController player)
     {
-        // Debug.Log("播放技巧A动画");
+        Debug.Log("播放技巧A动画");
     }
 
     protected override void PlayEffects(InputController player)
     {
-        // Debug.Log("播放技巧A特效");
+        Debug.Log("播放技巧A特效");
     }
 
     protected override void AddScore()

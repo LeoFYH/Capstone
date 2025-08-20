@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using SkateGame;
+using QFramework;
 
 public class TrickState : StateBase
 {
@@ -21,22 +22,24 @@ public class TrickState : StateBase
 
     public override void Enter()
     {
-        // Debug.Log($"进入技巧状态，技巧名称: {currentTrickName}");
+        Debug.Log($"TrickState: 进入技巧状态，技巧名称: {currentTrickName}");
         
         // 如果没有设置技巧名称，检测输入决定技巧
         if (string.IsNullOrEmpty(currentTrickName))
         {
+            Debug.Log("TrickState: 没有预设技巧名称，检测输入");
             DetectTrickInput();
         }
 
         if (!string.IsNullOrEmpty(currentTrickName))
         {
+            Debug.Log($"TrickState: 执行技巧: {currentTrickName}");
             // 创建技巧实例并执行
             CreateAndPerformTrick();
         }
         else
         {
-            Debug.LogWarning("没有设置技巧名称，退出技巧状态");
+            Debug.LogWarning("TrickState: 没有设置技巧名称，退出技巧状态");
             player.stateMachine.SwitchState("Air");
         }
     }
@@ -46,12 +49,13 @@ public class TrickState : StateBase
     {
         currentTrickName = trickName;
         // Debug.Log($"设置技巧名称: {trickName}");
+        
     }
 
     private void DetectTrickInput()
     {
         // 检测输入决定技巧
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.E))
         {
             currentTrickName = "TrickA";
         }
@@ -63,9 +67,13 @@ public class TrickState : StateBase
 
     private void CreateAndPerformTrick()
     {
-        // Debug.Log($"创建技巧: {currentTrickName}");
+        Debug.Log($"TrickState: 创建技巧: {currentTrickName}");
         
-        // 根据技巧名称创建对应的技巧实例
+        // 发送技巧执行事件给系统层处理
+        Debug.Log($"TrickState: 发送TrickPerformedEvent: {currentTrickName}");
+        player.SendEvent<TrickPerformedEvent>(new TrickPerformedEvent { TrickName = currentTrickName });
+        
+        // 根据技巧名称创建对应的技巧实例（仅用于状态机内部逻辑）
         switch (currentTrickName)
         {
             case "TrickA":
@@ -78,16 +86,19 @@ public class TrickState : StateBase
                 currentTrick = new TrickC();
                 break;
             default:
-                Debug.LogWarning($"未知的技巧: {currentTrickName}");
+                Debug.LogWarning($"TrickState: 未知的技巧: {currentTrickName}");
                 return;
         }
 
-        // 执行技巧
+        Debug.Log($"TrickState: 执行技巧动画和特效: {currentTrickName}");
+        // 执行技巧（仅动画和特效，不处理分数）
         currentTrick.PerformTrick(player);
         
         // 设置计时器
         trickTimer = currentTrick.duration;
         isPerformingTrick = true;
+        
+        Debug.Log($"TrickState: 技巧设置完成，持续时间: {trickTimer}");
         
         // 清除技巧名称，准备接收下一个技巧
         currentTrickName = null;
@@ -98,18 +109,15 @@ public class TrickState : StateBase
         // 检测落地，如果落地则立即退出技巧状态
         if (player.IsGrounded())
         {
-            // 立即清空技巧列表和分数
-            TrickScore.Instance.ResetTrickScore();
-            // Debug.Log("技巧执行中落地，立即清空技巧列表！");
-            
-            
+            // 发送玩家落地事件，让系统处理
+            player.SendEvent<PlayerLandedEvent>(new PlayerLandedEvent());
             
             player.stateMachine.SwitchState("Idle");
             return;
         }
 
         // 检测新的技巧输入
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.E))
         {
             // 立即执行新技巧
             currentTrickName = "TrickA";

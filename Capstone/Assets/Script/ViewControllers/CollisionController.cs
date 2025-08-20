@@ -20,7 +20,7 @@ namespace SkateGame
         
         protected override void InitializeController()
         {
-            // Debug.Log("碰撞检测控制器初始化完成");
+            Debug.Log("碰撞检测控制器初始化完成");
             
             player = GetComponent<InputController>();
             rb = GetComponent<Rigidbody2D>();

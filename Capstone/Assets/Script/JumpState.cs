@@ -24,7 +24,7 @@ public class JumpState : StateBase
         isCharging = true;
         chargeTime = 0f;
         hasJumped = false;
-        initialHorizontalVelocity = rb.velocity.x;
+        initialHorizontalVelocity = rb.linearVelocity.x;
         // Debug.Log($"初始水平速度: {initialHorizontalVelocity}");
         
         // 立即发送跳跃执行事件

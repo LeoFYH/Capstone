@@ -76,6 +76,7 @@ namespace SkateGame
             stateMachine.AddState("Air", new AirState(this, rb));
             stateMachine.AddState("Trick", new TrickState(this, rb));
             stateMachine.AddState("GJump", new GJumpState(this, rb));
+            stateMachine.AddState("DoubleJump", new DoubleJumpState(this, rb));
             stateMachine.AddState("Grab", new GrabbingState(this, rb));
             stateMachine.AddState("WallRide", new WallRideState(this, rb));
             stateMachine.AddState("Reverse", new ReverseState(this, rb));
@@ -118,7 +119,8 @@ namespace SkateGame
             float moveInput = Input.GetAxisRaw("Horizontal");
             
             // 跳跃输入检测 - 只负责状态切换
-            if (Input.GetKeyDown(KeyCode.Space) && !hasJumpedThisFrame)
+            // 在Air状态下不处理空格键，让AirState自己处理二段跳
+            if (Input.GetKeyDown(KeyCode.Space) && !hasJumpedThisFrame && currentState != "Air")
             {
                 if (wasGrounded)
                 {
@@ -145,9 +147,16 @@ namespace SkateGame
                 return;
             }
             
-            // 轨道输入
-            if (Input.GetKeyDown(KeyCode.E) && !IsGrounded())
+            // 轨道输入 - E键只用于滑轨，不用于技巧
+            if (Input.GetKeyDown(KeyCode.E))
             {
+                // 在地面上按E键，检查滑轨条件
+                Debug.Log($"E键按下 - 检测滑轨条件:");
+                Debug.Log($"  - IsGrounded(): {IsGrounded()}");
+                Debug.Log($"  - isNearTrack: {isNearTrack}");
+                Debug.Log($"  - currentTrack: {(currentTrack != null ? currentTrack.name : "null")}");
+                Debug.Log($"  - grindJumpTimer: {grindJumpTimer}");
+                
                 isEHeld = true;
                 this.SendEvent<GrindInputEvent>();
             }
@@ -173,13 +182,13 @@ namespace SkateGame
                 isWHeld = false;
             }
             
-            // 技巧输入
-            if (Input.GetKeyDown(KeyCode.A))
+            // 技巧输入 - J对应TrickA，K对应TrickB
+            if (Input.GetKeyDown(KeyCode.J))
             {
                 this.SendEvent<TrickAInputEvent>();
             }
             
-            if (Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKeyDown(KeyCode.K))
             {
                 this.SendEvent<TrickBInputEvent>();
             }
@@ -207,7 +216,7 @@ namespace SkateGame
             // 使用多个射线检测来提高准确性
             Vector2 rayStart = transform.position;
             Vector2 rayDirection = Vector2.down;
-            float rayDistance = 1.2f; // 稍微增加距离
+            float rayDistance = 0.8f; // 减少检测距离，避免误判
             
             // 主射线检测
             RaycastHit2D hit = Physics2D.Raycast(rayStart, rayDirection, rayDistance, groundLayer);
@@ -233,19 +242,6 @@ namespace SkateGame
             
             bool grounded = hit.collider != null;
             
-            // 只在状态变化时打印调试信息
-            if (grounded != wasGrounded)
-            {
-                if (grounded)
-                {
-                    // Debug.Log($"IsGrounded: 着地检测成功, 碰撞物体 = {hit.collider.name}");
-                }
-                else
-                {
-                    // Debug.Log("IsGrounded: 离开地面");
-                }
-            }
-            
             return grounded;
         }
         
@@ -268,7 +264,7 @@ namespace SkateGame
 
             float timer = 0f;
             bool reverseTriggered = false;
-                         float originalDirection = Mathf.Sign(rb.velocity.x);
+                         float originalDirection = Mathf.Sign(rb.linearVelocity.x);
 
             while (timer < reverseInputWindow)
             {
@@ -298,11 +294,14 @@ namespace SkateGame
         // 碰撞检测
         void OnTriggerEnter2D(Collider2D other)
         {
+            Debug.Log($"OnTriggerEnter2D: {other.name} (isTrigger: {other.isTrigger})");
+            
             if (other.isTrigger)
             {
                 Track track = other.GetComponent<Track>();
                 if (track != null)
                 {
+                    Debug.Log($"检测到滑轨: {track.name}");
                     currentTrack = track;
                     isNearTrack = true;
                 }
@@ -310,6 +309,7 @@ namespace SkateGame
                 Wall wall = other.GetComponent<Wall>();
                 if (wall != null)
                 { 
+                    Debug.Log($"检测到墙壁: {wall.name}");
                     currentWall = wall;
                     isNearWall = true;
                 }
@@ -318,11 +318,14 @@ namespace SkateGame
 
         void OnTriggerExit2D(Collider2D other)
         {
+            Debug.Log($"OnTriggerExit2D: {other.name}");
+            
             if (other.isTrigger)
             {
                 Track track = other.GetComponent<Track>();
                 if (track != null && track == currentTrack)
                 {
+                    Debug.Log($"离开滑轨: {track.name}");
                     isNearTrack = false;
                     currentTrack = null;
                 }
@@ -330,6 +333,7 @@ namespace SkateGame
                 Wall wall = other.GetComponent<Wall>();
                 if (wall != null)
                 {
+                    Debug.Log($"离开墙壁: {wall.name}");
                     currentWall = null;
                     isNearWall = false;
                 }

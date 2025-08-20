@@ -21,20 +21,20 @@ namespace SkateGame
 
         public void UpdateScoreDisplay(int score)
         {
-            // Debug.Log($"更新分数显示: {score}");
+            Debug.Log($"更新分数显示: {score}");
             // 实际的UI更新逻辑
         }
 
         public void UpdateTrickList()
         {
             var trickModel = this.GetModel<ITrickModel>();
-            // Debug.Log($"更新技巧列表，当前技巧数量: {trickModel.CurrentTricks.Value.Count}");
+            Debug.Log($"更新技巧列表，当前技巧数量: {trickModel.CurrentTricks.Value.Count}");
             // 实际的UI更新逻辑
         }
 
         public void ShowTrickNotification(string trickName)
         {
-            // Debug.Log($"显示技巧通知: {trickName}");
+            Debug.Log($"显示技巧通知: {trickName}");
             // 实际的UI通知逻辑
         }
 

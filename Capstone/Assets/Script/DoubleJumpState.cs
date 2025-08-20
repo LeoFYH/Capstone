@@ -1,5 +1,6 @@
 using UnityEngine;
 using SkateGame;
+using QFramework;
 
 public class DoubleJumpState : StateBase
 {
@@ -17,8 +18,12 @@ public class DoubleJumpState : StateBase
     public override void Enter()
     {
         // 直接跳起来
-        rb.velocity = new Vector2(rb.velocity.x, player.doubleJumpForce);
-        // Debug.Log("二段跳！");
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.doubleJumpForce);
+        Debug.Log("DoubleJumpState: 执行二段跳！");
+        
+        // 发送技巧执行事件给系统，更新UIController
+        Debug.Log("DoubleJumpState: 发送TrickPerformedEvent事件");
+        player.SendEvent<TrickPerformedEvent>(new TrickPerformedEvent { TrickName = "doublejump" });
     }
 
     public override void Update()
@@ -31,7 +36,7 @@ public class DoubleJumpState : StateBase
         //}
         
         // 检测落地，落地后切回Idle
-        if (player.IsGrounded() && rb.velocity.y <= 0.01f)
+        if (player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
         {
             player.stateMachine.SwitchState("Idle");
         }

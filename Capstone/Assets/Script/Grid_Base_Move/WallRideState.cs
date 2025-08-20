@@ -27,7 +27,7 @@ public class WallRideState : StateBase
         }
         else
         {
-            lockedDirection = Mathf.Sign(rb.velocity.x);
+            lockedDirection = Mathf.Sign(rb.linearVelocity.x);
         }
 
         normalGravity = rb.gravityScale;

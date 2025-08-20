@@ -21,19 +21,19 @@ namespace SkateGame
 
         public void PlayTrickSound(string trickName)
         {
-            // Debug.Log($"播放技巧音效: {trickName}");
+            Debug.Log($"播放技巧音效: {trickName}");
             // 实际的音频播放逻辑
         }
 
         public void PlayLandingSound()
         {
-            // Debug.Log("播放落地音效");
+            Debug.Log("播放落地音效");
             // 实际的音频播放逻辑
         }
 
         public void PlayJumpSound()
         {
-            // Debug.Log("播放跳跃音效");
+            Debug.Log("播放跳跃音效");
             // 实际的音频播放逻辑
         }
 

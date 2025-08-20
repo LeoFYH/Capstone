@@ -24,7 +24,7 @@ public class MoveState : StateBase
     public override void Enter()
     {
         // Debug.Log("进入Move状态");
-        currentVelocityX = rb.velocity.x; // 保持当前水平速度
+        currentVelocityX = rb.linearVelocity.x; // 保持当前水平速度
     }
 
     public override void Update()

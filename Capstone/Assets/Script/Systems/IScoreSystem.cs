@@ -23,8 +23,8 @@ namespace SkateGame
             var scoreModel = this.GetModel<IScoreModel>();
             scoreModel.TotalScore.Value += score * scoreModel.ComboMultiplier.Value;
             
-            // 发送分数更新事件
-            this.SendEvent<ScoreUpdatedEvent>(new ScoreUpdatedEvent { NewScore = scoreModel.TotalScore.Value });
+            // 不再发送事件，直接更新模型
+            // UIController会监听模型变化自动更新UI
         }
 
         public void ResetScore()
@@ -33,7 +33,8 @@ namespace SkateGame
             scoreModel.TotalScore.Value = 0;
             scoreModel.ComboMultiplier.Value = 1;
             
-            this.SendEvent<ScoreUpdatedEvent>(new ScoreUpdatedEvent { NewScore = 0 });
+            // 不再发送事件，直接更新模型
+            // UIController会监听模型变化自动更新UI
         }
 
         public void UpdateCombo(int combo)

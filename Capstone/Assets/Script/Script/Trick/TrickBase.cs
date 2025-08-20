@@ -9,7 +9,7 @@ public abstract class TrickBase
 
     public virtual void PerformTrick(InputController player)
     {
-        // Debug.Log($"执行技巧: {trickName}");
+        Debug.Log($"执行技巧: {trickName}");
     }
 
     public virtual void Exit(InputController player)

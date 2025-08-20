@@ -51,7 +51,7 @@ namespace SkateGame
             
             // 地面移动：直接设置速度
             float targetVelocityX = horizontalInput * playerController.moveSpeed;
-            rb.velocity = new Vector2(targetVelocityX, rb.velocity.y);
+            rb.linearVelocity = new Vector2(targetVelocityX, rb.linearVelocity.y);
             
             //Debug.Log($"地面移动: 输入={horizontalInput}, 目标速度={targetVelocityX}");
         }
@@ -70,10 +70,10 @@ namespace SkateGame
                 
                 // 控制最大水平速度
                 float maxSpeed = playerController.maxAirHorizontalSpeed;
-                rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
+                rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -maxSpeed, maxSpeed), rb.linearVelocity.y);
             }
             
-            // Debug.Log($"空中移动: 输入={horizontalInput}, 当前速度={rb.velocity.x}");
+            Debug.Log($"空中移动: 输入={horizontalInput}, 当前速度={rb.linearVelocity.x}");
         }
         
         public void ApplyJumpMovement(float horizontalInput)
@@ -90,10 +90,10 @@ namespace SkateGame
                 
                 // 控制最大水平速度
                 float maxSpeed = playerController.maxAirHorizontalSpeed;
-                rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
+                rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -maxSpeed, maxSpeed), rb.linearVelocity.y);
             }
             
-            // Debug.Log($"跳跃移动: 输入={horizontalInput}, 当前速度={rb.velocity.x}");
+            Debug.Log($"跳跃移动: 输入={horizontalInput}, 当前速度={rb.linearVelocity.x}");
         }
     }
 }

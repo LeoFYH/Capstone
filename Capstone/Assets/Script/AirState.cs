@@ -37,7 +37,7 @@ public class AirState : StateBase
         player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
 
         // 检测技巧输入并切换到 TrickState
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.E))
         {
             //新的trickstate注册方法，带动作名
             player.stateMachine.SwitchState("Trick", "TrickA");
@@ -54,13 +54,10 @@ public class AirState : StateBase
         // 二段跳检测
         if (Input.GetKeyDown(KeyCode.Space) && canDoubleJump)
         {
-            // 直接执行二段跳
-            rb.velocity = new Vector2(rb.velocity.x, player.doubleJumpForce);//没用doublejump状态机
+            // 切换到DoubleJump状态，让DoubleJumpState处理二段跳逻辑和事件发送
+            Debug.Log("AirState: 检测到二段跳输入，切换到DoubleJump状态");
+            player.stateMachine.SwitchState("DoubleJump");
             canDoubleJump = false; // 禁用二段跳
-            // Debug.Log("二段跳！");
-            
-            // 添加二段跳分数 - 暂时注释掉
-            //ScoreManager.Instance.AddTrickScore(1);
         }
 
         // 检测落地
@@ -73,8 +70,8 @@ public class AirState : StateBase
                 // 这里可以添加连击奖励逻辑
             }
             
-            // 正常落地时立即打印技巧列表并开始5秒倒计时清零
-            TrickScore.Instance.OnPlayerLanded();
+            // 发送玩家落地事件，让系统处理
+            player.SendEvent<PlayerLandedEvent>(new PlayerLandedEvent());
             
             player.stateMachine.SwitchState("Idle");
         }

@@ -21,7 +21,16 @@ public class GrindState : StateBase
     public override void Enter()
     {
         // Debug.Log("E Grind");
-        Vector2 velocity = rb.velocity;
+        
+        // 检查currentTrack是否为null
+        if (player.currentTrack == null)
+        {
+            Debug.LogError("GrindState.Enter: currentTrack为null，无法进入滑轨状态");
+            player.stateMachine.SwitchState("Jump");
+            return;
+        }
+        
+        Vector2 velocity = rb.linearVelocity;
         speed = velocity.magnitude;
         normalG = rb.gravityScale;
         if (speed < 0.1f)
@@ -36,7 +45,7 @@ public class GrindState : StateBase
         }
 
         rb.gravityScale = 0f;
-        rb.velocity = new Vector2(direction.x * speed, 0);
+        rb.linearVelocity = new Vector2(direction.x * speed, 0);
         SnapPlayerToTrack();
         
         // 开始滑轨计分
@@ -45,33 +54,42 @@ public class GrindState : StateBase
 
     public override void Update()
     {
-        if (player.currentTrack == null || !player.isEHeld)
+        // 首先检查E键是否按住，如果没有按住立即退出
+        if (!player.isEHeld)
         {
+            Debug.Log("GrindState: E键未按住，切换到Jump状态");
             player.stateMachine.SwitchState("Jump");
+            return;
         }
-
+        
+        // 然后检查currentTrack是否为null
+        if (player.currentTrack == null)
+        {
+            Debug.Log("GrindState: currentTrack为null，切换到Jump状态");
+            player.stateMachine.SwitchState("Jump");
+            return;
+        }
 
         if (isJumping) return;
 
+        // 再次检查currentTrack，确保安全
+        if (player.currentTrack != null)
+        {
+            Vector2 moveDelta = direction * speed * Time.deltaTime;
+            Vector3 pos = player.transform.position;
+            pos.x += moveDelta.x;
+            pos.y = player.currentTrack.GetTrackPosition().y;
+            player.transform.position = pos;
 
-        Vector2 moveDelta = direction * speed * Time.deltaTime;
-        Vector3 pos = player.transform.position;
-        pos.x += moveDelta.x;
-        pos.y = player.currentTrack.GetTrackPosition().y;
-        player.transform.position = pos;
-
-        rb.velocity = new Vector2(direction.x * speed, 0);
-
-
-
-
+            rb.linearVelocity = new Vector2(direction.x * speed, 0);
+        }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             // Debug.Log("G Jump");
             isJumping = true;
             rb.gravityScale = 1f;
-            rb.velocity = new Vector2(direction.x * speed, 10f);
+            rb.linearVelocity = new Vector2(direction.x * speed, 10f);
             player.grindJumpTimer = player.grindJumpIgnoreTime;
 
             if (player.isEHeld)
@@ -87,10 +105,17 @@ public class GrindState : StateBase
 
     private void SnapPlayerToTrack()
     {
-        Vector3 trackPos = player.currentTrack.GetTrackPosition();
-        Vector3 playerPos = player.transform.position;
-        playerPos.y = trackPos.y;
-        player.transform.position = playerPos;
+        if (player.currentTrack != null)
+        {
+            Vector3 trackPos = player.currentTrack.GetTrackPosition();
+            Vector3 playerPos = player.transform.position;
+            playerPos.y = trackPos.y;
+            player.transform.position = playerPos;
+        }
+        else
+        {
+            Debug.LogWarning("SnapPlayerToTrack: currentTrack为null，无法吸附到滑轨");
+        }
     }
 
     public override void Exit()
