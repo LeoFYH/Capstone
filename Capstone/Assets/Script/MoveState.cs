@@ -23,14 +23,17 @@ public class MoveState : StateBase
 
     public override void Enter()
     {
-        // Debug.Log("进入Move状态");
-        currentVelocityX = rb.linearVelocity.x; // 保持当前水平速度
+        //Debug.Log("进入Move状态");
+        //currentVelocityX = rb.linearVelocity.x; // 保持当前水平速度
     }
 
     public override void Update()
     {
         // Move状态下发送移动事件
-        float moveInput = Input.GetAxisRaw("Horizontal");
+        // 使用平滑输入而不是 Raw，这样会有逐渐过渡的感觉
+        float moveInput = Input.GetAxis("Horizontal");
+
+        // 发给 MovementSystem，让它处理加速/减速
         player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
     }
 

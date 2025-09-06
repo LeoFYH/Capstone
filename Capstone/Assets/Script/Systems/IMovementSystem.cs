@@ -45,15 +45,39 @@ namespace SkateGame
         public void ApplyGroundMovement(float horizontalInput)
         {
             if (playerController == null || !playerController.IsGrounded()) return;
-            
+
             Rigidbody2D rb = playerController.GetRigidbody();
             if (rb == null) return;
-            
-            // 地面移动：直接设置速度
-            float targetVelocityX = horizontalInput * playerController.moveSpeed;
-            rb.linearVelocity = new Vector2(targetVelocityX, rb.linearVelocity.y);
-            
-            //Debug.Log($"地面移动: 输入={horizontalInput}, 目标速度={targetVelocityX}");
+
+            float currentSpeed = rb.linearVelocity.x;
+            float targetSpeed = horizontalInput * playerController.moveSpeed;
+            float newSpeed = currentSpeed;
+
+            // ------------------------
+            // 1. 有输入时
+            // ------------------------
+            if (Mathf.Abs(horizontalInput) > 0.01f)
+            {
+                // (1) 转向时，先减速 → 不能立刻掉头
+                if (Mathf.Sign(currentSpeed) != Mathf.Sign(horizontalInput) && Mathf.Abs(currentSpeed) > 0.1f)
+                {
+                    newSpeed = Mathf.MoveTowards(currentSpeed, 0, playerController.turnDecel * Time.fixedDeltaTime);
+                }
+                else
+                {
+                    // (2) 同方向，加速逼近目标速度
+                    newSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, playerController.groundAccel * Time.fixedDeltaTime);
+                }
+            }
+            // ------------------------
+            // 2. 没有输入时 → 滑行一段再停下
+            // ------------------------
+            else
+            {
+                newSpeed = Mathf.MoveTowards(currentSpeed, 0, playerController.groundDecel * Time.fixedDeltaTime);
+            }
+
+            rb.linearVelocity = new Vector2(newSpeed, rb.linearVelocity.y);
         }
         
         public void ApplyAirMovement(float horizontalInput)

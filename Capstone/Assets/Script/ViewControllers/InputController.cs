@@ -25,7 +25,9 @@ namespace SkateGame
         public float moveSpeed = 5f;
         public float airControlForce = 5f;
         public float maxAirHorizontalSpeed = 10f;
-
+        public float groundAccel = 20f;        // 正常加速率
+        public float groundDecel = 10f;        // 松开时的减速（摩擦力）
+        public float turnDecel = 40f;          // 转向时的刹车强度
         [Header("轨道设置")]
         public Track currentTrack;
         public float grindJumpIgnoreTime = 0.2f;
