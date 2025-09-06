@@ -297,6 +297,18 @@ namespace SkateGame
         {
             return rb;
         }
+        
+        // 奖励跳跃方法 - 用于高等级技巧奖励
+        public void RewardJump()
+        {
+            if (rb != null)
+            {
+                // 给予一个额外的跳跃力
+                Vector2 currentVelocity = rb.linearVelocity;
+                rb.linearVelocity = new Vector2(currentVelocity.x, doubleJumpForce);
+                Debug.Log("奖励跳跃！获得额外跳跃力");
+            }
+        }
 
         // 延迟切换状态的协程
         public IEnumerator SwitchToStateDelayed(string stateName)
