@@ -15,7 +15,7 @@ namespace SkateGame
             [Header("TextMeshPro UI组件")]
     public Text trickInfoText;      // 技巧信息显示（包含名称、数量、分数）
     public Text aimTimeText;        // 瞄准时间上限显示
-    public Text styleGradeText;     // 风格等级显示
+    public Text gradeText;          // 等级显示
 
 
         protected override void Start()
@@ -48,11 +48,13 @@ namespace SkateGame
             trickModel.CurrentTricks.Register(OnTrickListChanged);
             trickModel.CurrentTrickName.Register(OnTrickNameChanged);
             scoreModel.TotalScore.Register(OnScoreChanged);
+            scoreModel.CurrentGrade.Register(OnGradeChanged);
             
             // Display current values on initialization
             OnTrickListChanged(trickModel.CurrentTricks.Value);
             OnTrickNameChanged(trickModel.CurrentTrickName.Value);
             OnScoreChanged(scoreModel.TotalScore.Value);
+            OnGradeChanged(scoreModel.CurrentGrade.Value);
             
             // Initialize aim time display
             InitializeAimTimeDisplay();
@@ -115,6 +117,22 @@ namespace SkateGame
             // Force update the display when score changes
             var trickModel = this.GetModel<ITrickModel>();
             OnTrickListChanged(trickModel.CurrentTricks.Value);
+        }
+        
+        private void OnGradeChanged(char newGrade)
+        {
+            Debug.Log($"UIController: Grade changed - {newGrade}");
+            
+            // Update grade display
+            if (gradeText != null)
+            {
+                gradeText.text = $"当前等级: {newGrade}";
+                Debug.Log($"UIController: Updated gradeText - {newGrade}");
+            }
+            else
+            {
+                Debug.LogWarning("UIController: gradeText is null!");
+            }
         }
 
         
