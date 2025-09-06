@@ -94,6 +94,9 @@ public class TrickState : StateBase
         // 执行技巧（仅动画和特效，不处理分数）
         currentTrick.PerformTrick(player);
         
+        // 标记已执行trick，用于落地奖励
+        player.MarkTrickPerformed();
+        
         // 设置计时器
         trickTimer = currentTrick.duration;
         isPerformingTrick = true;
@@ -109,6 +112,9 @@ public class TrickState : StateBase
         // 检测落地，如果落地则立即退出技巧状态
         if (player.IsGrounded())
         {
+            // 处理瞄准时间奖励（如果执行了trick）
+            player.HandleLandingAimTimeBonus();
+            
             // 发送玩家落地事件，让系统处理
             player.SendEvent<PlayerLandedEvent>(new PlayerLandedEvent());
             
@@ -151,6 +157,9 @@ public class TrickState : StateBase
         {
             currentTrick.Exit(player);
         }
+        
+        // 确保颜色恢复为白色
+        player.ResetPlayerColor();
         
         // 清除技巧名称和实例
         currentTrickName = null;

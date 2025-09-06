@@ -14,6 +14,8 @@ namespace SkateGame
     {
             [Header("TextMeshPro UI组件")]
     public Text trickInfoText;      // 技巧信息显示（包含名称、数量、分数）
+    public Text aimTimeText;        // 瞄准时间上限显示
+    public Text styleGradeText;     // 风格等级显示
 
 
         protected override void Start()
@@ -51,12 +53,15 @@ namespace SkateGame
             OnTrickListChanged(trickModel.CurrentTricks.Value);
             OnTrickNameChanged(trickModel.CurrentTrickName.Value);
             OnScoreChanged(scoreModel.TotalScore.Value);
+            
+            // Initialize aim time display
+            InitializeAimTimeDisplay();
         }
         
         protected override void OnRealTimeUpdate()
         {
-            // UIController不处理实时更新逻辑
-            // 所有逻辑都在系统层处理
+            // 更新瞄准时间显示
+            UpdateAimTimeDisplay();
         }
         
         private void OnTrickListChanged(List<TrickInfo> tricks)
@@ -111,7 +116,59 @@ namespace SkateGame
             var trickModel = this.GetModel<ITrickModel>();
             OnTrickListChanged(trickModel.CurrentTricks.Value);
         }
+
         
+        // 初始化瞄准时间显示
+        private void InitializeAimTimeDisplay()
+        {
+            if (aimTimeText != null)
+            {
+                // 获取InputController来获取瞄准时间上限
+                    InputController playerController = Object.FindFirstObjectByType<InputController>();
+               
+                    float maxAimTime = playerController.maxAimTime;
+                    aimTimeText.text = $"瞄准时间上限: {maxAimTime:F1}秒";
+                    Debug.Log($"UIController: 初始化瞄准时间显示 - {maxAimTime}秒");
+               
+                    aimTimeText.text = "瞄准时间上限: 3.0秒";
+                    Debug.LogWarning("UIController: 无法找到InputController，使用默认瞄准时间");
+               
+            }
+        }
+
+        // 更新瞄准时间显示
+        private void UpdateAimTimeDisplay()
+        {
+            if (aimTimeText != null)
+            {
+                // 获取InputController来获取当前瞄准状态
+                InputController playerController = Object.FindFirstObjectByType<InputController>();
+                if (playerController != null)
+                {
+                    if (playerController.isAiming)
+                    {
+                        // 计算剩余瞄准时间
+                        float remainingTime = playerController.maxAimTime - playerController.GetAimTimer();
+                        remainingTime = Mathf.Max(0, remainingTime);
+                        aimTimeText.text = $"瞄准中... 剩余: {remainingTime:F1}秒";
+                    }
+                    else
+                    {
+                        // 显示当前瞄准时间上限，如果超过基础值则显示奖励信息
+                        if (playerController.maxAimTime > playerController.baseMaxAimTime)
+                        {
+                            float bonus = playerController.maxAimTime - playerController.baseMaxAimTime;
+                            aimTimeText.text = $"瞄准时间上限: {playerController.maxAimTime:F1}秒 (+{bonus:F1}秒奖励)";
+                        }
+                        else
+                        {
+                            aimTimeText.text = $"瞄准时间上限: {playerController.maxAimTime:F1}秒";
+                        }
+                    }
+                }
+            }
+        }
+
         protected override void OnDestroy()
         {
             // 调用基类的OnDestroy

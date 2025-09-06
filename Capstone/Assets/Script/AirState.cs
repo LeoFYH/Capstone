@@ -71,6 +71,12 @@ public class AirState : StateBase
                 // 这里可以添加连击奖励逻辑
             }
             
+            // 处理瞄准时间奖励（如果执行了trick）
+            player.HandleLandingAimTimeBonus();
+            
+            // 确保颜色恢复为白色
+            player.ResetPlayerColor();
+            
             // 发送玩家落地事件，让系统处理
             //player.SendEvent<PlayerLandedEvent>(new PlayerLandedEvent());
             

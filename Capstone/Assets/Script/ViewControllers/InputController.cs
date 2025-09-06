@@ -66,17 +66,42 @@ namespace SkateGame
         public LineRenderer aimLine;      // 瞄准线
         public float aimLineLength = 10f; // 瞄准线长度
         public LayerMask shootLayer;
+        public float maxAimTime = 3f;     // 最大瞄准时间
 
         public bool isAiming = false;
         public GameObject[] bulletPrefabs;   // 可切换的子弹类型
         private int currentBulletIndex = 0;
         public float bulletSpeed = 15f;
+        private float aimTimer = 0f;      // 瞄准计时器
+
+        [Header("颜色设置")]
+        public SpriteRenderer playerSprite; // 玩家精灵渲染器
+        private Color originalColor = Color.white; // 原始颜色
+
+        [Header("瞄准时间奖励")]
+        private bool hasPerformedTrickInAir = false; // 是否在空中执行了trick
+        private float _baseMaxAimTime = 3f; // 基础瞄准时间上限
         protected override void InitializeController()
         {
             // Debug.Log("玩家控制器初始化完成");
 
             // 获取组件
             rb = GetComponent<Rigidbody2D>();
+            
+            // 获取玩家精灵渲染器
+            if (playerSprite == null)
+            {
+                playerSprite = GetComponent<SpriteRenderer>();
+            }
+            
+            // 保存原始颜色
+            if (playerSprite != null)
+            {
+                originalColor = playerSprite.color;
+            }
+            
+            // 初始化瞄准时间
+            _baseMaxAimTime = maxAimTime;
 
             // 初始化状态机
             stateMachine = new E();
@@ -378,6 +403,7 @@ namespace SkateGame
             if (Input.GetMouseButtonDown(1))
             {
                 isAiming = true;
+                aimTimer = 0f; // 重置计时器
                 Time.timeScale = 0.2f;
                 Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 if (aimLine != null) aimLine.enabled = true;
@@ -386,13 +412,21 @@ namespace SkateGame
             // 松开右键恢复
             if (Input.GetMouseButtonUp(1))
             {
-                isAiming = false;
-                Time.timeScale = 1f;
-                if (aimLine != null) aimLine.enabled = false;
+                StopAiming();
             }
 
             if (isAiming)
             {
+                // 更新瞄准计时器
+                aimTimer += Time.unscaledDeltaTime; // 使用unscaledDeltaTime因为时间被放慢了
+                
+                // 检查是否超过最大瞄准时间
+                if (aimTimer >= maxAimTime)
+                {
+                    StopAiming();
+                    return;
+                }
+
                 // 获取鼠标方向
                 Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 direction = (mouseWorldPos - (Vector2)transform.position).normalized;
@@ -410,8 +444,14 @@ namespace SkateGame
                     FireBullet();
                 }
             }
+        }
 
-
+        private void StopAiming()
+        {
+            isAiming = false;
+            aimTimer = 0f;
+            Time.timeScale = 1f;
+            if (aimLine != null) aimLine.enabled = false;
         }
 
         private void FireBullet()
@@ -433,6 +473,60 @@ namespace SkateGame
 
             // 如果是轨道子弹，不需要方向参数，轨道始终水平生成
         }
+
+        // 颜色管理方法
+        public void ChangePlayerColor(Color newColor)
+        {
+            if (playerSprite != null)
+            {
+                playerSprite.color = newColor;
+            }
+        }
+
+        public void ResetPlayerColor()
+        {
+            if (playerSprite != null)
+            {
+                playerSprite.color = originalColor;
+            }
+        }
+
+        // 获取当前瞄准计时器值（供UI使用）
+        public float GetAimTimer()
+        {
+            return aimTimer;
+        }
+
+        // 标记已执行trick（由TrickState调用）
+        public void MarkTrickPerformed()
+        {
+            hasPerformedTrickInAir = true;
+            Debug.Log("InputController: 标记已执行trick");
+        }
+
+        // 处理落地时的瞄准时间奖励
+        public void HandleLandingAimTimeBonus()
+        {
+            if (hasPerformedTrickInAir)
+            {
+                // 增加瞄准时间上限1秒
+                maxAimTime += 1f;
+                Debug.Log($"InputController: 落地奖励！瞄准时间上限增加1秒，当前上限: {maxAimTime}秒");
+                
+                // 重置标志
+                hasPerformedTrickInAir = false;
+            }
+        }
+
+        // 重置瞄准时间上限到基础值
+        public void ResetAimTimeToBase()
+        {
+            maxAimTime = _baseMaxAimTime;
+            Debug.Log($"InputController: 重置瞄准时间上限到基础值: {maxAimTime}秒");
+        }
+
+        // 获取基础瞄准时间上限（供UI使用）
+        public float baseMaxAimTime => _baseMaxAimTime;
     }
 
 

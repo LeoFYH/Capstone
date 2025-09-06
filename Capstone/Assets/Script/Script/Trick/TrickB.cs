@@ -15,12 +15,18 @@ public class TrickB : TrickBase
         Debug.Log("执行技巧B");
         PlayAnimation(player);
         PlayEffects(player);
+        
+        // 改变玩家颜色为蓝色
+        player.ChangePlayerColor(Color.blue);
+        
         // 不再在这里调用AddScore，分数由系统层处理
     }
 
     public override void Exit(InputController player)
     {
         Debug.Log("退出技巧B");
+        // 恢复玩家颜色
+        player.ResetPlayerColor();
     }
 
     protected override void PlayAnimation(InputController player)
