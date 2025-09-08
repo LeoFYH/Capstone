@@ -126,7 +126,7 @@ namespace SkateGame
             // Update grade display
             if (gradeText != null)
             {
-                gradeText.text = $"当前等级: {newGrade}";
+                gradeText.text = $"Rank: {newGrade}";
                 Debug.Log($"UIController: Updated gradeText - {newGrade}");
             }
             else
@@ -145,10 +145,10 @@ namespace SkateGame
                     InputController playerController = Object.FindFirstObjectByType<InputController>();
                
                     float maxAimTime = playerController.maxAimTime;
-                    aimTimeText.text = $"瞄准时间上限: {maxAimTime:F1}秒";
+                    aimTimeText.text = $"Aim Time: {maxAimTime:F1}s";
                     Debug.Log($"UIController: 初始化瞄准时间显示 - {maxAimTime}秒");
                
-                    aimTimeText.text = "瞄准时间上限: 3.0秒";
+                    aimTimeText.text = "Aim Time: 3.0s";
                     Debug.LogWarning("UIController: 无法找到InputController，使用默认瞄准时间");
                
             }
@@ -176,11 +176,11 @@ namespace SkateGame
                         if (playerController.maxAimTime > playerController.baseMaxAimTime)
                         {
                             float bonus = playerController.maxAimTime - playerController.baseMaxAimTime;
-                            aimTimeText.text = $"瞄准时间上限: {playerController.maxAimTime:F1}秒 (+{bonus:F1}秒奖励)";
+                            aimTimeText.text = $"Aim Time: {playerController.maxAimTime:F1}s (+{bonus:F1}s)";
                         }
                         else
                         {
-                            aimTimeText.text = $"瞄准时间上限: {playerController.maxAimTime:F1}秒";
+                            aimTimeText.text = $"Aim Time: {playerController.maxAimTime:F1}s";
                         }
                     }
                 }

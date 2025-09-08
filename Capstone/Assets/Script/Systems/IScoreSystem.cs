@@ -62,11 +62,11 @@ namespace SkateGame
         private void OnPlayerLanded(PlayerLandedEvent evt)
         {
             // 玩家着陆时重置等级为默认值
-            var scoreModel = this.GetModel<IScoreModel>();
-            char previousGrade = scoreModel.CurrentGrade.Value;
-            scoreModel.CurrentGrade.Value = 'D'; // 重置为默认等级
+            //var scoreModel = this.GetModel<IScoreModel>();
+            //char previousGrade = scoreModel.CurrentGrade.Value;
+            //scoreModel.CurrentGrade.Value = 'D'; // 重置为默认等级
             
-            Debug.Log($"玩家着陆，等级从 {previousGrade} 重置为 D");
+            //Debug.Log($"玩家着陆，等级从 {previousGrade} 重置为 D");
         }
         
         private char UpgradeGrade(char currentGrade)
