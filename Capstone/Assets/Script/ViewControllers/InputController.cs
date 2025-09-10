@@ -155,6 +155,12 @@ namespace SkateGame
             // 获取当前状态和移动输入
             string currentState = stateMachine.GetCurrentStateName();
             float moveInput = Input.GetAxisRaw("Horizontal");
+            
+            // 调试信息
+            if (Mathf.Abs(moveInput) > 0.01f)
+            {
+                Debug.Log($"移动输入检测: moveInput={moveInput}, currentState={currentState}, IsGrounded={IsGrounded()}");
+            }
 
             // 跳跃输入检测 - 只负责状态切换
             // 在Air状态下不处理空格键，让AirState自己处理二段跳
