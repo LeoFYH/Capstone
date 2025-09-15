@@ -34,8 +34,38 @@ public class MoveState : StateBase
         
         if (Mathf.Abs(moveInput) > 0.01f)
         {
-            // 加速
-            currentVelocityX += moveInput * acceleration * Time.deltaTime;
+            // 检测方向改变（输入方向与当前速度方向相反）
+            bool isDirectionChange = Mathf.Sign(moveInput) != Mathf.Sign(currentVelocityX) && Mathf.Abs(currentVelocityX) > 0.1f;
+            
+            if (isDirectionChange)
+            {
+                // 方向改变时，先快速减速，然后反向加速
+                float turnDeceleration = deceleration * 3f; // 3倍减速
+                if (currentVelocityX > 0)
+                {
+                    currentVelocityX -= turnDeceleration * Time.deltaTime;
+                    if (currentVelocityX < 0) currentVelocityX = 0;
+                }
+                else if (currentVelocityX < 0)
+                {
+                    currentVelocityX += turnDeceleration * Time.deltaTime;
+                    if (currentVelocityX > 0) currentVelocityX = 0;
+                }
+                
+                // 如果速度已经接近0，开始反向加速
+                if (Mathf.Abs(currentVelocityX) < 0.1f)
+                {
+                    currentVelocityX += moveInput * acceleration * 2f * Time.deltaTime; // 2倍加速
+                }
+                
+                Debug.Log($"检测到方向改变: 输入={moveInput}, 当前速度={currentVelocityX}");
+            }
+            else
+            {
+                // 正常加速
+                currentVelocityX += moveInput * acceleration * Time.deltaTime;
+            }
+            
             currentVelocityX = Mathf.Clamp(currentVelocityX, -maxSpeed, maxSpeed);
         }
         else

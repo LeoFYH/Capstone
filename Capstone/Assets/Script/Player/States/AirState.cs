@@ -36,26 +36,23 @@ public class AirState : StateBase
         float moveInput = Input.GetAxisRaw("Horizontal");
         if (Mathf.Abs(moveInput) > 0.01f)
         {
-            // 计算空中移动力
-            float moveForce = moveInput * airControlForce;
-            
             // 获取当前水平速度
             float currentHorizontalVelocity = rb.linearVelocity.x;
             
-            // 限制最大空中水平速度
-            if (Mathf.Abs(currentHorizontalVelocity) < maxAirHorizontalSpeed)
-            {
-                // 应用空中移动力
-                rb.linearVelocity = new Vector2(currentHorizontalVelocity + moveForce * Time.deltaTime, rb.linearVelocity.y);
-            }
-            else
-            {
-                // 如果已经达到最大速度，只允许减速
-                if (Mathf.Sign(moveInput) != Mathf.Sign(currentHorizontalVelocity))
-                {
-                    rb.linearVelocity = new Vector2(currentHorizontalVelocity + moveForce * Time.deltaTime, rb.linearVelocity.y);
-                }
-            }
+            // 计算目标速度
+            float targetVelocity = moveInput * maxAirHorizontalSpeed;
+            
+            // 计算速度差值
+            float velocityDifference = targetVelocity - currentHorizontalVelocity;
+            
+            // 应用空中控制力（基于速度差值）
+            float moveForce = velocityDifference * airControlForce;
+            
+            // 限制力的大小，避免过度加速
+            moveForce = Mathf.Clamp(moveForce, -airControlForce * 2f, airControlForce * 2f);
+            
+            // 应用力到刚体
+            rb.AddForce(new Vector2(moveForce, 0), ForceMode2D.Force);
         }
 
         // 检测技巧输入并切换到 TrickState
@@ -86,6 +83,16 @@ public class AirState : StateBase
         if (player.IsGrounded() && player.isInAir)
         {
             player.isInAir = false;
+            
+            // 着陆时平滑处理水平速度，避免突然停止
+            float currentHorizontalVelocity = rb.linearVelocity.x;
+            if (Mathf.Abs(currentHorizontalVelocity) > 0.1f)
+            {
+                // 将水平速度减少到合理范围，避免着陆后继续高速移动
+                float dampedVelocity = currentHorizontalVelocity * 0.3f; // 减少到30%
+                rb.linearVelocity = new Vector2(dampedVelocity, rb.linearVelocity.y);
+            }
+            
             // 落地时根据连击数给予奖励
             if (player.airCombo > 0)
             {
