@@ -24,9 +24,8 @@ public class IdleState : StateBase
 
     public override void Update()
     {
-        // Idle状态下发送移动事件（即使没有移动输入）
-        float moveInput = Input.GetAxisRaw("Horizontal");
-        player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
+        // Idle状态下不处理移动，保持静止
+        // 移动输入由InputController检测并切换到Move状态
     }
 
     public override void Exit()

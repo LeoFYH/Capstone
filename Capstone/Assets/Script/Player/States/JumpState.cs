@@ -27,8 +27,26 @@ public class JumpState : StateBase
         initialHorizontalVelocity = rb.linearVelocity.x;
         // Debug.Log($"初始水平速度: {initialHorizontalVelocity}");
         
-        // 立即发送跳跃执行事件
-        player.SendEvent<JumpExecuteEvent>();
+        // 直接执行跳跃逻辑
+        Debug.Log("JumpState: 执行跳跃");
+        if (player != null)
+        {
+            // 获取当前水平速度
+            float currentHorizontalVelocity = rb.linearVelocity.x;
+            
+            // 执行跳跃
+            float jumpForce = player.maxJumpForce;
+            rb.linearVelocity = new Vector2(currentHorizontalVelocity, jumpForce);
+            
+            Debug.Log($"JumpState执行跳跃 - 使用跳跃力: {jumpForce}, 水平速度: {currentHorizontalVelocity}");
+            
+            // 立即切换到Air状态
+            player.stateMachine.SwitchState("Air");
+        }
+        else
+        {
+            Debug.LogError("player为空！");
+        }
     }
 
     public override void Update()
@@ -41,28 +59,33 @@ public class JumpState : StateBase
                 chargeTime = player.maxChargeTime;
         }
         
-        // Jump状态下发送移动事件
+        // Jump状态下的空中移动控制（在切换到Air状态之前）
         float moveInput = Input.GetAxisRaw("Horizontal");
-        player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
+        if (Mathf.Abs(moveInput) > 0.01f)
+        {
+            // 计算空中移动力
+            float moveForce = moveInput * player.airControlForce;
+            
+            // 获取当前水平速度
+            float currentHorizontalVelocity = rb.linearVelocity.x;
+            
+            // 限制最大空中水平速度
+            if (Mathf.Abs(currentHorizontalVelocity) < player.maxAirHorizontalSpeed)
+            {
+                // 应用空中移动力
+                rb.linearVelocity = new Vector2(currentHorizontalVelocity + moveForce * Time.deltaTime, rb.linearVelocity.y);
+            }
+            else
+            {
+                // 如果已经达到最大速度，只允许减速
+                if (Mathf.Sign(moveInput) != Mathf.Sign(currentHorizontalVelocity))
+                {
+                    rb.linearVelocity = new Vector2(currentHorizontalVelocity + moveForce * Time.deltaTime, rb.linearVelocity.y);
+                }
+            }
+        }
     }
-    ///
-    /// //
-    
-    // 公共方法，供InputController调用执行跳跃
-    //错了 应该写进系统逻辑 state只管发信号给系统
-    // public void ExecuteJump()
-    // {
-    //     Debug.Log($"执行跳跃 - 使用固定跳跃力: {player.maxJumpForce}");
-    //     float jumpForce = player.maxJumpForce;
-    //     rb.velocity = new Vector2(initialHorizontalVelocity, jumpForce); // 完整继承初始速度
-    //     Debug.Log($"设置速度: ({initialHorizontalVelocity}, {jumpForce})");
-    //     isCharging = false;
-    //     hasJumped = true;
-    //     Debug.Log("跳跃执行完成");
-        
-    //     // 立即切换到Air状态，这样空中移动就能正常工作
-    //     player.stateMachine.SwitchState("Air");
-    // }
+   
 
     public override void Exit()
     {

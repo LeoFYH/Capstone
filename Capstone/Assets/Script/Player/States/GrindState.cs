@@ -25,8 +25,8 @@ public class GrindState : StateBase
         // 检查currentTrack是否为null
         if (player.currentTrack == null)
         {
-            Debug.LogError("GrindState.Enter: currentTrack为null，无法进入滑轨状态");
-            player.stateMachine.SwitchState("Jump");
+            Debug.Log("GrindState.Enter: currentTrack为null，无法进入滑轨状态，保持当前状态");
+            // 不切换状态，直接退出Enter方法
             return;
         }
         
@@ -57,16 +57,32 @@ public class GrindState : StateBase
         // 首先检查E键是否按住，如果没有按住立即退出
         if (!player.isEHeld)
         {
-            Debug.Log("GrindState: E键未按住，切换到Jump状态");
-            player.stateMachine.SwitchState("Jump");
+            Debug.Log("GrindState: E键未按住，退出滑轨状态");
+            // 根据当前状态决定切换到哪个状态
+            if (player.IsGrounded())
+            {
+                player.stateMachine.SwitchState("Idle");
+            }
+            else
+            {
+                player.stateMachine.SwitchState("Air");
+            }
             return;
         }
         
         // 然后检查currentTrack是否为null
         if (player.currentTrack == null)
         {
-            Debug.Log("GrindState: currentTrack为null，切换到Jump状态");
-            player.stateMachine.SwitchState("Jump");
+            Debug.Log("GrindState: currentTrack为null，退出滑轨状态");
+            // 根据当前状态决定切换到哪个状态
+            if (player.IsGrounded())
+            {
+                player.stateMachine.SwitchState("Idle");
+            }
+            else
+            {
+                player.stateMachine.SwitchState("Air");
+            }
             return;
         }
 

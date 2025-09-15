@@ -32,9 +32,31 @@ public class AirState : StateBase
         // 更新空中时间
         player.airTime += Time.deltaTime;
         
-        // Air状态下发送移动事件
+        // 空中移动控制
         float moveInput = Input.GetAxisRaw("Horizontal");
-        player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
+        if (Mathf.Abs(moveInput) > 0.01f)
+        {
+            // 计算空中移动力
+            float moveForce = moveInput * airControlForce;
+            
+            // 获取当前水平速度
+            float currentHorizontalVelocity = rb.linearVelocity.x;
+            
+            // 限制最大空中水平速度
+            if (Mathf.Abs(currentHorizontalVelocity) < maxAirHorizontalSpeed)
+            {
+                // 应用空中移动力
+                rb.linearVelocity = new Vector2(currentHorizontalVelocity + moveForce * Time.deltaTime, rb.linearVelocity.y);
+            }
+            else
+            {
+                // 如果已经达到最大速度，只允许减速
+                if (Mathf.Sign(moveInput) != Mathf.Sign(currentHorizontalVelocity))
+                {
+                    rb.linearVelocity = new Vector2(currentHorizontalVelocity + moveForce * Time.deltaTime, rb.linearVelocity.y);
+                }
+            }
+        }
 
         // 检测技巧输入并切换到 TrickState
         if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.E))

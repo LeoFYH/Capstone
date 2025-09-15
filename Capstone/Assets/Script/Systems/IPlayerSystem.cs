@@ -22,7 +22,7 @@ namespace SkateGame
             // 监听输入事件
             this.RegisterEvent<TrickAInputEvent>(OnTrickAInput);
             this.RegisterEvent<TrickBInputEvent>(OnTrickBInput);
-            this.RegisterEvent<JumpExecuteEvent>(OnJumpExecute);
+            //this.RegisterEvent<JumpExecuteEvent>(OnJumpExecute);
             this.RegisterEvent<GrindInputEvent>(OnGrindInput);
             this.RegisterEvent<PowerGrindInputEvent>(OnPowerGrindInput);
             this.RegisterEvent<ReverseInputEvent>(OnReverseInput);
@@ -102,46 +102,41 @@ namespace SkateGame
         }
 
         
-        private void OnJumpExecute(JumpExecuteEvent evt)
-        {
-            Debug.Log("PlayerSystem接收到JumpExecuteEvent - 执行跳跃");
-            if (playerController != null)
-            {
-                // 系统层执行跳跃逻辑
-                var rb = playerController.GetRigidbody();
-                if (rb != null)
-                {
-                    // 获取当前水平速度
-                    float currentHorizontalVelocity = rb.linearVelocity.x;
+        // private void OnJumpExecute(JumpExecuteEvent evt)
+        // {
+        //     Debug.Log("PlayerSystem接收到JumpExecuteEvent - 执行跳跃");
+        //     if (playerController != null)
+        //     {
+        //         // 系统层执行跳跃逻辑
+        //         var rb = playerController.GetRigidbody();
+        //         if (rb != null)
+        //         {
+        //             // 获取当前水平速度
+        //             float currentHorizontalVelocity = rb.linearVelocity.x;
                     
-                    // 执行跳跃
-                    float jumpForce = playerController.maxJumpForce;
-                    rb.linearVelocity = new Vector2(currentHorizontalVelocity, jumpForce);
+        //             // 执行跳跃
+        //             float jumpForce = playerController.maxJumpForce;
+        //             rb.linearVelocity = new Vector2(currentHorizontalVelocity, jumpForce);
                     
-                    Debug.Log($"系统执行跳跃 - 使用跳跃力: {jumpForce}, 水平速度: {currentHorizontalVelocity}");
+        //             Debug.Log($"系统执行跳跃 - 使用跳跃力: {jumpForce}, 水平速度: {currentHorizontalVelocity}");
                     
-                    // 立即切换到Air状态
-                    playerController.stateMachine.SwitchState("Air");
-                }
-                else
-                {
-                    Debug.LogError("Rigidbody2D为空！");
-                }
-            }
-            else
-            {
-                Debug.LogError("playerController为空！");
-            }
-        }
+        //             // 立即切换到Air状态
+        //             playerController.stateMachine.SwitchState("Air");
+        //         }
+        //         else
+        //         {
+        //             Debug.LogError("Rigidbody2D为空！");
+        //         }
+        //     }
+        //     else
+        //     {
+        //         Debug.LogError("playerController为空！");
+        //     }
+        // }
 
         private void OnGrindInput(GrindInputEvent evt)
         {
-            Debug.Log($"OnGrindInput被调用:");
-            Debug.Log($"  - playerController: {(playerController != null ? "存在" : "null")}");
-            Debug.Log($"  - IsGrounded(): {(playerController != null ? playerController.IsGrounded().ToString() : "N/A")}");
-            Debug.Log($"  - isNearTrack: {(playerController != null ? playerController.isNearTrack.ToString() : "N/A")}");
-            Debug.Log($"  - grindJumpTimer: {(playerController != null ? playerController.grindJumpTimer.ToString() : "N/A")}");
-            Debug.Log($"  - isNearWall: {(playerController != null ? playerController.isNearWall.ToString() : "N/A")}");
+            
             
             if (playerController != null)
             {

@@ -29,12 +29,32 @@ public class MoveState : StateBase
 
     public override void Update()
     {
-        // Move状态下发送移动事件
-        // 使用平滑输入而不是 Raw，这样会有逐渐过渡的感觉
+        // Move状态下直接处理地面移动
         float moveInput = Input.GetAxis("Horizontal");
-
-        // 发给 MovementSystem，让它处理加速/减速
-        player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
+        
+        if (Mathf.Abs(moveInput) > 0.01f)
+        {
+            // 加速
+            currentVelocityX += moveInput * acceleration * Time.deltaTime;
+            currentVelocityX = Mathf.Clamp(currentVelocityX, -maxSpeed, maxSpeed);
+        }
+        else
+        {
+            // 减速
+            if (currentVelocityX > 0)
+            {
+                currentVelocityX -= deceleration * Time.deltaTime;
+                if (currentVelocityX < 0) currentVelocityX = 0;
+            }
+            else if (currentVelocityX < 0)
+            {
+                currentVelocityX += deceleration * Time.deltaTime;
+                if (currentVelocityX > 0) currentVelocityX = 0;
+            }
+        }
+        
+        // 应用水平速度
+        rb.linearVelocity = new Vector2(currentVelocityX, rb.linearVelocity.y);
     }
 
     public override void Exit()

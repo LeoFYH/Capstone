@@ -175,23 +175,10 @@ namespace SkateGame
 
                     return; // 跳跃后直接返回，不处理其他输入
                 }
-                //else
-                //{
-                //    // 如果不在着地状态，启动跳跃缓冲
-                //    jumpBufferTimer = jumpBufferTime;
-                //     Debug.Log("Space键按下但未着地，启动跳跃缓冲");
-                //}
+               
             }
 
-            // 检查跳跃缓冲
-            //if (jumpBufferTimer > 0f && wasGrounded && !hasJumpedThisFrame)
-            //{
-            //    Debug.Log("跳跃缓冲触发 - 切换到Jump状态");
-            //    hasJumpedThisFrame = true;
-            //    jumpBufferTimer = 0f; // 清除缓冲
-            //    stateMachine.SwitchState("Jump");
-            //    return;
-            //}
+          
             if (Input.GetKeyDown(KeyCode.F))
             {
                 currentBulletIndex = (currentBulletIndex + 1) % bulletPrefabs.Length;
@@ -210,7 +197,8 @@ namespace SkateGame
                 Debug.Log($"  - grindJumpTimer: {grindJumpTimer}");
 
                 isEHeld = true;
-                this.SendEvent<GrindInputEvent>();
+                 stateMachine.SwitchState("Grind");
+                //this.SendEvent<GrindInputEvent>();
             }
 
             if (Input.GetKeyUp(KeyCode.E))
