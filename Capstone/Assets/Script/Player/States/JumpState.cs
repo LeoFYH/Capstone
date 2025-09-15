@@ -28,6 +28,7 @@ public class JumpState : StateBase
         // Debug.Log($"初始水平速度: {initialHorizontalVelocity}");
         
         // 直接执行跳跃逻辑
+        
         Debug.Log("JumpState: 执行跳跃");
         if (player != null)
         {

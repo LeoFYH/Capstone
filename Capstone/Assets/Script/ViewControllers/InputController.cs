@@ -156,26 +156,23 @@ namespace SkateGame
             string currentState = stateMachine.GetCurrentStateName();
             float moveInput = Input.GetAxisRaw("Horizontal");
             
-            // 调试信息
-            if (Mathf.Abs(moveInput) > 0.01f)
+            // 空格键处理：统一处理所有跳跃逻辑
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                Debug.Log($"移动输入检测: moveInput={moveInput}, currentState={currentState}, IsGrounded={IsGrounded()}");
-            }
-
-            // 跳跃输入检测 - 只负责状态切换
-            // 在Air状态下不处理空格键，让AirState自己处理二段跳
-            Debug.Log("hasJumpedThisFrame:" + !hasJumpedThisFrame + "currentstate: " + currentState + "wasground" + wasGrounded);
-            if (Input.GetKeyDown(KeyCode.Space) && currentState != "Air")
-            {
-                if (wasGrounded)
+                if (wasGrounded && currentState != "Air")
                 {
-                    Debug.Log("Space键按下 - 切换到Jump状态" + "currentState:" + currentState);
-                    hasJumpedThisFrame = true; // 设置标志防止重复跳跃
+                    // 地面跳跃
+                    Debug.Log("Space键按下 - 地面跳跃");
+                    hasJumpedThisFrame = true;
                     stateMachine.SwitchState("Jump");
-
-                    return; // 跳跃后直接返回，不处理其他输入
                 }
-               
+                else if (!wasGrounded && currentState != "DoubleJump")
+                {
+                    // 空中二段跳
+                    Debug.Log("Space键按下 - 二段跳");
+                    stateMachine.SwitchState("DoubleJump");
+                }
+                return;
             }
 
           

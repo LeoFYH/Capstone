@@ -6,8 +6,7 @@ public class AirState : StateBase
 {
     private Rigidbody2D rb;
     private InputController player;
-    private float airControlForce = 10f; // 空中控制力
-    private float maxAirHorizontalSpeed = 8f; // 最大空中水平速度
+    // 使用InputController的参数，不在这里重复定义
     private bool canDoubleJump = true; // 是否可以二段跳
 
     public AirState(InputController player, Rigidbody2D rb)
@@ -32,26 +31,27 @@ public class AirState : StateBase
         // 更新空中时间
         player.airTime += Time.deltaTime;
         
-        // 空中移动控制
+        // 空中移动控制（统一阻力感，AddForce方式）
         float moveInput = Input.GetAxisRaw("Horizontal");
         if (Mathf.Abs(moveInput) > 0.01f)
         {
             // 获取当前水平速度
             float currentHorizontalVelocity = rb.linearVelocity.x;
             
-            // 计算目标速度
-            float targetVelocity = moveInput * maxAirHorizontalSpeed;
+            // 计算目标速度（使用InputController的参数）
+            float targetVelocity = moveInput * player.maxAirHorizontalSpeed;
             
             // 计算速度差值
             float velocityDifference = targetVelocity - currentHorizontalVelocity;
             
-            // 应用空中控制力（基于速度差值）
-            float moveForce = velocityDifference * airControlForce;
+            // 应用空中控制力（基于速度差值，产生阻力感）
+            // 增加控制力倍数，让转向更容易
+            float moveForce = velocityDifference * player.airControlForce * 1.5f;
             
             // 限制力的大小，避免过度加速
-            moveForce = Mathf.Clamp(moveForce, -airControlForce * 2f, airControlForce * 2f);
+            moveForce = Mathf.Clamp(moveForce, -player.airControlForce * 3f, player.airControlForce * 3f);
             
-            // 应用力到刚体
+            // 应用力到刚体（AddForce方式产生阻力感）
             rb.AddForce(new Vector2(moveForce, 0), ForceMode2D.Force);
         }
 
@@ -70,14 +70,7 @@ public class AirState : StateBase
             return;
         }
 
-        // 二段跳检测
-        if (Input.GetKeyDown(KeyCode.Space) && canDoubleJump)
-        {
-            // 切换到DoubleJump状态，让DoubleJumpState处理二段跳逻辑和事件发送
-            Debug.Log("AirState: 检测到二段跳输入，切换到DoubleJump状态");
-            player.stateMachine.SwitchState("DoubleJump");
-            canDoubleJump = false; // 禁用二段跳
-        }
+        // 二段跳检测已移至InputController统一处理
 
         // 检测落地
         if (player.IsGrounded() && player.isInAir)

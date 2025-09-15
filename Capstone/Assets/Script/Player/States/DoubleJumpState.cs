@@ -17,30 +17,27 @@ public class DoubleJumpState : StateBase
 
     public override void Enter()
     {
-        // 直接跳起来
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.doubleJumpForce);
-        Debug.Log("DoubleJumpState: 执行二段跳！");
+        // 获取当前水平速度（与JumpState保持一致）
+        float currentHorizontalVelocity = rb.linearVelocity.x;
+        
+        // 执行二段跳（与JumpState相同的逻辑）
+        float jumpForce = player.doubleJumpForce;
+        rb.linearVelocity = new Vector2(currentHorizontalVelocity, jumpForce);
+        
+        Debug.Log($"DoubleJumpState执行二段跳 - 使用跳跃力: {jumpForce}, 水平速度: {currentHorizontalVelocity}");
         
         // 发送技巧执行事件给系统，更新UIController
         Debug.Log("DoubleJumpState: 发送TrickPerformedEvent事件");
         player.SendEvent<TrickPerformedEvent>(new TrickPerformedEvent { TrickName = "doublejump" });
+        
+        // 立即切换到Air状态，让AirState处理空中移动和落地检测
+        player.stateMachine.SwitchState("Air");
     }
 
     public override void Update()
     {
-        // 空中左右微调
-        float moveInput = Input.GetAxisRaw("Horizontal");
-        //if (Mathf.Abs(moveInput) > 0.01f)
-        //{
-        //    rb.linearVelocity = new Vector2(moveInput * player.airMoveSpeed, rb.linearVelocity.y);
-        //}
-        
-        // 检测落地，落地后切回Idle
-        if (player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
-        {
-            player.stateMachine.SwitchState("Idle");
-            Debug.Log("2222:" + player.stateMachine.GetCurrentStateName());
-        }
+        // DoubleJump状态会立即切换到Air状态，所以这里不需要处理移动和落地检测
+        // 空中移动和落地检测都由AirState处理
     }
 
     public override void Exit()
