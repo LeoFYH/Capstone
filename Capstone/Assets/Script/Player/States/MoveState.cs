@@ -6,17 +6,23 @@ public class MoveState : StateBase
 {
     private Rigidbody2D rb;
     private InputController player;
+    private IPlayerModel playerModel;
     
     // 加速度相关参数
-    private float currentVelocityX = 0f;
-    private float acceleration = 15f; // 加速度
-    private float deceleration = 20f; // 减速度
-    private float maxSpeed = 5f; // 最大速度
+    private float currentVelocityX;
+    private float acceleration;
+    private float deceleration;
+    private float maxSpeed;
 
     public MoveState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
+        playerModel = this.GetModel<IPlayerModel>();
+        currentVelocityX = playerModel.CurrentVelocityX.Value;
+        acceleration = playerModel.Acceleration.Value;
+        deceleration = playerModel.Deceleration.Value;
+        maxSpeed = playerModel.MaxSpeed.Value;
     }
 
     public override string GetStateName() => "Move";

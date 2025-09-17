@@ -2,7 +2,7 @@ using UnityEngine;
 using QFramework;
 
 // 状态基类
-public abstract class StateBase
+public abstract class StateBase : ICanGetModel, IBelongToArchitecture
 {
     // 进入状态时调用
     public virtual void Enter() { }
@@ -15,6 +15,8 @@ public abstract class StateBase
     
     // 获取状态名称
     public abstract string GetStateName();
+
+    public IArchitecture GetArchitecture() => SkateGame.GameApp.Interface;
     
     // 发送事件的辅助方法（通过InputController）
     protected void SendEvent<T>(T evt) where T : struct

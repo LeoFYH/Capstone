@@ -1,19 +1,26 @@
 using UnityEngine;
 using SkateGame;
+using QFramework;
 
 public class GrindState : StateBase
 {
     private InputController player;
     private Rigidbody2D rb;
+    private IPlayerModel playerModel;
     private float speed;
     private Vector2 direction;
-    private bool isJumping = false;
     private float normalG;
-
+    private bool isJumping;
+  
     public GrindState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
+        playerModel = player.GetModel<IPlayerModel>();
+        speed = playerModel.Speed.Value;
+        direction = playerModel.Direction.Value;
+        normalG = playerModel.NormalG.Value;
+        isJumping = playerModel.IsJumping.Value;
     }
 
     public override string GetStateName() => "Grind";

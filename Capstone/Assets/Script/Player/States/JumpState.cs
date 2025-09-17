@@ -6,14 +6,20 @@ public class JumpState : StateBase
 {
     private Rigidbody2D rb;
     private InputController player;
-    private float chargeTime = 0f;
-    private bool isCharging = false;
-    private bool hasJumped = false;
+    private IPlayerModel playerModel;
+    private float chargeTime;
+    private bool isCharging;
+    private bool hasJumped;
     private float initialHorizontalVelocity;
     public JumpState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
+        playerModel = this.GetModel<IPlayerModel>();
+        chargeTime = playerModel.ChargeTime.Value;
+        isCharging = playerModel.IsCharging.Value;
+        hasJumped = playerModel.HasJumped.Value;
+        initialHorizontalVelocity = playerModel.InitialHorizontalVelocity.Value;
     }
 
     public override string GetStateName() => "Jump";

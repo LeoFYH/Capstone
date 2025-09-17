@@ -1,4 +1,5 @@
 using QFramework;
+using UnityEngine;
 
 namespace SkateGame
 {
@@ -13,7 +14,24 @@ namespace SkateGame
         BindableProperty<bool> IsNearWall { get; }
         BindableProperty<float> MoveSpeed { get; }
         BindableProperty<float> JumpForce { get; }
-        BindableProperty<bool> canDoubleJump { get; }
+        BindableProperty<bool> CanDoubleJump { get; }
+        // grind相关
+        BindableProperty<float> Speed { get; }
+        BindableProperty<Vector2> Direction { get; }
+        BindableProperty<bool> IsJumping { get; }
+        BindableProperty<float> NormalG { get; }
+
+        // jump相关
+        BindableProperty<float> ChargeTime { get; }
+        BindableProperty<bool> IsCharging { get; }
+        BindableProperty<bool> HasJumped { get; }
+        BindableProperty<float> InitialHorizontalVelocity { get; }
+
+        // move相关
+        BindableProperty<float> CurrentVelocityX { get; }
+        BindableProperty<float> Acceleration { get; }
+        BindableProperty<float> Deceleration { get; }
+        BindableProperty<float> MaxSpeed { get; }
     }
 
     public class PlayerModel : AbstractModel, IPlayerModel
@@ -27,7 +45,26 @@ namespace SkateGame
         public BindableProperty<bool> IsNearWall { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> MoveSpeed { get; } = new BindableProperty<float>(5f);
         public BindableProperty<float> JumpForce { get; } = new BindableProperty<float>(14f);
-        public BindableProperty<bool> canDoubleJump { get; } = new BindableProperty<bool>(false);
+        public BindableProperty<bool> CanDoubleJump { get; } = new BindableProperty<bool>(false);
+
+        // grind相关
+        public BindableProperty<float> Speed { get; } = new BindableProperty<float>(0f);
+        public BindableProperty<Vector2> Direction { get; } = new BindableProperty<Vector2>(Vector2.zero);
+        public BindableProperty<bool> IsJumping { get; } = new BindableProperty<bool>(false);
+        public BindableProperty<float> NormalG { get; } = new BindableProperty<float>(1f);
+        
+        // jump相关
+        public BindableProperty<float> ChargeTime { get; } = new BindableProperty<float>(0f);
+        public BindableProperty<bool> IsCharging { get; } = new BindableProperty<bool>(false);
+        public BindableProperty<bool> HasJumped { get; } = new BindableProperty<bool>(false);
+        public BindableProperty<float> InitialHorizontalVelocity { get; } = new BindableProperty<float>(0f);
+        
+        // move相关
+        public BindableProperty<float> CurrentVelocityX { get; } = new BindableProperty<float>(0f);
+        public BindableProperty<float> Acceleration { get; } = new BindableProperty<float>(15f);
+        public BindableProperty<float> Deceleration { get; } = new BindableProperty<float>(20f);
+        public BindableProperty<float> MaxSpeed { get; } = new BindableProperty<float>(5f);
+         
         
         protected override void OnInit()
         {

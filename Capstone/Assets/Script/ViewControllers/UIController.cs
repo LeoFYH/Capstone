@@ -12,10 +12,10 @@ namespace SkateGame
     /// </summary>
     public class UIController : ViewerControllerBase
     {
-            [Header("TextMeshPro UI组件")]
-    public Text trickInfoText;      // 技巧信息显示（包含名称、数量、分数）
-    public Text aimTimeText;        // 瞄准时间上限显示
-    public Text gradeText;          // 等级显示
+        [Header("TextMeshPro UI组件")]
+        public Text trickInfoText;      // 技巧信息显示（包含名称、数量、分数）
+        public Text aimTimeText;        // 瞄准时间上限显示
+        public Text gradeText;          // 等级显示
 
 
         protected override void Start()

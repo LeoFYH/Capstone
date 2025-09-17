@@ -120,7 +120,7 @@ namespace SkateGame
 
             stateMachine.SwitchState("Idle");
             this.GetModel<IPlayerModel>().IsInAir.Value = false;
-            this.GetModel<IPlayerModel>().canDoubleJump.Value = true;
+            this.GetModel<IPlayerModel>().CanDoubleJump.Value = true;
 
         }
 
@@ -148,7 +148,7 @@ namespace SkateGame
             wasGrounded = IsGrounded();
             if(wasGrounded)
             {
-                this.GetModel<IPlayerModel>().canDoubleJump.Value = true;
+                this.GetModel<IPlayerModel>().CanDoubleJump.Value = true;
             }
 
             // 检测输入并发送事件
@@ -173,12 +173,12 @@ namespace SkateGame
                     hasJumpedThisFrame = true;
                     stateMachine.SwitchState("Jump");
                 }
-                else if (!wasGrounded && currentState != "DoubleJump"&&this.GetModel<IPlayerModel>().canDoubleJump.Value)
+                else if (!wasGrounded && currentState != "DoubleJump"&&this.GetModel<IPlayerModel>().CanDoubleJump.Value)
                 {
                     // 空中二段跳
                     Debug.Log("Space键按下 - 二段跳");
                     stateMachine.SwitchState("DoubleJump");
-                    this.GetModel<IPlayerModel>().canDoubleJump.Value = false;
+                    this.GetModel<IPlayerModel>().CanDoubleJump.Value = false;
                 }
                 return;
             }
