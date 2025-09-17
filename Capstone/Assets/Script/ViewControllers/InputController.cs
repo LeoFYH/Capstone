@@ -119,6 +119,9 @@ namespace SkateGame
             stateMachine.AddState("PowerGrind", new PowerGrindState(this, rb));
 
             stateMachine.SwitchState("Idle");
+            this.GetModel<IPlayerModel>().IsInAir.Value = false;
+            this.GetModel<IPlayerModel>().canDoubleJump.Value = true;
+
         }
 
         protected override void OnRealTimeUpdate()
@@ -143,6 +146,10 @@ namespace SkateGame
 
             // 更新着地状态
             wasGrounded = IsGrounded();
+            if(wasGrounded)
+            {
+                this.GetModel<IPlayerModel>().canDoubleJump.Value = true;
+            }
 
             // 检测输入并发送事件
             DetectInput();
@@ -166,11 +173,12 @@ namespace SkateGame
                     hasJumpedThisFrame = true;
                     stateMachine.SwitchState("Jump");
                 }
-                else if (!wasGrounded && currentState != "DoubleJump")
+                else if (!wasGrounded && currentState != "DoubleJump"&&this.GetModel<IPlayerModel>().canDoubleJump.Value)
                 {
                     // 空中二段跳
                     Debug.Log("Space键按下 - 二段跳");
                     stateMachine.SwitchState("DoubleJump");
+                    this.GetModel<IPlayerModel>().canDoubleJump.Value = false;
                 }
                 return;
             }

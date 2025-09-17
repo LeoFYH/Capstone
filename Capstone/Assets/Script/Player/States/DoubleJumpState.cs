@@ -32,6 +32,7 @@ public class DoubleJumpState : StateBase
         
         // 立即切换到Air状态，让AirState处理空中移动和落地检测
         player.stateMachine.SwitchState("Air");
+        
     }
 
     public override void Update()

@@ -13,6 +13,7 @@ namespace SkateGame
         BindableProperty<bool> IsNearWall { get; }
         BindableProperty<float> MoveSpeed { get; }
         BindableProperty<float> JumpForce { get; }
+        BindableProperty<bool> canDoubleJump { get; }
     }
 
     public class PlayerModel : AbstractModel, IPlayerModel
@@ -26,6 +27,7 @@ namespace SkateGame
         public BindableProperty<bool> IsNearWall { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> MoveSpeed { get; } = new BindableProperty<float>(5f);
         public BindableProperty<float> JumpForce { get; } = new BindableProperty<float>(14f);
+        public BindableProperty<bool> canDoubleJump { get; } = new BindableProperty<bool>(false);
         
         protected override void OnInit()
         {
