@@ -12,25 +12,12 @@ namespace SkateGame
     /// </summary>
     public class InputController : ViewerControllerBase
     {
-
+        private IPlayerModel playerModel;
         public GameObject powerGrindEffect;
         [Header("状态机")]
         public E stateMachine;
         private Rigidbody2D rb;
 
-        [Header("跳跃设置")]
-        public float maxJumpForce = 14f;
-        public float minJumpForce = 2f;
-        public float doubleJumpForce = 8f;
-        public float maxChargeTime = 2f;
-
-        [Header("移动设置")]
-        public float moveSpeed = 5f;
-        public float airControlForce = 5f;
-        public float maxAirHorizontalSpeed = 10f;
-        public float groundAccel = 20f;        // 正常加速率
-        public float groundDecel = 10f;        // 松开时的减速（摩擦力）
-        public float turnDecel = 40f;          // 转向时的刹车强度
         [Header("轨道设置")]
         public Track currentTrack;
         public float grindJumpIgnoreTime = 0.2f;
@@ -89,22 +76,24 @@ namespace SkateGame
         protected override void InitializeController()
         {
             // Debug.Log("玩家控制器初始化完成");
-
+            // 获取玩家参数
+            playerModel = this.GetModel<IPlayerModel>();
+            
             // 获取组件
             rb = GetComponent<Rigidbody2D>();
-            
+
             // 获取玩家精灵渲染器
             if (playerSprite == null)
             {
                 playerSprite = GetComponent<SpriteRenderer>();
             }
-            
+
             // 保存原始颜色
             if (playerSprite != null)
             {
                 originalColor = playerSprite.color;
             }
-            
+
             // 初始化瞄准时间
             _baseMaxAimTime = maxAimTime;
 
@@ -190,7 +179,7 @@ namespace SkateGame
             // 获取当前状态和移动输入
             string currentState = stateMachine.GetCurrentStateName();
             float moveInput = Input.GetAxisRaw("Horizontal");
-            
+
             // 调试信息
             if (Mathf.Abs(moveInput) > 0.01f)
             {
@@ -286,7 +275,7 @@ namespace SkateGame
             if (currentState == "PowerGrind" && isCheckingReverseWindow)
             {
                 float currentVelocityX = rb.linearVelocity.x;
-                
+
                 // 如果当前有水平速度且输入方向与速度方向相反
                 if (Mathf.Abs(currentVelocityX) > 1f && Mathf.Abs(moveInput) > 0.01f)
                 {
@@ -313,7 +302,7 @@ namespace SkateGame
             }
 
 
-            
+
         }
 
         // 提供给状态机使用的方法
@@ -361,7 +350,7 @@ namespace SkateGame
         {
             return rb;
         }
-        
+
         // 奖励跳跃方法 - 用于高等级技巧奖励
         public void RewardJump()
         {
@@ -369,7 +358,7 @@ namespace SkateGame
             {
                 // 给予一个额外的跳跃力
                 Vector2 currentVelocity = rb.linearVelocity;
-                rb.linearVelocity = new Vector2(currentVelocity.x, doubleJumpForce);
+                rb.linearVelocity = new Vector2(currentVelocity.x, playerModel.doubleJumpForce.Value);
                 Debug.Log("奖励跳跃！获得额外跳跃力");
             }
         }
@@ -469,7 +458,7 @@ namespace SkateGame
             {
                 // 更新瞄准计时器
                 aimTimer += Time.unscaledDeltaTime; // 使用unscaledDeltaTime因为时间被放慢了
-                
+
                 // 检查是否超过最大瞄准时间
                 if (aimTimer >= maxAimTime)
                 {
@@ -562,7 +551,7 @@ namespace SkateGame
                 // 增加瞄准时间上限1秒
                 maxAimTime += 1f;
                 Debug.Log($"InputController: 落地奖励！瞄准时间上限增加1秒，当前上限: {maxAimTime}秒");
-                
+
                 // 重置标志
                 hasPerformedTrickInAir = false;
             }

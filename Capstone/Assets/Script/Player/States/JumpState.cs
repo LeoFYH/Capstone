@@ -6,14 +6,18 @@ public class JumpState : StateBase
 {
     private Rigidbody2D rb;
     private InputController player;
-    private float chargeTime = 0f;
-    private bool isCharging = false;
-    private bool hasJumped = false;
+    private float chargeTime;
+    private bool isCharging;
+    private bool hasJumped;
     private float initialHorizontalVelocity;
     public JumpState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
+        chargeTime = playerModel.ChargeTime.Value;
+        isCharging = playerModel.IsCharging.Value;
+        hasJumped = playerModel.HasJumped.Value;
+        initialHorizontalVelocity = playerModel.InitialHorizontalVelocity.Value;
     }
 
     public override string GetStateName() => "Jump";
@@ -37,8 +41,8 @@ public class JumpState : StateBase
         if (isCharging)
         {
             chargeTime += Time.deltaTime;
-            if (chargeTime > player.maxChargeTime)
-                chargeTime = player.maxChargeTime;
+            if (chargeTime > playerModel.maxChargeTime.Value)
+                chargeTime = playerModel.maxChargeTime.Value;
         }
         
         // Jump状态下发送移动事件

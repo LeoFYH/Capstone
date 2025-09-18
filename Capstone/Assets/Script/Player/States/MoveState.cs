@@ -8,15 +8,19 @@ public class MoveState : StateBase
     private InputController player;
     
     // 加速度相关参数
-    private float currentVelocityX = 0f;
-    private float acceleration = 15f; // 加速度
-    private float deceleration = 20f; // 减速度
-    private float maxSpeed = 5f; // 最大速度
+    private float currentVelocityX;
+    private float acceleration;
+    private float deceleration;
+    private float maxSpeed;
 
     public MoveState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
+        currentVelocityX = playerModel.CurrentVelocityX.Value;
+        acceleration = playerModel.Acceleration.Value;
+        deceleration = playerModel.MoveDeceleration.Value;
+        maxSpeed = playerModel.MaxSpeed.Value;
     }
 
     public override string GetStateName() => "Move";

@@ -6,8 +6,8 @@ public class TrickA : TrickBase
     public TrickA()
     {
         trickName = "TrickA";
-        duration = 1.5f;
-        scoreValue = 20;
+        duration = playerModel.TrickADuration.Value;
+        scoreValue = playerModel.TrickAScore.Value;
     }
 
     public override void PerformTrick(InputController player)

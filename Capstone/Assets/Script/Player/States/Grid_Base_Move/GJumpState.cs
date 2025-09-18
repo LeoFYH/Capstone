@@ -25,7 +25,7 @@ public class GJumpState : StateBase
         rb.gravityScale = 1f;
 
         Vector2 currentVelocity = rb.linearVelocity;
-        rb.linearVelocity = new Vector2(currentVelocity.x, player.maxJumpForce);
+        rb.linearVelocity = new Vector2(currentVelocity.x, playerModel.maxJumpForce.Value);
     }
 
     public override void Update()
@@ -35,10 +35,10 @@ public class GJumpState : StateBase
 
         if (Mathf.Abs(moveInput) > 0.01f)
         {
-            rb.AddForce(Vector2.right * moveInput * player.airControlForce, ForceMode2D.Force);
+            rb.AddForce(Vector2.right * moveInput * playerModel.airControlForce.Value, ForceMode2D.Force);
 
 
-            float max = player.maxAirHorizontalSpeed;
+            float max = playerModel.maxAirHorizontalSpeed.Value;
                             rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -max, max), rb.linearVelocity.y);
         }
 
