@@ -13,11 +13,15 @@ namespace SkateGame
     public class PlayerSystem : AbstractSystem, IPlayerSystem, ICanSendCommand
     {
         private InputController playerController;
+        private IPlayerModel playerModel;
         
         protected override void OnInit()
         {
             // 获取玩家控制器
             playerController = Object.FindFirstObjectByType<InputController>();
+            
+            // 获取玩家参数
+            playerModel = this.GetModel<IPlayerModel>();
             
             // 监听输入事件
             this.RegisterEvent<TrickAInputEvent>(OnTrickAInput);
@@ -115,7 +119,7 @@ namespace SkateGame
                     float currentHorizontalVelocity = rb.linearVelocity.x;
                     
                     // 执行跳跃
-                    float jumpForce = playerController.maxJumpForce;
+                    float jumpForce = playerModel.maxJumpForce.Value;
                     rb.linearVelocity = new Vector2(currentHorizontalVelocity, jumpForce);
                     
                     Debug.Log($"系统执行跳跃 - 使用跳跃力: {jumpForce}, 水平速度: {currentHorizontalVelocity}");

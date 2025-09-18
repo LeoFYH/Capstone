@@ -1,17 +1,21 @@
 using UnityEngine;
 using SkateGame;
+using QFramework;
 
 public class PowerGrindState : StateBase
 {
     private Rigidbody2D rb;
     private InputController player;
-    private float deceleration = 1f; // 每秒速度减少的量
+    private float deceleration;
     private float direction;
+
 
     public PowerGrindState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
+        deceleration = playerModel.PowerGrindDeceleration.Value;
+        direction = playerModel.PowerGrindDirection.Value;
     }
 
     public override string GetStateName() => "PowerGrind";

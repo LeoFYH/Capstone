@@ -1,5 +1,6 @@
 using UnityEngine;
 using SkateGame;
+using QFramework;
 
 public class GrindState : StateBase
 {
@@ -7,13 +8,17 @@ public class GrindState : StateBase
     private Rigidbody2D rb;
     private float speed;
     private Vector2 direction;
-    private bool isJumping = false;
     private float normalG;
-
+    private bool isJumping;
+  
     public GrindState(InputController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
+        speed = playerModel.Speed.Value;
+        direction = playerModel.GrindDirection.Value;
+        normalG = playerModel.NormalG.Value;
+        isJumping = playerModel.IsJumping.Value;
     }
 
     public override string GetStateName() => "Grind";
@@ -37,7 +42,7 @@ public class GrindState : StateBase
         {
             Vector2 trackDir = player.currentTrack.GetTrackDirection();
             direction = new Vector2(trackDir.x, 0).normalized;
-            speed = player.moveSpeed;
+            speed = playerModel.moveSpeed.Value;
         }
         else
         {

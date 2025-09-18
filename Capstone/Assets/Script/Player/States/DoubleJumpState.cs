@@ -18,7 +18,7 @@ public class DoubleJumpState : StateBase
     public override void Enter()
     {
         // 直接跳起来
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.doubleJumpForce);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, playerModel.doubleJumpForce.Value);
         Debug.Log("DoubleJumpState: 执行二段跳！");
         
         // 发送技巧执行事件给系统，更新UIController
