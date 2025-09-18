@@ -1,6 +1,7 @@
 using UnityEngine;
 using QFramework;
 using System.Collections;
+using MoreMountains.Feedbacks;
 
 namespace SkateGame
 {
@@ -11,6 +12,8 @@ namespace SkateGame
     /// </summary>
     public class InputController : ViewerControllerBase
     {
+
+        public GameObject powerGrindEffect;
         [Header("状态机")]
         public E stateMachine;
         private Rigidbody2D rb;
@@ -60,7 +63,8 @@ namespace SkateGame
         [Header("Combat Setting")]
         public bool isPowerGrinding;
         private bool isCheckingReverseWindow = false;
-        public float reverseInputWindow = 0.2f;
+        public float reverseInputWindow = 2.0f;
+        private float reverseTimer = 0f;
 
         [Header("瞄准与射击设置")]
         public LineRenderer aimLine;      // 瞄准线
@@ -81,6 +85,7 @@ namespace SkateGame
         [Header("瞄准时间奖励")]
         private bool hasPerformedTrickInAir = false; // 是否在空中执行了trick
         private float _baseMaxAimTime = 3f; // 基础瞄准时间上限
+        public MMF_Player powerGrindEffectPlayer;
         protected override void InitializeController()
         {
             // Debug.Log("玩家控制器初始化完成");
@@ -119,6 +124,24 @@ namespace SkateGame
             stateMachine.AddState("PowerGrind", new PowerGrindState(this, rb));
 
             stateMachine.SwitchState("Idle");
+
+            // 初始化MMF效果播放器
+            if (powerGrindEffect != null)
+            {
+                powerGrindEffectPlayer = powerGrindEffect.GetComponent<MMF_Player>();
+                if (powerGrindEffectPlayer == null)
+                {
+                    Debug.LogWarning("powerGrindEffect对象上没有找到MMF_Player组件");
+                }
+                else
+                {
+                    Debug.Log("PowerGrind MMF效果播放器初始化成功");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("powerGrindEffect对象未分配");
+            }
         }
 
         protected override void OnRealTimeUpdate()
@@ -136,6 +159,18 @@ namespace SkateGame
             if (jumpBufferTimer > 0f)
             {
                 jumpBufferTimer -= Time.deltaTime;
+            }
+
+            // 更新反向检测计时器
+            if (isCheckingReverseWindow)
+            {
+                reverseTimer += Time.deltaTime;
+                if (reverseTimer >= reverseInputWindow)
+                {
+                    isCheckingReverseWindow = false;
+                    reverseTimer = 0f;
+                    Debug.Log("反向检测计时窗口结束");
+                }
             }
 
             // 重置跳跃标志
@@ -218,15 +253,17 @@ namespace SkateGame
                 isEHeld = false;
             }
 
-            // 强力轨道输入
-            if (Input.GetKeyDown(KeyCode.W) && IsGrounded())
+            // 强力轨道输入 - 只有在没有按Space键时才触发
+            if (Input.GetKeyDown(KeyCode.W) && IsGrounded() && !Input.GetKey(KeyCode.Space))
             {
                 isWHeld = true;
 
                 if (!isCheckingReverseWindow)
                 {
-                    StartCoroutine(CheckReverseWindow());
+                    CheckReverseWindow();
                 }
+
+                stateMachine.SwitchState("PowerGrind");
             }
 
             if (Input.GetKeyUp(KeyCode.W))
@@ -245,6 +282,24 @@ namespace SkateGame
                 this.SendEvent<TrickBInputEvent>();
             }
 
+            // 反向检测 - 在PowerGrind状态下检测反向输入
+            if (currentState == "PowerGrind" && isCheckingReverseWindow)
+            {
+                float currentVelocityX = rb.linearVelocity.x;
+                
+                // 如果当前有水平速度且输入方向与速度方向相反
+                if (Mathf.Abs(currentVelocityX) > 1f && Mathf.Abs(moveInput) > 0.01f)
+                {
+                    if (Mathf.Sign(moveInput) != Mathf.Sign(currentVelocityX))
+                    {
+                        Debug.Log($"PowerGrind状态下检测到反向输入: 当前速度={currentVelocityX}, 输入={moveInput}");
+                        stateMachine.SwitchState("Reverse");
+                        isCheckingReverseWindow = false;
+                        return; // 进入反向状态后直接返回，不处理其他逻辑
+                    }
+                }
+            }
+
             // 移动状态切换（基于移动输入）
             if (currentState == "Idle" && Mathf.Abs(moveInput) > 0.01f && IsGrounded())
             {
@@ -256,6 +311,9 @@ namespace SkateGame
                 stateMachine.SwitchState("Idle");
                 Debug.Log("2222:" + currentState);
             }
+
+
+            
         }
 
         // 提供给状态机使用的方法
@@ -323,38 +381,12 @@ namespace SkateGame
             stateMachine.SwitchState(stateName);
         }
 
-        // 反向输入检测协程
-        private IEnumerator CheckReverseWindow()
+        // 反向输入检测 - 只负责计时
+        private void CheckReverseWindow()
         {
             isCheckingReverseWindow = true;
-
-            float timer = 0f;
-            bool reverseTriggered = false;
-            float originalDirection = Mathf.Sign(rb.linearVelocity.x);
-
-            while (timer < reverseInputWindow)
-            {
-                float input = Input.GetAxisRaw("Horizontal");
-
-                if (Mathf.Abs(input) > 0.01f && Mathf.Sign(input) != originalDirection)
-                {
-                    // Debug.Log("Reverse");
-                    this.SendEvent<ReverseInputEvent>();
-                    reverseTriggered = true;
-                    break;
-                }
-
-                timer += Time.deltaTime;
-                yield return null;
-            }
-
-            if (!reverseTriggered)
-            {
-                // Debug.Log("PG");
-                this.SendEvent<PowerGrindInputEvent>();
-            }
-
-            isCheckingReverseWindow = false;
+            reverseTimer = 0f;
+            Debug.Log("开始反向检测计时窗口");
         }
 
         // 碰撞检测
@@ -549,3 +581,4 @@ namespace SkateGame
 
 
 }
+

@@ -22,6 +22,18 @@ public class PowerGrindState : StateBase
 
         direction = Mathf.Sign(rb.linearVelocity.x);
         if (direction == 0) direction = 1f;
+        Debug.Log("PowerGrindState!!!!!");
+        
+        // 播放MMF效果
+        if (player.powerGrindEffectPlayer != null)
+        {
+            player.powerGrindEffectPlayer.PlayFeedbacks();
+            Debug.Log("播放PowerGrind MMF效果");
+        }
+        else
+        {
+            Debug.LogWarning("powerGrindEffectPlayer为null，无法播放效果");
+        }
     }
 
     public override void Update()

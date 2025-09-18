@@ -16,7 +16,7 @@ public class ReverseState : StateBase
 
     public override void Enter()
     {
-
+        Debug.Log("ReverseState!!!!!");
         Vector2 velocity = rb.linearVelocity;
         rb.linearVelocity = new Vector2(-velocity.x, velocity.y);
         player.stateMachine.SwitchState("Move");

@@ -44,20 +44,10 @@ namespace SkateGame
         
         public void ApplyGroundMovement(float horizontalInput)
         {
-            if (playerController == null || !playerController.IsGrounded()) 
-            {
-                Debug.Log($"ApplyGroundMovement跳过: playerController={playerController != null}, IsGrounded={playerController?.IsGrounded()}");
-                return;
-            }
+            if (playerController == null || !playerController.IsGrounded()) return;
 
             Rigidbody2D rb = playerController.GetRigidbody();
-            if (rb == null) 
-            {
-                Debug.Log("ApplyGroundMovement: Rigidbody2D为null");
-                return;
-            }
-            
-            Debug.Log($"ApplyGroundMovement: horizontalInput={horizontalInput}, currentSpeed={rb.linearVelocity.x}");
+            if (rb == null) return;
 
             float currentSpeed = rb.linearVelocity.x;
             float targetSpeed = horizontalInput * playerController.moveSpeed;
