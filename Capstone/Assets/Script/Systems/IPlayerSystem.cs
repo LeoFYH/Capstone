@@ -19,6 +19,7 @@ namespace SkateGame
         {
             // 获取玩家控制器
             playerController = Object.FindFirstObjectByType<InputController>();
+            Debug.Log($"PlayerSystem初始化: playerController = {(playerController != null ? "找到" : "未找到")}");
             
             // 获取玩家参数
             playerModel = this.GetModel<IPlayerModel>();
