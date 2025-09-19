@@ -13,7 +13,7 @@ namespace SkateGame
     public class InputController : ViewerControllerBase
     {
         private IPlayerModel playerModel;
-        public GameObject powerGrindEffect;
+
         [Header("状态机")]
         public E stateMachine;
         private Rigidbody2D rb;
@@ -72,7 +72,17 @@ namespace SkateGame
         [Header("瞄准时间奖励")]
         private bool hasPerformedTrickInAir = false; // 是否在空中执行了trick
         private float _baseMaxAimTime = 3f; // 基础瞄准时间上限
-        public MMF_Player powerGrindEffectPlayer;
+
+
+        [Header("MMF效果")]
+        public MMF_Player powerGrindEffect;
+        public MMF_Player ReverseEffect;
+        public MMF_Player GrindEffect;
+        public MMF_Player WallRideEffect;
+        [Header("粒子特效容器")]
+        public Transform particleEffectContainer; // 粒子特效容器
+        private float lastMoveInput = 0f; // 上一帧的移动输入
+        private bool isFacingRight = true; // 当前面向方向
         protected override void InitializeController()
         {
             // Debug.Log("玩家控制器初始化完成");
@@ -113,37 +123,26 @@ namespace SkateGame
             stateMachine.AddState("PowerGrind", new PowerGrindState(this, rb));
 
             stateMachine.SwitchState("Idle");
-
-            // 初始化MMF效果播放器
-            if (powerGrindEffect != null)
-            {
-                powerGrindEffectPlayer = powerGrindEffect.GetComponent<MMF_Player>();
-                if (powerGrindEffectPlayer == null)
-                {
-                    Debug.LogWarning("powerGrindEffect对象上没有找到MMF_Player组件");
-                }
-                else
-                {
-                    Debug.Log("PowerGrind MMF效果播放器初始化成功");
-                }
-            }
-            else
-            {
-                Debug.LogWarning("powerGrindEffect对象未分配");
-            }
         }
 
         protected override void OnRealTimeUpdate()
         {
             // 更新状态机
+            string currentState = stateMachine.GetCurrentStateName();
 
             if(wasGrounded){
                 this.GetModel<IPlayerModel>().AllowDoubleJump.Value = true;
                 
             }
             else{
-                stateMachine.SwitchState("Air");
-                Debug.Log("切换到Air状态");
+                // 只有在不是特殊状态时才切换到Air状态
+                if (currentState != "Jump" && currentState != "DoubleJump" && 
+                    currentState != "WallRide" && currentState != "Trick" && 
+                    currentState != "PowerGrind" && currentState != "Reverse")
+                {
+                    stateMachine.SwitchState("Air");
+                    Debug.Log("切换到Air状态");
+                }
             }
 
             stateMachine.UpdateCurrentState();
@@ -182,6 +181,9 @@ namespace SkateGame
             DetectInput();
 
             HandleAimAndShoot();
+            
+            // 检测玩家方向变化并更新粒子特效
+            CheckPlayerDirectionChange();
         }
 
         private void DetectInput()
@@ -448,19 +450,24 @@ namespace SkateGame
 
         private void HandleAimAndShoot()
         {
-            // 按住右键进入瞄准
-            if (Input.GetMouseButtonDown(1))
+            // 按住R键进入瞄准
+            if (Input.GetKeyDown(KeyCode.R))
             {
                 isAiming = true;
                 aimTimer = 0f; // 重置计时器
                 Time.timeScale = 0.2f;
                 Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 if (aimLine != null) aimLine.enabled = true;
+                Debug.Log("开始瞄准模式");
             }
 
-            // 松开右键恢复
-            if (Input.GetMouseButtonUp(1))
+            // 松开R键发射子弹
+            if (Input.GetKeyUp(KeyCode.R))
             {
+                if (isAiming)
+                {
+                    FireBullet();
+                }
                 StopAiming();
             }
 
@@ -486,12 +493,6 @@ namespace SkateGame
                     aimLine.SetPosition(0, transform.position);
                     aimLine.SetPosition(1, (Vector2)transform.position + direction * aimLineLength);
                 }
-
-                // 左键开火
-                if (Input.GetMouseButtonDown(0))
-                {
-                    FireBullet();
-                }
             }
         }
 
@@ -501,6 +502,7 @@ namespace SkateGame
             aimTimer = 0f;
             Time.timeScale = 1f;
             if (aimLine != null) aimLine.enabled = false;
+            Debug.Log("结束瞄准模式");
         }
 
         private void FireBullet()
@@ -520,6 +522,7 @@ namespace SkateGame
                 bulletRb.linearVelocity = direction * bulletSpeed;
             }
 
+            Debug.Log($"发射子弹！方向: {direction}, 速度: {bulletSpeed}");
             // 如果是轨道子弹，不需要方向参数，轨道始终水平生成
         }
 
@@ -576,6 +579,34 @@ namespace SkateGame
 
         // 获取基础瞄准时间上限（供UI使用）
         public float baseMaxAimTime => _baseMaxAimTime;
+
+        // 检测玩家方向变化并更新粒子特效容器
+        private void CheckPlayerDirectionChange()
+        {
+            float currentMoveInput = Input.GetAxisRaw("Horizontal");
+            
+            // 检查是否有移动输入
+            if (Mathf.Abs(currentMoveInput) > 0.01f)
+            {
+                bool shouldFaceRight = currentMoveInput > 0;
+                
+                // 检查方向是否改变
+                if (isFacingRight != shouldFaceRight)
+                {
+                    // 方向改变，旋转粒子特效容器180度
+                    if (particleEffectContainer != null)
+                    {
+                        Vector3 currentRotation = particleEffectContainer.localEulerAngles;
+                        particleEffectContainer.localEulerAngles = new Vector3(currentRotation.x, currentRotation.y + 180f, currentRotation.z);
+                        isFacingRight = shouldFaceRight;
+                        
+                    }
+                }
+            }
+            
+            // 更新上一帧的移动输入
+            lastMoveInput = currentMoveInput;
+        }
     }
 
 

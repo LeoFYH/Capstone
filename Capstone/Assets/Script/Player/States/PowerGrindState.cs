@@ -29,10 +29,9 @@ public class PowerGrindState : StateBase
         Debug.Log("PowerGrindState!!!!!");
         
         // 播放MMF效果
-        if (player.powerGrindEffectPlayer != null)
+        if (player.powerGrindEffect != null)
         {
-            player.powerGrindEffectPlayer.PlayFeedbacks();
-            Debug.Log("播放PowerGrind MMF效果");
+            player.powerGrindEffect.PlayFeedbacks();
         }
         else
         {
@@ -72,5 +71,16 @@ public class PowerGrindState : StateBase
     public override void Exit()
     {
         player.isPowerGrinding = false;
+        
+        // 停止MMF效果
+        if (player.powerGrindEffect != null)
+        {
+            player.powerGrindEffect.StopFeedbacks();
+
+        }
+        else
+        {
+            Debug.LogWarning("powerGrindEffectPlayer为null，无法停止效果");
+        }
     }
 }

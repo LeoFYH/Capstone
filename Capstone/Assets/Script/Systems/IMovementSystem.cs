@@ -99,7 +99,7 @@ namespace SkateGame
                 rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -maxSpeed, maxSpeed), rb.linearVelocity.y);
             }
             
-            Debug.Log($"空中移动: 输入={horizontalInput}, 当前速度={rb.linearVelocity.x}");
+            //Debug.Log($"空中移动: 输入={horizontalInput}, 当前速度={rb.linearVelocity.x}");
         }
         
         public void ApplyJumpMovement(float horizontalInput)

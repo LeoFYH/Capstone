@@ -20,6 +20,17 @@ public class ReverseState : StateBase
         Vector2 velocity = rb.linearVelocity;
         rb.linearVelocity = new Vector2(-velocity.x, velocity.y);
         player.stateMachine.SwitchState("Move");
+
+
+        if (player.ReverseEffect != null)
+        {
+            player.ReverseEffect.PlayFeedbacks();
+
+        }
+        else
+        {
+            Debug.LogWarning("ReverseEffect为null，无法播放效果");
+        }
     }
 
     public override void Update()

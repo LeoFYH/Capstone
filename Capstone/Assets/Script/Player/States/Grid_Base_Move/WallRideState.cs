@@ -32,11 +32,20 @@ public class WallRideState : StateBase
 
         normalGravity = rb.gravityScale;
         rb.gravityScale = onWallGravity;
+
+        if (player.WallRideEffect != null)
+        {
+            player.WallRideEffect.PlayFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("WallRideEffect为null，无法播放效果");
+        }
     }
 
     public override void Update()
     {
-
+        rb.gravityScale = onWallGravity;
         if (player.currentWall == null || !player.isEHeld)
         {
             player.stateMachine.SwitchState("Jump");
@@ -47,5 +56,15 @@ public class WallRideState : StateBase
     {
         rb.gravityScale = normalGravity;
         // Debug.Log("退出WallRide状态");
+        
+        if (player.WallRideEffect != null)
+        {
+            player.WallRideEffect.StopFeedbacks();
+
+        }
+        else
+        {
+            Debug.LogWarning("WallRideEffect为null，无法停止效果");
+        }
     }
 }

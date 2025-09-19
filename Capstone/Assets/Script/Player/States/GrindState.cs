@@ -55,6 +55,15 @@ public class GrindState : StateBase
         
         // 开始滑轨计分
         //ScoreManager.Instance.StartGrindScoring();
+
+        if (player.GrindEffect != null)
+        {
+            player.GrindEffect.PlayFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("GrindEffect为null，无法播放效果");
+        }
     }
 
     public override void Update()
@@ -131,5 +140,15 @@ public class GrindState : StateBase
         
         // 结束滑轨计分
         //ScoreManager.Instance.EndGrindScoring();
+
+        if (player.GrindEffect != null)
+        {
+            player.GrindEffect.StopFeedbacks();
+
+        }
+        else
+        {
+            Debug.LogWarning("pGrindEffect为null，无法停止效果");
+        }
     }
 }
