@@ -24,6 +24,7 @@ public class DoubleJumpState : StateBase
         // 发送技巧执行事件给系统，更新UIController
         Debug.Log("DoubleJumpState: 发送TrickPerformedEvent事件");
         player.SendEvent<TrickPerformedEvent>(new TrickPerformedEvent { TrickName = "doublejump" });
+        
     }
 
     public override void Update()
@@ -41,10 +42,12 @@ public class DoubleJumpState : StateBase
             player.stateMachine.SwitchState("Idle");
             Debug.Log("2222:" + player.stateMachine.GetCurrentStateName());
         }
+        this.player.GetModel<IPlayerModel>().AllowDoubleJump.Value = false;
     }
 
     public override void Exit()
     {
         // Debug.Log("退出DoubleJump状态");
+        this.player.GetModel<IPlayerModel>().AllowDoubleJump.Value = false;
     }
 } 

@@ -26,7 +26,6 @@ public class AirState : StateBase
         player.isInAir = true;
         player.airTime = 0f;
         player.airCombo = 0;
-        canDoubleJump = true; // 重置二段跳
          Debug.Log("进入空中状态");
     }
 
@@ -55,12 +54,13 @@ public class AirState : StateBase
         }
 
         // 二段跳检测
-        if (Input.GetKeyDown(KeyCode.Space) && canDoubleJump)
+        if (Input.GetKeyDown(KeyCode.Space) && this.player.GetModel<IPlayerModel>().AllowDoubleJump.Value)
         {
             // 切换到DoubleJump状态，让DoubleJumpState处理二段跳逻辑和事件发送
             Debug.Log("AirState: 检测到二段跳输入，切换到DoubleJump状态");
             player.stateMachine.SwitchState("DoubleJump");
-            canDoubleJump = false; // 禁用二段跳
+
+            
         }
 
         // 检测落地

@@ -46,8 +46,7 @@ public class JumpState : StateBase
         }
         
         // Jump状态下发送移动事件
-        float moveInput = Input.GetAxisRaw("Horizontal");
-        player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
+        
     }
     ///
     /// //

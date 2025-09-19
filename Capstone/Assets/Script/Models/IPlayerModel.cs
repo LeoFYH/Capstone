@@ -68,7 +68,7 @@ namespace SkateGame
         BindableProperty<float> minJumpForce { get; }
         BindableProperty<float> doubleJumpForce { get; }
         BindableProperty<float> maxChargeTime { get; }
-
+        BindableProperty<bool> AllowDoubleJump { get; }
         [Header("移动设置")]
         BindableProperty<float> moveSpeed { get; }
         BindableProperty<float> airControlForce { get; }
@@ -88,7 +88,7 @@ namespace SkateGame
         public BindableProperty<bool> IsNearTrack { get; } = new BindableProperty<bool>(false);
         public BindableProperty<bool> IsNearWall { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> MoveSpeed { get; } = new BindableProperty<float>(5f);
-        public BindableProperty<float> JumpForce { get; } = new BindableProperty<float>(14f);
+        public BindableProperty<float> JumpForce { get; } = new BindableProperty<float>(0f);
         
         // air相关
         public BindableProperty<float> AirControlForce { get; } = new BindableProperty<float>(10f);
@@ -124,10 +124,11 @@ namespace SkateGame
         public BindableProperty<int> TrickBScore { get; } = new BindableProperty<int>(20);
 
         // 跳跃设置
-        public BindableProperty<float> maxJumpForce { get; } = new BindableProperty<float>(14f);
-        public BindableProperty<float> minJumpForce { get; } = new BindableProperty<float>(2f);
+        public BindableProperty<float> maxJumpForce { get; } = new BindableProperty<float>(6f);
+        public BindableProperty<float> minJumpForce { get; } = new BindableProperty<float>(0f);
         public BindableProperty<float> doubleJumpForce { get; } = new BindableProperty<float>(8f);
         public BindableProperty<float> maxChargeTime { get; } = new BindableProperty<float>(2f);
+        public BindableProperty<bool> AllowDoubleJump { get; } = new BindableProperty<bool>(true);
 
         // 移动设置
         public BindableProperty<float> moveSpeed { get; } = new BindableProperty<float>(5f);

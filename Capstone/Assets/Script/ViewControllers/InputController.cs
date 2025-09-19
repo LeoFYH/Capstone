@@ -136,6 +136,16 @@ namespace SkateGame
         protected override void OnRealTimeUpdate()
         {
             // 更新状态机
+
+            if(wasGrounded){
+                this.GetModel<IPlayerModel>().AllowDoubleJump.Value = true;
+                
+            }
+            else{
+                stateMachine.SwitchState("Air");
+                Debug.Log("切换到Air状态");
+            }
+
             stateMachine.UpdateCurrentState();
 
             // 更新轨道跳计时器
@@ -358,7 +368,7 @@ namespace SkateGame
             {
                 // 给予一个额外的跳跃力
                 Vector2 currentVelocity = rb.linearVelocity;
-                rb.linearVelocity = new Vector2(currentVelocity.x, playerModel.doubleJumpForce.Value);
+                rb.linearVelocity = new Vector2(currentVelocity.x, 0);
                 Debug.Log("奖励跳跃！获得额外跳跃力");
             }
         }
