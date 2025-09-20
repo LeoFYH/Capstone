@@ -230,20 +230,17 @@ namespace SkateGame
             
             if (colliders.Length > 0)
             {
-                Debug.Log($"Raycast检测到 {colliders.Length} 个 InteractiveLayer 对象:");
-                foreach (var collider in colliders)
-                {
-                    Debug.Log($"  - 对象: {collider.name}");
-                    Debug.Log($"  - 距离: {Vector2.Distance(playerPosition, collider.transform.position):F2}");
-                    Debug.Log($"  - 是Trigger: {collider.isTrigger}");
+               
+                this.GetModel<IPlayerModel>().isInPower.Value = true;
+                if(this.GetModel<IPlayerModel>().isInPower.Value){
+                    playerController.TrickABoostEffect.PlayFeedbacks();
+                    
                 }
+                Debug.Log("isInPower: " + this.GetModel<IPlayerModel>().isInPower.Value);
+              
             }
-            else
-            {
-                Debug.Log("Raycast没有检测到任何 InteractiveLayer 对象");
-            }
-            
-           
+          
+
         }
         
         // 使用多个方向的射线检测

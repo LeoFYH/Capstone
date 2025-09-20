@@ -59,6 +59,7 @@ namespace SkateGame
         BindableProperty<int> TrickAScore { get; }
         BindableProperty<float> TrickBDuration { get; }
         BindableProperty<int> TrickBScore { get; }
+        BindableProperty<bool> isInPower { get; }
 
         ///———————从inputcontroller迁移———————
         /// <summary>
@@ -76,6 +77,7 @@ namespace SkateGame
         BindableProperty<float> groundAccel { get; }
         BindableProperty<float> groundDecel { get; }
         BindableProperty<float> turnDecel { get; }
+        
     }
 
     public class PlayerModel : AbstractModel, IPlayerModel
@@ -122,6 +124,7 @@ namespace SkateGame
         public BindableProperty<int> TrickAScore { get; } = new BindableProperty<int>(20);
         public BindableProperty<float> TrickBDuration { get; } = new BindableProperty<float>(1.5f);
         public BindableProperty<int> TrickBScore { get; } = new BindableProperty<int>(20);
+        public BindableProperty<bool> isInPower { get; } = new BindableProperty<bool>(false);
 
         // 跳跃设置
         public BindableProperty<float> maxJumpForce { get; } = new BindableProperty<float>(6f);
