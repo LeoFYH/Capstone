@@ -1,5 +1,6 @@
 using QFramework;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace SkateGame
 {
@@ -78,17 +79,25 @@ namespace SkateGame
         {
             Debug.Log($"PlayerSystem: 接收到TrickAInputEvent");
             Debug.Log($"  - playerController存在: {playerController != null}");
+           
+
             if (playerController != null)
             {
-                Debug.Log($"  - IsGrounded(): {playerController.IsGrounded()}");
-                Debug.Log($"  - 玩家位置: {playerController.transform.position}");
-                Debug.Log($"  - 玩家速度: {playerController.GetRigidbody().linearVelocity}");
+                if (playerController.TrickAEffect != null)
+                {
+                    playerController.TrickAEffect.PlayFeedbacks();
+                }
+               
+                // 使用 Raycast 检测 InteractiveLayer 对象
+                DetectInteractiveObjectsWithRaycast();
+                 
             }
             
             if (playerController != null && !playerController.IsGrounded())
             {
                 Debug.Log("PlayerSystem: 在空中执行TrickA");
                 playerController.stateMachine.SwitchState("Trick", "TrickA");
+                
             }
             else
             {
@@ -207,5 +216,37 @@ namespace SkateGame
         {
             // Debug.Log($"状态切换: {evt.FromState} -> {evt.ToState}");
         }
+        
+        // 使用 Raycast 检测 InteractiveLayer 对象
+        private void DetectInteractiveObjectsWithRaycast()
+        {
+            if (playerController == null) return;
+            
+            Vector2 playerPosition = playerController.transform.position;
+            float detectionRadius = 2f; // 检测半径
+            
+            // 方法1: 使用 Physics2D.OverlapCircle 检测圆形区域
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(playerPosition, detectionRadius, LayerMask.GetMask("InteractiveLayer"));
+            
+            if (colliders.Length > 0)
+            {
+                Debug.Log($"Raycast检测到 {colliders.Length} 个 InteractiveLayer 对象:");
+                foreach (var collider in colliders)
+                {
+                    Debug.Log($"  - 对象: {collider.name}");
+                    Debug.Log($"  - 距离: {Vector2.Distance(playerPosition, collider.transform.position):F2}");
+                    Debug.Log($"  - 是Trigger: {collider.isTrigger}");
+                }
+            }
+            else
+            {
+                Debug.Log("Raycast没有检测到任何 InteractiveLayer 对象");
+            }
+            
+           
+        }
+        
+        // 使用多个方向的射线检测
+       
     }
 }

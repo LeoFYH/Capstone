@@ -79,6 +79,9 @@ namespace SkateGame
         public MMF_Player ReverseEffect;
         public MMF_Player GrindEffect;
         public MMF_Player WallRideEffect;
+        public MMF_Player TrickAEffect;
+        public MMF_Player TrickBEffect;
+        public MMF_Player TrickABoostEffect;
         [Header("粒子特效容器")]
         public Transform particleEffectContainer; // 粒子特效容器
         private float lastMoveInput = 0f; // 上一帧的移动输入
@@ -273,8 +276,9 @@ namespace SkateGame
             }
 
             // 技巧输入 - J对应TrickA，K对应TrickB
-            if (Input.GetKeyDown(KeyCode.J))
+            if (Input.GetKeyDown(KeyCode.W)&&stateMachine.GetCurrentStateName() == "Air")
             {
+                Debug.Log("trickainput");
                 this.SendEvent<TrickAInputEvent>();
             }
 
