@@ -27,10 +27,12 @@ namespace SkateGame
             if (playerController == null) return;
             
             string currentState = playerController.stateMachine.GetCurrentStateName();
+            Debug.Log("currentState:" + currentState);
             
             switch (currentState)
             {
                 case "Idle":
+                    break;
                 case "Move":
                     ApplyGroundMovement(evt.HorizontalInput);
                     break;

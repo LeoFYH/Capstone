@@ -168,7 +168,7 @@ namespace SkateGame
         {
             float moveInput = inputModel.Move.Value.x;
             
-            // 移动状态切换
+            // 移动状态切换 移动由OnMoveInput事件处理
             string currentState = stateMachine.GetCurrentStateName();
             if (currentState == "Idle" && Mathf.Abs(moveInput) > 0.01f && IsGrounded())
             {
