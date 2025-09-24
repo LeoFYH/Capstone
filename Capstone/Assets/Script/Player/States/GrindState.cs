@@ -92,7 +92,7 @@ public class GrindState : StateBase
             Vector2 moveDelta = direction * speed * Time.deltaTime;
             Vector3 pos = player.transform.position;
             pos.x += moveDelta.x;
-            pos.y = playerModel.CurrentTrack.Value.GetTrackPosition().y;
+            pos.y = playerModel.CurrentTrack.Value.GetTrackPosition().y+0.2f;
             player.transform.position = pos;
 
             rb.linearVelocity = new Vector2(direction.x * speed, 0);
@@ -123,7 +123,7 @@ public class GrindState : StateBase
         {
             Vector3 trackPos = playerModel.CurrentTrack.Value.GetTrackPosition();
             Vector3 playerPos = player.transform.position;
-            playerPos.y = trackPos.y;
+            playerPos.y = trackPos.y+0.2f;
             player.transform.position = playerPos;
         }
         else
