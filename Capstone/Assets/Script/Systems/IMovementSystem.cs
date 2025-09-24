@@ -47,7 +47,7 @@ namespace SkateGame
         
         public void ApplyGroundMovement(float horizontalInput)
         {
-            if (playerController == null || !playerController.IsGrounded()) return;
+            if (playerController == null || !playerModel.IsGrounded.Value) return;
 
             Rigidbody2D rb = playerController.GetRigidbody();
             if (rb == null) return;

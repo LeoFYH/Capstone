@@ -21,6 +21,8 @@ namespace SkateGame
 
         [Header("轨道设置")]
         public float grindJumpIgnoreTime = 0.2f;
+        [Header("Jump Setting")]
+        public float jumpTime = 0.2f;
 
         [Header("Wall Setting")]
         public Wall currentWall;
@@ -83,7 +85,7 @@ namespace SkateGame
                 }
             }
 
-            // 保存原始颜色
+            // 保存原始颜色 （待删）
             if (playerSprite != null)
             {
                 originalColor = playerSprite.color;
@@ -114,28 +116,23 @@ namespace SkateGame
         {
             // 更新状态机
             string currentState = stateMachine.GetCurrentStateName();
-
+            
+            IsGrounded();
+            /// Warning 待创建一个落地状态
             if(playerModel.WasGrounded.Value){
-                this.GetModel<IPlayerModel>().AllowDoubleJump.Value = true;
+                playerModel.AllowDoubleJump.Value = true;
                 
             }
-            else{
-                // 只有在不是特殊状态时才切换到Air状态
-                if (currentState != "Jump" && currentState != "DoubleJump" && 
-                    currentState != "WallRide" && currentState != "Trick" && 
-                    currentState != "PowerGrind" && currentState != "Reverse")
-                {
-                    stateMachine.SwitchState("Air");
-                }
+            // 如果离地但非跳跃，切换到Air状态
+            if(playerModel.WasGrounded.Value && !playerModel.IsGrounded.Value && currentState != "Jump")
+            {
+                stateMachine.SwitchState("Air");
             }
 
+            // 更新当前State
             stateMachine.UpdateCurrentState();
 
-            // 更新轨道跳计时器
-            if (playerModel.GrindJumpTimer.Value > 0f)
-            {
-                playerModel.GrindJumpTimer.Value -= Time.deltaTime;
-            }
+            /// Warning 移动到grindstate
 
             // 更新反向检测计时器
             if (playerModel.IsCheckingReverseWindow.Value)
@@ -152,9 +149,6 @@ namespace SkateGame
             // 重置跳跃标志
             hasJumpedThisFrame = false;
 
-            // 更新着地状态
-            playerModel.WasGrounded.Value = IsGrounded();
-
             // 检测输入并发送事件
             DetectInput();
 
@@ -170,11 +164,11 @@ namespace SkateGame
             
             // 移动状态切换 移动由OnMoveInput事件处理
             string currentState = stateMachine.GetCurrentStateName();
-            if (currentState == "Idle" && Mathf.Abs(moveInput) > 0.01f && IsGrounded())
+            if (currentState == "Idle" && Mathf.Abs(moveInput) > 0.01f && playerModel.WasGrounded.Value)
             {
                 stateMachine.SwitchState("Move");
             }
-            else if (currentState == "Move" && Mathf.Abs(moveInput) <= 0.01f && IsGrounded())
+            else if (currentState == "Move" && Mathf.Abs(moveInput) <= 0.01f && playerModel.WasGrounded.Value)
             {
                 stateMachine.SwitchState("Idle");
                 Debug.Log("2222:" + currentState);
@@ -221,7 +215,7 @@ namespace SkateGame
         }
         private void PowerGrind()
         {
-            if (inputModel.TrickStart.Value && IsGrounded())
+            if (inputModel.TrickStart.Value && playerModel.WasGrounded.Value)
             {
                 if (!playerModel.IsCheckingReverseWindow.Value)
                 {
@@ -240,14 +234,8 @@ namespace SkateGame
         #endregion
 
         #region Collision
-        public bool IsGrounded()
+        public void IsGrounded()
         {
-            if (rb == null)
-            {
-                Debug.LogWarning("IsGrounded: rb为空");
-                return false;
-            }
-
             // 使用多个射线检测来提高准确性
             Vector2 rayStart = transform.position;
             Vector2 rayDirection = Vector2.down;
@@ -276,8 +264,10 @@ namespace SkateGame
             }
 
             bool grounded = hit.collider != null;
-
-            return grounded;
+            
+            // 记录上一帧落地状态
+            playerModel.WasGrounded.Value = playerModel.IsGrounded.Value;
+            playerModel.IsGrounded.Value = grounded;
         }
         #endregion
 
@@ -314,7 +304,7 @@ namespace SkateGame
             Debug.Log("开始反向检测计时窗口");
         }
 
-        // 碰撞检测
+        #region Interaction Trigger
         void OnTriggerEnter2D(Collider2D other)
         {
             Debug.Log($"OnTriggerEnter2D: {other.name} (isTrigger: {other.isTrigger})");
@@ -362,16 +352,7 @@ namespace SkateGame
                 }
             }
         }
-
-        void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(transform.position, 1.5f);
-        }
-
-
-
-
+        #endregion
         private void HandleAimAndShoot()
         {
             // 按住R键进入瞄准
@@ -527,7 +508,6 @@ namespace SkateGame
                     }
                 }
             }
-            
             // 更新上一帧的移动输入
             lastMoveInput = currentMoveInput;
         }

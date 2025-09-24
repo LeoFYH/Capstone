@@ -25,11 +25,15 @@ public class JumpState : StateBase
     public override void Enter()
     {
         // Debug.Log("JumpState.Enter() - 开始跳跃");
+        playerModel.GrindJumpTimer.Value = player.grindJumpIgnoreTime;
         isCharging = true;
         chargeTime = 0f;
         hasJumped = false;
         initialHorizontalVelocity = rb.linearVelocity.x;
         // Debug.Log($"初始水平速度: {initialHorizontalVelocity}");
+
+        // Reset local jump timer
+        playerModel.StateTimer.Value = player.jumpTime;
         
         // 立即发送跳跃执行事件
         player.SendEvent<JumpExecuteEvent>();
@@ -37,6 +41,8 @@ public class JumpState : StateBase
 
     public override void Update()
     {
+        UpdateGrindJumpTimer();
+        
         // 蓄力跳逻辑（现在只是计时，移动由移动系统处理）
         if (isCharging)
         {
@@ -45,30 +51,27 @@ public class JumpState : StateBase
                 chargeTime = playerModel.maxChargeTime.Value;
         }
         
-        // Jump状态下发送移动事件
-        
+        if (playerModel.StateTimer.Value > 0f)
+        {
+            playerModel.StateTimer.Value -= Time.deltaTime;
+        }
+        else
+        {
+            player.stateMachine.SwitchState("Air");
+        }
     }
-    ///
-    /// //
-    
-    // 公共方法，供InputController调用执行跳跃
-    //错了 应该写进系统逻辑 state只管发信号给系统
-    // public void ExecuteJump()
-    // {
-    //     Debug.Log($"执行跳跃 - 使用固定跳跃力: {player.maxJumpForce}");
-    //     float jumpForce = player.maxJumpForce;
-    //     rb.velocity = new Vector2(initialHorizontalVelocity, jumpForce); // 完整继承初始速度
-    //     Debug.Log($"设置速度: ({initialHorizontalVelocity}, {jumpForce})");
-    //     isCharging = false;
-    //     hasJumped = true;
-    //     Debug.Log("跳跃执行完成");
-        
-    //     // 立即切换到Air状态，这样空中移动就能正常工作
-    //     player.stateMachine.SwitchState("Air");
-    // }
 
     public override void Exit()
     {
         // Debug.Log("退出Jump状态");
+    }
+    
+    private void UpdateGrindJumpTimer()
+    {
+        // 更新轨道跳计时器
+        if (playerModel.GrindJumpTimer.Value > 0f)
+        {
+            playerModel.GrindJumpTimer.Value -= Time.deltaTime;
+        }
     }
 } 

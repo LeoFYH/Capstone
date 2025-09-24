@@ -110,7 +110,7 @@ public class TrickState : StateBase
     public override void Update()
     {
         // 检测落地，如果落地则立即退出技巧状态
-        if (player.IsGrounded())
+        if (playerModel.IsGrounded.Value)
         {
             // 处理瞄准时间奖励（如果执行了trick）
             player.HandleLandingAimTimeBonus();

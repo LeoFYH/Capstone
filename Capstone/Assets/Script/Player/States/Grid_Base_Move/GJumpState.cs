@@ -1,14 +1,14 @@
 using UnityEngine;
 using SkateGame;
 
-public class GJumpState : StateBase
+public class GJumpState : JumpState
 {
     private InputController player;
     private Rigidbody2D rb;
     private bool hasJumped = false;
     public bool canDoubleJump = true;
 
-    public GJumpState(InputController player, Rigidbody2D rb)
+    public GJumpState(InputController player, Rigidbody2D rb) : base(player, rb)
     {
         this.player = player;
         this.rb = rb;
@@ -18,7 +18,9 @@ public class GJumpState : StateBase
 
     public override void Enter()
     {
-        // Debug.Log("GJ");
+        Debug.Log("GJ");
+        
+        playerModel.GrindJumpTimer.Value = player.grindJumpIgnoreTime;
         hasJumped = true;
         canDoubleJump = true;
 
@@ -50,7 +52,7 @@ public class GJumpState : StateBase
             Debug.Log("DoubleJump88888888888!");
         }
 
-        if (player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
+        if (playerModel.WasGrounded.Value && rb.linearVelocity.y <= 0.01f)
         {
             player.stateMachine.SwitchState("Idle");
             Debug.Log("2222:" + player.stateMachine.GetCurrentStateName());

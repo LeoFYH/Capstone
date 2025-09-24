@@ -37,7 +37,7 @@ public class DoubleJumpState : StateBase
         //}
         
         // 检测落地，落地后切回Idle
-        if (player.IsGrounded() && rb.linearVelocity.y <= 0.01f)
+        if (playerModel.IsGrounded.Value && rb.linearVelocity.y <= 0.01f)
         {
             player.stateMachine.SwitchState("Idle");
             Debug.Log("2222:" + player.stateMachine.GetCurrentStateName());

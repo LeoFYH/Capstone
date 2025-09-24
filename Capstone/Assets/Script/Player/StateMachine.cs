@@ -38,34 +38,17 @@ public class E
     
     // 切换到指定状态（带参数）
     public void SwitchState(string stateName, object data)
-    {
-        if (states.ContainsKey(stateName))
+    {   
+        if (currentState == null)
+        {
+            EnterState(stateName, data);
+        }
+        else if (currentState.GetStateName() != stateName)
         {
             StateBase oldState = currentState;
+            currentState.Exit();
+            EnterState(stateName, data, oldState);
             
-            // 退出当前状态
-            if (currentState != null)
-            {
-                currentState.Exit();
-            }
-            
-            // 切换到新状态
-            currentState = states[stateName];
-            
-            // 进入新状态（传递数据）
-            if (currentState is TrickState trickState && data is string trickName)
-            {
-                //调用trickstate的settrickname方法来传入特技名称
-                trickState.SetTrickName(trickName);
-            }
-            currentState.Enter();
-            
-            // 触发状态切换事件
-            OnStateChanged?.Invoke(oldState, currentState);
-        }
-        else
-        {
-            // Debug.LogWarning($"状态 '{stateName}' 不存在！");
         }
     }
     
@@ -111,5 +94,20 @@ public class E
     {
         states.Clear();
         currentState = null;
+    }
+    // 进入新状态（传递数据）
+    public void EnterState(string stateName, object data, StateBase oldState = null)
+    {
+        currentState = states[stateName];
+        if (currentState is TrickState trickState && data is string trickName)
+        {
+            //调用trickstate的settrickname方法来传入特技名称
+            trickState.SetTrickName(trickName);
+        }
+        currentState.Enter();
+
+        // 触发状态切换事件
+        OnStateChanged?.Invoke(oldState, currentState);
+        Debug.Log("SwitchState to " + stateName);
     }
 } 

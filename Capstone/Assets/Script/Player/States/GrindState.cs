@@ -100,11 +100,9 @@ public class GrindState : StateBase
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            // Debug.Log("G Jump");
             isJumping = true;
             rb.gravityScale = 1f;
             rb.linearVelocity = new Vector2(direction.x * speed, 10f);
-            playerModel.GrindJumpTimer.Value = player.grindJumpIgnoreTime;
 
             if (inputModel.Grind.Value)
             {
@@ -151,4 +149,5 @@ public class GrindState : StateBase
             Debug.LogWarning("pGrindEffect为null，无法停止效果");
         }
     }
+
 }

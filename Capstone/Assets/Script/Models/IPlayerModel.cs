@@ -14,6 +14,7 @@ namespace SkateGame
         BindableProperty<bool> IsNearWall { get; }
         BindableProperty<float> MoveSpeed { get; }
         BindableProperty<float> JumpForce { get; }
+        BindableProperty<float> StateTimer { get; }
 
         /// <summary>
         /// air相关
@@ -80,7 +81,7 @@ namespace SkateGame
         
         // 非输入的运行时/调参（来自 InputController，但不包含 isEHeld/isWHeld 等原始输入）
         BindableProperty<Track> CurrentTrack { get; }
-        BindableProperty<float> GrindJumpTimer { get; }
+        BindableProperty<float> GrindJumpTimer { get; } // 用来防止跳跃后被吸附到原先滑轨
         BindableProperty<bool> WasGrounded { get; }
         BindableProperty<bool> IsCheckingReverseWindow { get; }
         BindableProperty<float> ReverseTimer { get; }
@@ -102,6 +103,7 @@ namespace SkateGame
         public BindableProperty<bool> IsNearWall { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> MoveSpeed { get; } = new BindableProperty<float>(5f);
         public BindableProperty<float> JumpForce { get; } = new BindableProperty<float>(0f);
+        public BindableProperty<float> StateTimer { get; } = new BindableProperty<float>(0f);
         
         // air相关
         public BindableProperty<float> AirControlForce { get; } = new BindableProperty<float>(10f);

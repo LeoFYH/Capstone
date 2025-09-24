@@ -59,7 +59,7 @@ public class AirState : StateBase
         }
 
         // 检测落地
-        if (player.IsGrounded())
+        if (playerModel.IsGrounded.Value)
         {
             // 落地时根据连击数给予奖励
             if (playerModel.AirCombo.Value > 0)

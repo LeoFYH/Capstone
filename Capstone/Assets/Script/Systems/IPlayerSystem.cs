@@ -93,7 +93,7 @@ namespace SkateGame
                  
             }
             
-            if (playerController != null && !playerController.IsGrounded())
+            if (playerController != null && !playerModel.IsGrounded.Value)
             {
                 Debug.Log("PlayerSystem: 在空中执行TrickA");
                 playerController.stateMachine.SwitchState("Trick", "TrickA");
@@ -107,7 +107,7 @@ namespace SkateGame
 
         private void OnTrickBInput(TrickBInputEvent evt)
         {
-            if (playerController != null && !playerController.IsGrounded())
+            if (playerController != null && !playerModel.IsGrounded.Value)
             {
                 // 直接切换到技巧状态，传递技巧名称
                 playerController.stateMachine.SwitchState("Trick", "TrickB");
@@ -133,9 +133,6 @@ namespace SkateGame
                     rb.linearVelocity = new Vector2(currentHorizontalVelocity, jumpForce);
                     
                     Debug.Log($"系统执行跳跃 - 使用跳跃力: {jumpForce}, 水平速度: {currentHorizontalVelocity}");
-                    
-                    // 立即切换到Air状态
-                    playerController.stateMachine.SwitchState("Air");
                 }
                 else
                 {
@@ -152,33 +149,33 @@ namespace SkateGame
         {
             Debug.Log($"OnGrindInput被调用:");
             Debug.Log($"  - playerController: {(playerController != null ? "存在" : "null")}");
-            Debug.Log($"  - IsGrounded(): {(playerController != null ? playerController.IsGrounded().ToString() : "N/A")}");
+            Debug.Log($"  - IsGrounded(): {(playerController != null ? playerModel.IsGrounded.Value.ToString() : "N/A")}");
             Debug.Log($"  - isNearTrack: {(playerController != null ? playerModel.IsNearTrack.Value.ToString() : "N/A")}");
             Debug.Log($"  - grindJumpTimer: {(playerController != null ? playerModel.GrindJumpTimer.Value.ToString() : "N/A")}");
             Debug.Log($"  - isNearWall: {(playerController != null ? playerModel.IsNearWall.Value.ToString() : "N/A")}");
-            
+            Debug.Log($"  - grindJumpTimer: {(playerController != null ? playerModel.GrindJumpTimer.Value.ToString() : "N/A")}");
             if (playerController != null)
             {
                 // 如果在地面上且靠近滑轨，直接切换到滑轨状态
-                if (playerController.IsGrounded() && playerModel.IsNearTrack.Value && playerModel.GrindJumpTimer.Value <= 0f)
+                if (playerModel.IsGrounded.Value && playerModel.IsNearTrack.Value && playerModel.GrindJumpTimer.Value <= 0f)
                 {
                     Debug.Log("在地面上切换到Grind状态");
                     playerController.stateMachine.SwitchState("Grind");
                 }
                 // 如果在空中且靠近滑轨
-                else if (!playerController.IsGrounded() && playerModel.IsNearTrack.Value && playerModel.GrindJumpTimer.Value <= 0f)
+                else if (!playerModel.IsGrounded.Value && playerModel.IsNearTrack.Value && playerModel.GrindJumpTimer.Value <= 0f)
                 {
                     Debug.Log("在空中切换到Grind状态");
                     playerController.stateMachine.SwitchState("Grind");
                 }
                 // 如果在空中且靠近墙壁
-                else if (!playerController.IsGrounded() && playerModel.IsNearWall.Value)
+                else if (!playerModel.IsGrounded.Value && playerModel.IsNearWall.Value)
                 {
                     Debug.Log("切换到WallRide状态");
                     playerController.stateMachine.SwitchState("WallRide");
                 }
                 // 如果在空中但不在滑轨或墙壁附近
-                else if (!playerController.IsGrounded())
+                else if (!playerModel.IsGrounded.Value)
                 {
                     Debug.Log("切换到Grab状态");
                     playerController.stateMachine.SwitchState("Grab");
@@ -196,7 +193,7 @@ namespace SkateGame
         
         private void OnPowerGrindInput(PowerGrindInputEvent evt)
         {
-            if (playerController != null && playerController.IsGrounded())
+            if (playerController != null && playerModel.IsGrounded.Value)
             {
                 playerController.stateMachine.SwitchState("PowerGrind");
                 // Debug.Log("切换到强力轨道状态");
@@ -205,7 +202,7 @@ namespace SkateGame
         
         private void OnReverseInput(ReverseInputEvent evt)
         {
-            if (playerController != null && playerController.IsGrounded())
+            if (playerController != null && playerModel.IsGrounded.Value)
             {
                 playerController.stateMachine.SwitchState("Reverse");
                 // Debug.Log("切换到反向状态");
