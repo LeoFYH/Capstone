@@ -27,7 +27,6 @@ namespace SkateGame
             if (playerController == null) return;
             
             string currentState = playerController.stateMachine.GetCurrentStateName();
-            Debug.Log("currentState:" + currentState);
             
             switch (currentState)
             {

@@ -13,7 +13,8 @@ namespace SkateGame
         InputAction _restartAction;
         InputAction _jumpAction;
         InputAction _grindAction;
-
+        InputAction _switchItemAction;
+        InputAction _trickAction;
         public IArchitecture GetArchitecture() => GameApp.Interface;
         
         void Awake()
@@ -22,6 +23,8 @@ namespace SkateGame
             _moveAction = _inputs.Player.Move;
             _jumpAction = _inputs.Player.Jump;
             _grindAction = _inputs.Player.Grind;
+            _switchItemAction = _inputs.Player.SwitchItem;
+            _trickAction = _inputs.Player.Trick;
         }
 
         private void OnEnable() => _inputs.Enable();
@@ -35,6 +38,9 @@ namespace SkateGame
                 Move = _moveAction.ReadValue<Vector2>(),
                 Jump = _jumpAction.IsPressed(),
                 Grind = _grindAction.IsPressed(),
+                SwitchItem = _switchItemAction.IsPressed(),
+                Trick = _trickAction.IsPressed(),
+                TrickStart= _trickAction.WasPressedThisFrame(),
             };
         }
 
@@ -44,6 +50,9 @@ namespace SkateGame
             inputModel.Move.Value = Gather().Move;
             inputModel.Jump.Value = Gather().Jump;
             inputModel.Grind.Value = Gather().Grind;
+            inputModel.SwitchItem.Value = Gather().SwitchItem;
+            inputModel.Trick.Value = Gather().Trick;
+            inputModel.TrickStart.Value = Gather().TrickStart;
         }
 
         public struct FrameInput
@@ -51,6 +60,9 @@ namespace SkateGame
             public Vector2 Move;
             public bool Jump;
             public bool Grind;
+            public bool SwitchItem;
+            public bool Trick;
+            public bool TrickStart;
         }
 
     }

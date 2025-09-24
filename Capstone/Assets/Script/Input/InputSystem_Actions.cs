@@ -53,6 +53,24 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SwitchItem"",
+                    ""type"": ""Button"",
+                    ""id"": ""4d8cb673-1f15-4e7e-947b-a4da4a334f43"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Trick"",
+                    ""type"": ""Button"",
+                    ""id"": ""e41bd53a-ee34-439a-b8ee-60d6d1471fbd"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -196,6 +214,28 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Grind"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""64b5a47a-0ebb-4ecd-a524-63a1b1c8a89c"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b64836b2-49ee-49d9-b883-b1d56bb4cdf5"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Trick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -786,6 +826,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Grind = m_Player.FindAction("Grind", throwIfNotFound: true);
+        m_Player_SwitchItem = m_Player.FindAction("SwitchItem", throwIfNotFound: true);
+        m_Player_Trick = m_Player.FindAction("Trick", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -868,6 +910,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Grind;
+    private readonly InputAction m_Player_SwitchItem;
+    private readonly InputAction m_Player_Trick;
     public struct PlayerActions
     {
         private @InputSystem_Actions m_Wrapper;
@@ -875,6 +919,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Grind => m_Wrapper.m_Player_Grind;
+        public InputAction @SwitchItem => m_Wrapper.m_Player_SwitchItem;
+        public InputAction @Trick => m_Wrapper.m_Player_Trick;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -893,6 +939,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Grind.started += instance.OnGrind;
             @Grind.performed += instance.OnGrind;
             @Grind.canceled += instance.OnGrind;
+            @SwitchItem.started += instance.OnSwitchItem;
+            @SwitchItem.performed += instance.OnSwitchItem;
+            @SwitchItem.canceled += instance.OnSwitchItem;
+            @Trick.started += instance.OnTrick;
+            @Trick.performed += instance.OnTrick;
+            @Trick.canceled += instance.OnTrick;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -906,6 +958,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Grind.started -= instance.OnGrind;
             @Grind.performed -= instance.OnGrind;
             @Grind.canceled -= instance.OnGrind;
+            @SwitchItem.started -= instance.OnSwitchItem;
+            @SwitchItem.performed -= instance.OnSwitchItem;
+            @SwitchItem.canceled -= instance.OnSwitchItem;
+            @Trick.started -= instance.OnTrick;
+            @Trick.performed -= instance.OnTrick;
+            @Trick.canceled -= instance.OnTrick;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1091,6 +1149,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnGrind(InputAction.CallbackContext context);
+        void OnSwitchItem(InputAction.CallbackContext context);
+        void OnTrick(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

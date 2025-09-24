@@ -26,7 +26,6 @@ namespace SkateGame
         public Wall currentWall;
 
         [Header("Button Check")]
-        public bool isWHeld = false;
         private bool hasJumpedThisFrame = false; // 防止同一帧重复跳跃
 
         [Header("Ground Detection")]
@@ -77,7 +76,11 @@ namespace SkateGame
             // 获取玩家精灵渲染器
             if (playerSprite == null)
             {
-                playerSprite = GetComponent<SpriteRenderer>();
+                playerSprite = GetComponentInChildren<SpriteRenderer>();
+                if (playerSprite == null)
+                {
+                    playerSprite = GetComponent<SpriteRenderer>();
+                }
             }
 
             // 保存原始颜色
@@ -154,9 +157,6 @@ namespace SkateGame
 
             // 检测输入并发送事件
             DetectInput();
-            Move();
-            Jump();
-            Grind();
 
             HandleAimAndShoot();
             
@@ -181,6 +181,17 @@ namespace SkateGame
             }
         }
 
+        #region Player Actions
+        
+        private void DetectInput()
+        {
+            Move();
+            Jump();
+            Grind();
+            SwitchItem();
+            PowerGrind();
+            Trick();
+        }
         private void Jump()
         {
             if (inputModel.Jump.Value && stateMachine.GetCurrentStateName() != "Air")
@@ -200,66 +211,35 @@ namespace SkateGame
                 this.SendEvent<GrindInputEvent>();
             }
         }
-        private void DetectInput()
+        private void SwitchItem()
         {
-            // 获取当前状态和移动输入
-            string currentState = stateMachine.GetCurrentStateName();
-            if (Input.GetKeyDown(KeyCode.F))
+            if (inputModel.SwitchItem.Value)
             {
                 playerModel.CurrentBulletIndex.Value = (playerModel.CurrentBulletIndex.Value + 1) % bulletPrefabs.Length;
                 Debug.Log("当前子弹类型: " + playerModel.CurrentBulletIndex.Value);
             }
-
-            // 强力轨道输入 - 只有在没有按Space键时才触发
-            if (Input.GetKeyDown(KeyCode.W) && IsGrounded() && !Input.GetKey(KeyCode.Space))
+        }
+        private void PowerGrind()
+        {
+            if (inputModel.TrickStart.Value && IsGrounded())
             {
-                isWHeld = true;
-
                 if (!playerModel.IsCheckingReverseWindow.Value)
                 {
                     CheckReverseWindow();
                 }
-
                 stateMachine.SwitchState("PowerGrind");
             }
-
-            if (Input.GetKeyUp(KeyCode.W))
+        }
+        private void Trick()
+        {
+            if (inputModel.TrickStart.Value && stateMachine.GetCurrentStateName() == "Air")
             {
-                isWHeld = false;
-            }
-
-            // 技巧输入 - J对应TrickA，K对应TrickB
-            if (Input.GetKeyDown(KeyCode.W)&&stateMachine.GetCurrentStateName() == "Air")
-            {
-                Debug.Log("trickainput");
                 this.SendEvent<TrickAInputEvent>();
             }
-
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                this.SendEvent<TrickBInputEvent>();
-            }
-
-            // 反向检测 - 在PowerGrind状态下检测反向输入
-            if (currentState == "PowerGrind" && playerModel.IsCheckingReverseWindow.Value)
-            {
-                float currentVelocityX = rb.linearVelocity.x;
-
-                // 如果当前有水平速度且输入方向与速度方向相反
-                if (Mathf.Abs(currentVelocityX) > 1f && Mathf.Abs(inputModel.Move.Value.x) > 0.01f)
-                {
-                    if (Mathf.Sign(inputModel.Move.Value.x) != Mathf.Sign(currentVelocityX))
-                    {
-                        Debug.Log($"PowerGrind状态下检测到反向输入: 当前速度={currentVelocityX}, 输入={inputModel.Move.Value.x}");
-                        stateMachine.SwitchState("Reverse");
-                        playerModel.IsCheckingReverseWindow.Value = false;
-                        return; // 进入反向状态后直接返回，不处理其他逻辑
-                    }
-                }
-            }
         }
+        #endregion
 
-        // 提供给状态机使用的方法
+        #region Collision
         public bool IsGrounded()
         {
             if (rb == null)
@@ -299,7 +279,9 @@ namespace SkateGame
 
             return grounded;
         }
+        #endregion
 
+        // 提供给状态机使用的方法
         public Rigidbody2D GetRigidbody()
         {
             return rb;
