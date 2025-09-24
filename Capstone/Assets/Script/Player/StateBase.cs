@@ -6,10 +6,12 @@ using SkateGame;
 public abstract class StateBase : ICanGetModel, IBelongToArchitecture
 {
     protected IPlayerModel playerModel;
+    protected IInputModel inputModel;
 
     protected StateBase()
     {
         playerModel = this.GetModel<IPlayerModel>();
+        inputModel = this.GetModel<IInputModel>();
     }
     // 进入状态时调用
     public virtual void Enter() { }

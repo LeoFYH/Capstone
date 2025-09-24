@@ -24,7 +24,7 @@ public class GrabbingState : StateBase
     {
         // Debug.Log("Keep Grabbing");
 
-        if (player.isEHeld == false)
+        if (inputModel.Grind.Value == false)
         {
             player.stateMachine.SwitchState("Idle");
             Debug.Log("2222:" + player.stateMachine.GetCurrentStateName());

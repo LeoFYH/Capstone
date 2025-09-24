@@ -23,16 +23,11 @@ public class AirState : StateBase
 
     public override void Enter()
     {
-        player.isInAir = true;
-        player.airTime = 0f;
-        player.airCombo = 0;
          Debug.Log("进入空中状态");
     }
 
     public override void Update()
     {
-        // 更新空中时间
-        player.airTime += Time.deltaTime;
         
         // Air状态下发送移动事件
         float moveInput = Input.GetAxisRaw("Horizontal");
@@ -64,11 +59,10 @@ public class AirState : StateBase
         }
 
         // 检测落地
-        if (player.IsGrounded() && player.isInAir)
+        if (player.IsGrounded())
         {
-            player.isInAir = false;
             // 落地时根据连击数给予奖励
-            if (player.airCombo > 0)
+            if (playerModel.AirCombo.Value > 0)
             {
                 // Debug.Log($"空中连击完成！连击数: {player.airCombo}");
                 // 这里可以添加连击奖励逻辑
@@ -90,7 +84,6 @@ public class AirState : StateBase
 
     public override void Exit()
     {
-        player.isInAir = false;
         Debug.Log("退出空中状态");
     }
 } 
