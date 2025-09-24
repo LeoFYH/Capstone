@@ -78,6 +78,17 @@ namespace SkateGame
         BindableProperty<float> groundDecel { get; }
         BindableProperty<float> turnDecel { get; }
         
+        // 非输入的运行时/调参（来自 InputController，但不包含 isEHeld/isWHeld 等原始输入）
+        BindableProperty<Track> CurrentTrack { get; }
+        BindableProperty<float> GrindJumpTimer { get; }
+        BindableProperty<bool> WasGrounded { get; }
+        BindableProperty<bool> IsCheckingReverseWindow { get; }
+        BindableProperty<float> ReverseTimer { get; }
+        BindableProperty<bool> IsAiming { get; }
+        BindableProperty<float> MaxAimTime { get; }
+        BindableProperty<float> AimTimer { get; }
+        BindableProperty<int> CurrentBulletIndex { get; }
+        BindableProperty<bool> HasPerformedTrickInAir { get; }
     }
 
     public class PlayerModel : AbstractModel, IPlayerModel
@@ -141,6 +152,17 @@ namespace SkateGame
         public BindableProperty<float> groundDecel { get; } = new BindableProperty<float>(10f);
         public BindableProperty<float> turnDecel { get; } = new BindableProperty<float>(40f);
 
+        // 非输入的运行时/调参（来自 InputController，但不包含 isEHeld/isWHeld 等原始输入）
+        public BindableProperty<Track> CurrentTrack { get; } = new BindableProperty<Track>(null);
+        public BindableProperty<float> GrindJumpTimer { get; } = new BindableProperty<float>(0f);
+        public BindableProperty<bool> WasGrounded { get; } = new BindableProperty<bool>(true);
+        public BindableProperty<bool> IsCheckingReverseWindow { get; } = new BindableProperty<bool>(false);
+        public BindableProperty<float> ReverseTimer { get; } = new BindableProperty<float>(0f);
+        public BindableProperty<bool> IsAiming { get; } = new BindableProperty<bool>(false);
+        public BindableProperty<float> MaxAimTime { get; } = new BindableProperty<float>(3f);
+        public BindableProperty<float> AimTimer { get; } = new BindableProperty<float>(0f);
+        public BindableProperty<int> CurrentBulletIndex { get; } = new BindableProperty<int>(0);
+        public BindableProperty<bool> HasPerformedTrickInAir { get; } = new BindableProperty<bool>(false);
         protected override void OnInit()
         {
             // 初始化逻辑

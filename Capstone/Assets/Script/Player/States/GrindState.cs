@@ -28,7 +28,7 @@ public class GrindState : StateBase
         // Debug.Log("E Grind");
         
         // 检查currentTrack是否为null
-        if (player.currentTrack == null)
+        if (playerModel.CurrentTrack.Value == null)
         {
             Debug.LogError("GrindState.Enter: currentTrack为null，无法进入滑轨状态");
             player.stateMachine.SwitchState("Jump");
@@ -40,7 +40,7 @@ public class GrindState : StateBase
         normalG = rb.gravityScale;
         if (speed < 0.1f)
         {
-            Vector2 trackDir = player.currentTrack.GetTrackDirection();
+            Vector2 trackDir = playerModel.CurrentTrack.Value.GetTrackDirection();
             direction = new Vector2(trackDir.x, 0).normalized;
             speed = playerModel.moveSpeed.Value;
         }
@@ -69,7 +69,7 @@ public class GrindState : StateBase
     public override void Update()
     {
         // 首先检查E键是否按住，如果没有按住立即退出
-        if (!player.isEHeld)
+        if (!inputModel.Grind.Value)
         {
             Debug.Log("GrindState: E键未按住，切换到Jump状态");
             player.stateMachine.SwitchState("Jump");
@@ -77,7 +77,7 @@ public class GrindState : StateBase
         }
         
         // 然后检查currentTrack是否为null
-        if (player.currentTrack == null)
+        if (playerModel.CurrentTrack.Value == null)
         {
             Debug.Log("GrindState: currentTrack为null，切换到Jump状态");
             player.stateMachine.SwitchState("Jump");
@@ -87,12 +87,12 @@ public class GrindState : StateBase
         if (isJumping) return;
 
         // 再次检查currentTrack，确保安全
-        if (player.currentTrack != null)
+        if (playerModel.CurrentTrack.Value != null)
         {
             Vector2 moveDelta = direction * speed * Time.deltaTime;
             Vector3 pos = player.transform.position;
             pos.x += moveDelta.x;
-            pos.y = player.currentTrack.GetTrackPosition().y;
+            pos.y = playerModel.CurrentTrack.Value.GetTrackPosition().y;
             player.transform.position = pos;
 
             rb.linearVelocity = new Vector2(direction.x * speed, 0);
@@ -104,9 +104,9 @@ public class GrindState : StateBase
             isJumping = true;
             rb.gravityScale = 1f;
             rb.linearVelocity = new Vector2(direction.x * speed, 10f);
-            player.grindJumpTimer = player.grindJumpIgnoreTime;
+            playerModel.GrindJumpTimer.Value = player.grindJumpIgnoreTime;
 
-            if (player.isEHeld)
+            if (inputModel.Grind.Value)
             {
                 player.StartCoroutine(player.SwitchToStateDelayed("Grab"));
             }
@@ -119,9 +119,9 @@ public class GrindState : StateBase
 
     private void SnapPlayerToTrack()
     {
-        if (player.currentTrack != null)
+        if (playerModel.CurrentTrack.Value != null)
         {
-            Vector3 trackPos = player.currentTrack.GetTrackPosition();
+            Vector3 trackPos = playerModel.CurrentTrack.Value.GetTrackPosition();
             Vector3 playerPos = player.transform.position;
             playerPos.y = trackPos.y;
             player.transform.position = playerPos;

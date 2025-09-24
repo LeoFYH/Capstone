@@ -13,64 +13,41 @@ namespace SkateGame
     public class InputController : ViewerControllerBase
     {
         private IPlayerModel playerModel;
+        private IInputModel inputModel;
 
         [Header("状态机")]
         public E stateMachine;
         private Rigidbody2D rb;
 
         [Header("轨道设置")]
-        public Track currentTrack;
         public float grindJumpIgnoreTime = 0.2f;
-        public float grindJumpTimer = 0f;
-
-        [Header("空中设置")]
-        public bool isInAir = false;
-        public float airTime = 0f;
-        public int airCombo = 0;
-        public bool isNearTrack = false;
 
         [Header("Wall Setting")]
         public Wall currentWall;
-        public bool isNearWall = false;
 
         [Header("Button Check")]
-        public bool isEHeld = false;
         public bool isWHeld = false;
         private bool hasJumpedThisFrame = false; // 防止同一帧重复跳跃
 
         [Header("Ground Detection")]
         public LayerMask groundLayer = 1; // 地面层级
-        private bool wasGrounded = false; // 上一帧是否着地
-        private float jumpBufferTime = 0.1f; // 跳跃缓冲时间
-        private float jumpBufferTimer = 0f; // 跳跃缓冲计时器
-
-        [Header("Life Setting")]
-        public bool canBeHurt;
 
         [Header("Combat Setting")]
-        public bool isPowerGrinding;
-        private bool isCheckingReverseWindow = false;
-        public float reverseInputWindow = 2.0f;
-        private float reverseTimer = 0f;
+        public float reverseInputWindow = 2.0f; 
 
         [Header("瞄准与射击设置")]
         public LineRenderer aimLine;      // 瞄准线
         public float aimLineLength = 10f; // 瞄准线长度
         public LayerMask shootLayer;
-        public float maxAimTime = 3f;     // 最大瞄准时间
 
-        public bool isAiming = false;
         public GameObject[] bulletPrefabs;   // 可切换的子弹类型
-        private int currentBulletIndex = 0;
         public float bulletSpeed = 15f;
-        private float aimTimer = 0f;      // 瞄准计时器
 
         [Header("颜色设置")]
         public SpriteRenderer playerSprite; // 玩家精灵渲染器
         private Color originalColor = Color.white; // 原始颜色
 
         [Header("瞄准时间奖励")]
-        private bool hasPerformedTrickInAir = false; // 是否在空中执行了trick
         private float _baseMaxAimTime = 3f; // 基础瞄准时间上限
 
 
@@ -86,11 +63,13 @@ namespace SkateGame
         public Transform particleEffectContainer; // 粒子特效容器
         private float lastMoveInput = 0f; // 上一帧的移动输入
         private bool isFacingRight = true; // 当前面向方向
+
         protected override void InitializeController()
         {
-            // Debug.Log("玩家控制器初始化完成");
             // 获取玩家参数
             playerModel = this.GetModel<IPlayerModel>();
+
+            inputModel = this.GetModel<IInputModel>();
             
             // 获取组件
             rb = GetComponent<Rigidbody2D>();
@@ -108,7 +87,7 @@ namespace SkateGame
             }
 
             // 初始化瞄准时间
-            _baseMaxAimTime = maxAimTime;
+            playerModel.MaxAimTime.Value = baseMaxAimTime;
 
             // 初始化状态机
             stateMachine = new E();
@@ -133,7 +112,7 @@ namespace SkateGame
             // 更新状态机
             string currentState = stateMachine.GetCurrentStateName();
 
-            if(wasGrounded){
+            if(playerModel.WasGrounded.Value){
                 this.GetModel<IPlayerModel>().AllowDoubleJump.Value = true;
                 
             }
@@ -144,32 +123,25 @@ namespace SkateGame
                     currentState != "PowerGrind" && currentState != "Reverse")
                 {
                     stateMachine.SwitchState("Air");
-                    Debug.Log("切换到Air状态");
                 }
             }
 
             stateMachine.UpdateCurrentState();
 
             // 更新轨道跳计时器
-            if (grindJumpTimer > 0f)
+            if (playerModel.GrindJumpTimer.Value > 0f)
             {
-                grindJumpTimer -= Time.deltaTime;
-            }
-
-            // 更新跳跃缓冲计时器
-            if (jumpBufferTimer > 0f)
-            {
-                jumpBufferTimer -= Time.deltaTime;
+                playerModel.GrindJumpTimer.Value -= Time.deltaTime;
             }
 
             // 更新反向检测计时器
-            if (isCheckingReverseWindow)
+            if (playerModel.IsCheckingReverseWindow.Value)
             {
-                reverseTimer += Time.deltaTime;
-                if (reverseTimer >= reverseInputWindow)
+                playerModel.ReverseTimer.Value += Time.deltaTime;
+                if (playerModel.ReverseTimer.Value >= reverseInputWindow)
                 {
-                    isCheckingReverseWindow = false;
-                    reverseTimer = 0f;
+                    playerModel.IsCheckingReverseWindow.Value = false;
+                    playerModel.ReverseTimer.Value = 0f;
                     Debug.Log("反向检测计时窗口结束");
                 }
             }
@@ -178,10 +150,13 @@ namespace SkateGame
             hasJumpedThisFrame = false;
 
             // 更新着地状态
-            wasGrounded = IsGrounded();
+            playerModel.WasGrounded.Value = IsGrounded();
 
             // 检测输入并发送事件
             DetectInput();
+            Move();
+            Jump();
+            Grind();
 
             HandleAimAndShoot();
             
@@ -189,72 +164,50 @@ namespace SkateGame
             CheckPlayerDirectionChange();
         }
 
+        private void Move()
+        {
+            float moveInput = inputModel.Move.Value.x;
+            
+            // 移动状态切换
+            string currentState = stateMachine.GetCurrentStateName();
+            if (currentState == "Idle" && Mathf.Abs(moveInput) > 0.01f && IsGrounded())
+            {
+                stateMachine.SwitchState("Move");
+            }
+            else if (currentState == "Move" && Mathf.Abs(moveInput) <= 0.01f && IsGrounded())
+            {
+                stateMachine.SwitchState("Idle");
+                Debug.Log("2222:" + currentState);
+            }
+        }
+
+        private void Jump()
+        {
+            if (inputModel.Jump.Value && stateMachine.GetCurrentStateName() != "Air")
+            {
+                if (playerModel.WasGrounded.Value)
+                {
+                    hasJumpedThisFrame = true;
+                    stateMachine.SwitchState("Jump");
+                }
+            }
+        }
+
+        private void Grind()
+        {
+            if (inputModel.Grind.Value)
+            {
+                this.SendEvent<GrindInputEvent>();
+            }
+        }
         private void DetectInput()
         {
             // 获取当前状态和移动输入
             string currentState = stateMachine.GetCurrentStateName();
-            float moveInput = Input.GetAxisRaw("Horizontal");
-
-            // 调试信息
-            if (Mathf.Abs(moveInput) > 0.01f)
-            {
-                Debug.Log($"移动输入检测: moveInput={moveInput}, currentState={currentState}, IsGrounded={IsGrounded()}");
-            }
-
-            // 跳跃输入检测 - 只负责状态切换
-            // 在Air状态下不处理空格键，让AirState自己处理二段跳
-            Debug.Log("hasJumpedThisFrame:" + !hasJumpedThisFrame + "currentstate: " + currentState + "wasground" + wasGrounded);
-            if (Input.GetKeyDown(KeyCode.Space) && currentState != "Air")
-            {
-                if (wasGrounded)
-                {
-                    Debug.Log("Space键按下 - 切换到Jump状态" + "currentState:" + currentState);
-                    hasJumpedThisFrame = true; // 设置标志防止重复跳跃
-                    stateMachine.SwitchState("Jump");
-
-                    return; // 跳跃后直接返回，不处理其他输入
-                }
-                //else
-                //{
-                //    // 如果不在着地状态，启动跳跃缓冲
-                //    jumpBufferTimer = jumpBufferTime;
-                //     Debug.Log("Space键按下但未着地，启动跳跃缓冲");
-                //}
-            }
-
-            // 检查跳跃缓冲
-            //if (jumpBufferTimer > 0f && wasGrounded && !hasJumpedThisFrame)
-            //{
-            //    Debug.Log("跳跃缓冲触发 - 切换到Jump状态");
-            //    hasJumpedThisFrame = true;
-            //    jumpBufferTimer = 0f; // 清除缓冲
-            //    stateMachine.SwitchState("Jump");
-            //    return;
-            //}
             if (Input.GetKeyDown(KeyCode.F))
             {
-                currentBulletIndex = (currentBulletIndex + 1) % bulletPrefabs.Length;
-                Debug.Log("当前子弹类型: " + currentBulletIndex);
-            }
-
-
-            // 轨道输入 - E键只用于滑轨，不用于技巧
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                // 在地面上按E键，检查滑轨条件
-                Debug.Log($"E键按下 - 检测滑轨条件:");
-                Debug.Log($"  - IsGrounded(): {IsGrounded()}");
-                Debug.Log($"  - isNearTrack: {isNearTrack}");
-                Debug.Log($"  - currentTrack: {(currentTrack != null ? currentTrack.name : "null")}");
-                Debug.Log($"  - grindJumpTimer: {grindJumpTimer}");
-
-                isEHeld = true;
-                this.SendEvent<GrindInputEvent>();
-            }
-
-            if (Input.GetKeyUp(KeyCode.E))
-            {
-                isEHeld = false;
+                playerModel.CurrentBulletIndex.Value = (playerModel.CurrentBulletIndex.Value + 1) % bulletPrefabs.Length;
+                Debug.Log("当前子弹类型: " + playerModel.CurrentBulletIndex.Value);
             }
 
             // 强力轨道输入 - 只有在没有按Space键时才触发
@@ -262,7 +215,7 @@ namespace SkateGame
             {
                 isWHeld = true;
 
-                if (!isCheckingReverseWindow)
+                if (!playerModel.IsCheckingReverseWindow.Value)
                 {
                     CheckReverseWindow();
                 }
@@ -288,37 +241,22 @@ namespace SkateGame
             }
 
             // 反向检测 - 在PowerGrind状态下检测反向输入
-            if (currentState == "PowerGrind" && isCheckingReverseWindow)
+            if (currentState == "PowerGrind" && playerModel.IsCheckingReverseWindow.Value)
             {
                 float currentVelocityX = rb.linearVelocity.x;
 
                 // 如果当前有水平速度且输入方向与速度方向相反
-                if (Mathf.Abs(currentVelocityX) > 1f && Mathf.Abs(moveInput) > 0.01f)
+                if (Mathf.Abs(currentVelocityX) > 1f && Mathf.Abs(inputModel.Move.Value.x) > 0.01f)
                 {
-                    if (Mathf.Sign(moveInput) != Mathf.Sign(currentVelocityX))
+                    if (Mathf.Sign(inputModel.Move.Value.x) != Mathf.Sign(currentVelocityX))
                     {
-                        Debug.Log($"PowerGrind状态下检测到反向输入: 当前速度={currentVelocityX}, 输入={moveInput}");
+                        Debug.Log($"PowerGrind状态下检测到反向输入: 当前速度={currentVelocityX}, 输入={inputModel.Move.Value.x}");
                         stateMachine.SwitchState("Reverse");
-                        isCheckingReverseWindow = false;
+                        playerModel.IsCheckingReverseWindow.Value = false;
                         return; // 进入反向状态后直接返回，不处理其他逻辑
                     }
                 }
             }
-
-            // 移动状态切换（基于移动输入）
-            if (currentState == "Idle" && Mathf.Abs(moveInput) > 0.01f && IsGrounded())
-            {
-                stateMachine.SwitchState("Move");
-
-            }
-            else if (currentState == "Move" && Mathf.Abs(moveInput) <= 0.01f && IsGrounded())
-            {
-                stateMachine.SwitchState("Idle");
-                Debug.Log("2222:" + currentState);
-            }
-
-
-
         }
 
         // 提供给状态机使用的方法
@@ -389,8 +327,8 @@ namespace SkateGame
         // 反向输入检测 - 只负责计时
         private void CheckReverseWindow()
         {
-            isCheckingReverseWindow = true;
-            reverseTimer = 0f;
+            playerModel.IsCheckingReverseWindow.Value = true;
+            playerModel.ReverseTimer.Value = 0f;
             Debug.Log("开始反向检测计时窗口");
         }
 
@@ -405,8 +343,8 @@ namespace SkateGame
                 if (track != null)
                 {
                     Debug.Log($"检测到滑轨: {track.name}");
-                    currentTrack = track;
-                    isNearTrack = true;
+                    playerModel.CurrentTrack.Value = track;
+                    playerModel.IsNearTrack.Value = true;
                 }
 
                 Wall wall = other.GetComponent<Wall>();
@@ -414,7 +352,7 @@ namespace SkateGame
                 {
                     Debug.Log($"检测到墙壁: {wall.name}");
                     currentWall = wall;
-                    isNearWall = true;
+                    playerModel.IsNearWall.Value = true;
                 }
             }
         }
@@ -426,11 +364,11 @@ namespace SkateGame
             if (other.isTrigger)
             {
                 Track track = other.GetComponent<Track>();
-                if (track != null && track == currentTrack)
+                if (track != null && track == playerModel.CurrentTrack.Value)
                 {
                     Debug.Log($"离开滑轨: {track.name}");
-                    isNearTrack = false;
-                    currentTrack = null;
+                    playerModel.IsNearTrack.Value = false;
+                    playerModel.CurrentTrack.Value = null;
                 }
 
                 Wall wall = other.GetComponent<Wall>();
@@ -438,7 +376,7 @@ namespace SkateGame
                 {
                     Debug.Log($"离开墙壁: {wall.name}");
                     currentWall = null;
-                    isNearWall = false;
+                    playerModel.IsNearWall.Value = false;
                 }
             }
         }
@@ -457,8 +395,8 @@ namespace SkateGame
             // 按住R键进入瞄准
             if (Input.GetKeyDown(KeyCode.R))
             {
-                isAiming = true;
-                aimTimer = 0f; // 重置计时器
+                playerModel.IsAiming.Value = true;
+                playerModel.AimTimer.Value = 0f; // 重置计时器
                 Time.timeScale = 0.2f;
                 Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 if (aimLine != null) aimLine.enabled = true;
@@ -468,20 +406,20 @@ namespace SkateGame
             // 松开R键发射子弹
             if (Input.GetKeyUp(KeyCode.R))
             {
-                if (isAiming)
+                if (playerModel.IsAiming.Value)
                 {
                     FireBullet();
                 }
                 StopAiming();
             }
 
-            if (isAiming)
+            if (playerModel.IsAiming.Value)
             {
                 // 更新瞄准计时器
-                aimTimer += Time.unscaledDeltaTime; // 使用unscaledDeltaTime因为时间被放慢了
+                playerModel.AimTimer.Value += Time.unscaledDeltaTime; // 使用unscaledDeltaTime因为时间被放慢了
 
                 // 检查是否超过最大瞄准时间
-                if (aimTimer >= maxAimTime)
+                if (playerModel.AimTimer.Value >= playerModel.MaxAimTime.Value)
                 {
                     StopAiming();
                     return;
@@ -502,8 +440,8 @@ namespace SkateGame
 
         private void StopAiming()
         {
-            isAiming = false;
-            aimTimer = 0f;
+            playerModel.IsAiming.Value = false;
+            playerModel.AimTimer.Value = 0f;
             Time.timeScale = 1f;
             if (aimLine != null) aimLine.enabled = false;
             Debug.Log("结束瞄准模式");
@@ -513,7 +451,7 @@ namespace SkateGame
         {
             if (bulletPrefabs.Length == 0) return;
 
-            GameObject bulletPrefab = bulletPrefabs[currentBulletIndex];
+            GameObject bulletPrefab = bulletPrefabs[playerModel.CurrentBulletIndex.Value];
             if (bulletPrefab == null) return;
 
             Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -550,35 +488,35 @@ namespace SkateGame
         // 获取当前瞄准计时器值（供UI使用）
         public float GetAimTimer()
         {
-            return aimTimer;
+            return playerModel.AimTimer.Value;
         }
 
         // 标记已执行trick（由TrickState调用）
         public void MarkTrickPerformed()
         {
-            hasPerformedTrickInAir = true;
+            playerModel.HasPerformedTrickInAir.Value = true;
             Debug.Log("InputController: 标记已执行trick");
         }
 
         // 处理落地时的瞄准时间奖励
         public void HandleLandingAimTimeBonus()
         {
-            if (hasPerformedTrickInAir)
+            if (playerModel.HasPerformedTrickInAir.Value)
             {
                 // 增加瞄准时间上限1秒
-                maxAimTime += 1f;
-                Debug.Log($"InputController: 落地奖励！瞄准时间上限增加1秒，当前上限: {maxAimTime}秒");
+                    playerModel.MaxAimTime.Value += 1f;
+                Debug.Log($"InputController: 落地奖励！瞄准时间上限增加1秒，当前上限: {playerModel.MaxAimTime.Value}秒");
 
                 // 重置标志
-                hasPerformedTrickInAir = false;
+                playerModel.HasPerformedTrickInAir.Value = false;
             }
         }
 
         // 重置瞄准时间上限到基础值
         public void ResetAimTimeToBase()
         {
-            maxAimTime = _baseMaxAimTime;
-            Debug.Log($"InputController: 重置瞄准时间上限到基础值: {maxAimTime}秒");
+            playerModel.MaxAimTime.Value = _baseMaxAimTime;
+            Debug.Log($"InputController: 重置瞄准时间上限到基础值: {playerModel.MaxAimTime.Value}秒");
         }
 
         // 获取基础瞄准时间上限（供UI使用）

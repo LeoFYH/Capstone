@@ -46,7 +46,7 @@ public class WallRideState : StateBase
     public override void Update()
     {
         rb.gravityScale = onWallGravity;
-        if (player.currentWall == null || !player.isEHeld)
+        if (player.currentWall == null || !inputModel.Grind.Value)
         {
             player.stateMachine.SwitchState("Jump");
         }

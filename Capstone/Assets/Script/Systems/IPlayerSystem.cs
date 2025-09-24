@@ -153,26 +153,26 @@ namespace SkateGame
             Debug.Log($"OnGrindInput被调用:");
             Debug.Log($"  - playerController: {(playerController != null ? "存在" : "null")}");
             Debug.Log($"  - IsGrounded(): {(playerController != null ? playerController.IsGrounded().ToString() : "N/A")}");
-            Debug.Log($"  - isNearTrack: {(playerController != null ? playerController.isNearTrack.ToString() : "N/A")}");
-            Debug.Log($"  - grindJumpTimer: {(playerController != null ? playerController.grindJumpTimer.ToString() : "N/A")}");
-            Debug.Log($"  - isNearWall: {(playerController != null ? playerController.isNearWall.ToString() : "N/A")}");
+            Debug.Log($"  - isNearTrack: {(playerController != null ? playerModel.IsNearTrack.Value.ToString() : "N/A")}");
+            Debug.Log($"  - grindJumpTimer: {(playerController != null ? playerModel.GrindJumpTimer.Value.ToString() : "N/A")}");
+            Debug.Log($"  - isNearWall: {(playerController != null ? playerModel.IsNearWall.Value.ToString() : "N/A")}");
             
             if (playerController != null)
             {
                 // 如果在地面上且靠近滑轨，直接切换到滑轨状态
-                if (playerController.IsGrounded() && playerController.isNearTrack && playerController.grindJumpTimer <= 0f)
+                if (playerController.IsGrounded() && playerModel.IsNearTrack.Value && playerModel.GrindJumpTimer.Value <= 0f)
                 {
                     Debug.Log("在地面上切换到Grind状态");
                     playerController.stateMachine.SwitchState("Grind");
                 }
                 // 如果在空中且靠近滑轨
-                else if (!playerController.IsGrounded() && playerController.isNearTrack && playerController.grindJumpTimer <= 0f)
+                else if (!playerController.IsGrounded() && playerModel.IsNearTrack.Value && playerModel.GrindJumpTimer.Value <= 0f)
                 {
                     Debug.Log("在空中切换到Grind状态");
                     playerController.stateMachine.SwitchState("Grind");
                 }
                 // 如果在空中且靠近墙壁
-                else if (!playerController.IsGrounded() && playerController.isNearWall)
+                else if (!playerController.IsGrounded() && playerModel.IsNearWall.Value)
                 {
                     Debug.Log("切换到WallRide状态");
                     playerController.stateMachine.SwitchState("WallRide");

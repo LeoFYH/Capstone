@@ -12,6 +12,7 @@ namespace SkateGame
     /// </summary>
     public class UIController : ViewerControllerBase
     {
+        private IPlayerModel playerModel;
         [Header("TextMeshPro UI组件")]
         public Text trickInfoText;      // 技巧信息显示（包含名称、数量、分数）
         public Text aimTimeText;        // 瞄准时间上限显示
@@ -24,6 +25,9 @@ namespace SkateGame
         }
         protected override void InitializeController()
         {
+            
+            // 获取玩家参数
+            playerModel = this.GetModel<IPlayerModel>();
             Debug.Log("UIController initialized - Using TextMeshPro to display trick information");
             
             // Check if models are correctly obtained
@@ -140,11 +144,8 @@ namespace SkateGame
         private void InitializeAimTimeDisplay()
         {
             if (aimTimeText != null)
-            {
-                // 获取InputController来获取瞄准时间上限
-                    InputController playerController = Object.FindFirstObjectByType<InputController>();
-               
-                    float maxAimTime = playerController.maxAimTime;
+            {  
+                    float maxAimTime = playerModel.MaxAimTime.Value;
                     aimTimeText.text = $"Aim Time: {maxAimTime:F1}s";
                     Debug.Log($"UIController: 初始化瞄准时间显示 - {maxAimTime}秒");
                
@@ -163,24 +164,24 @@ namespace SkateGame
                 InputController playerController = Object.FindFirstObjectByType<InputController>();
                 if (playerController != null)
                 {
-                    if (playerController.isAiming)
+                    if (playerModel.IsAiming.Value)
                     {
                         // 计算剩余瞄准时间
-                        float remainingTime = playerController.maxAimTime - playerController.GetAimTimer();
+                        float remainingTime = playerModel.MaxAimTime.Value - playerController.GetAimTimer();
                         remainingTime = Mathf.Max(0, remainingTime);
                         aimTimeText.text = $"瞄准中... 剩余: {remainingTime:F1}秒";
                     }
                     else
                     {
                         // 显示当前瞄准时间上限，如果超过基础值则显示奖励信息
-                        if (playerController.maxAimTime > playerController.baseMaxAimTime)
+                        if (playerModel.MaxAimTime.Value > playerController.baseMaxAimTime)
                         {
-                            float bonus = playerController.maxAimTime - playerController.baseMaxAimTime;
-                            aimTimeText.text = $"Aim Time: {playerController.maxAimTime:F1}s (+{bonus:F1}s)";
+                            float bonus = playerModel.MaxAimTime.Value - playerController.baseMaxAimTime;
+                            aimTimeText.text = $"Aim Time: {playerModel.MaxAimTime.Value:F1}s (+{bonus:F1}s)";
                         }
                         else
                         {
-                            aimTimeText.text = $"Aim Time: {playerController.maxAimTime:F1}s";
+                            aimTimeText.text = $"Aim Time: {playerModel.MaxAimTime.Value:F1}s";
                         }
                     }
                 }

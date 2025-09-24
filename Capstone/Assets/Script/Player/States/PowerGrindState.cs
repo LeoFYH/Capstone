@@ -22,7 +22,6 @@ public class PowerGrindState : StateBase
 
     public override void Enter()
     {
-        player.isPowerGrinding = true;
 
         direction = Mathf.Sign(rb.linearVelocity.x);
         if (direction == 0) direction = 1f;
@@ -69,9 +68,7 @@ public class PowerGrindState : StateBase
     }
 
     public override void Exit()
-    {
-        player.isPowerGrinding = false;
-        
+    {   
         // 停止MMF效果
         if (player.powerGrindEffect != null)
         {

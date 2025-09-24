@@ -8,6 +8,7 @@ namespace SkateGame
         {
             // 注册数据模型
             this.RegisterModel<IPlayerModel>(new PlayerModel());
+            this.RegisterModel<IInputModel>(new InputModel());
             this.RegisterModel<ITrickModel>(new TrickModel());
             this.RegisterModel<IScoreModel>(new ScoreModel());
             this.RegisterModel<IGameModel>(new GameModel());
