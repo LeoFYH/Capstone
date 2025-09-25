@@ -17,7 +17,11 @@ namespace SkateGame
         public Text trickInfoText;      // 技巧信息显示（包含名称、数量、分数）
         public Text aimTimeText;        // 瞄准时间上限显示
         public Text gradeText;          // 等级显示
-
+        [Header("武器图标")]
+        public Sprite[] weaponIcons;           // 武器图标数组
+        public Sprite noWeaponIcon;
+        public Image displayImages;     
+        public int currentIconIndex = 0;       
 
         protected override void Start()
         {
@@ -53,12 +57,17 @@ namespace SkateGame
             trickModel.CurrentTrickName.Register(OnTrickNameChanged);
             scoreModel.TotalScore.Register(OnScoreChanged);
             scoreModel.CurrentGrade.Register(OnGradeChanged);
-            
+
+            playerModel.CurrentBulletIndex.Register(OnBulletIndexChanged);
+
             // Display current values on initialization
             OnTrickListChanged(trickModel.CurrentTricks.Value);
             OnTrickNameChanged(trickModel.CurrentTrickName.Value);
             OnScoreChanged(scoreModel.TotalScore.Value);
             OnGradeChanged(scoreModel.CurrentGrade.Value);
+            //
+            //Bullet UI
+            OnBulletIndexChanged(playerModel.CurrentBulletIndex.Value);
             
             // Initialize aim time display
             InitializeAimTimeDisplay();
@@ -68,8 +77,45 @@ namespace SkateGame
         {
             // 更新瞄准时间显示
             UpdateAimTimeDisplay();
+
+            UpdateWeaponIconDisplay();
+            
         }
         
+        ////////////If player change weapon
+        private void OnBulletIndexChanged(int newBulletIndex)
+        {
+            Debug.Log($"UIController: Bullet index changed - {newBulletIndex}");
+            UpdateWeaponIconDisplay();
+        }
+
+        ///////////display a new sprite
+        private void UpdateWeaponIconDisplay()
+        {
+            if (displayImages != null && weaponIcons != null && playerModel != null)
+            {
+                int currentIndex = playerModel.CurrentBulletIndex.Value;
+                
+                // 确保索引在有效范围内
+                if (currentIndex >= 0 && currentIndex < weaponIcons.Length)
+                {
+                    displayImages.sprite = weaponIcons[currentIndex];
+                    //Debug.Log($"UIController: 更新武器图标显示 - 当前索引: {currentIndex}");
+                }
+                else
+                {
+                    displayImages.sprite = noWeaponIcon;
+                    //Debug.LogWarning($"UIController: 子弹索引超出范围 - 索引: {currentIndex}, 数组长度: {weaponIcons.Length}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("UIController: displayImages、weaponIcons或playerModel为空！");
+            }
+        }
+
+
+
         private void OnTrickListChanged(List<TrickInfo> tricks)
         {
             Debug.Log($"UIController: Trick list changed - Count: {tricks.Count}");

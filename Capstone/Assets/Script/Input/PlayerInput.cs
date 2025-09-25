@@ -38,7 +38,7 @@ namespace SkateGame
                 Move = _moveAction.ReadValue<Vector2>(),
                 Jump = _jumpAction.IsPressed(),
                 Grind = _grindAction.IsPressed(),
-                SwitchItem = _switchItemAction.IsPressed(),
+                SwitchItem = _switchItemAction.WasPressedThisFrame(),
                 Trick = _trickAction.IsPressed(),
                 TrickStart= _trickAction.WasPressedThisFrame(),
             };
