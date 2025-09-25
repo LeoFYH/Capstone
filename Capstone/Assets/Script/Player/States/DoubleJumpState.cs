@@ -24,7 +24,15 @@ public class DoubleJumpState : StateBase
         // 发送技巧执行事件给系统，更新UIController
         Debug.Log("DoubleJumpState: 发送TrickPerformedEvent事件");
         player.SendEvent<TrickPerformedEvent>(new TrickPerformedEvent { TrickName = "doublejump" });
-        
+        //MMF
+        if (player.DoubleJumpEffect != null)
+        {
+            player.DoubleJumpEffect.PlayFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("DoubleJumpEffect为null，无法播放效果");
+        } 
     }
 
     public override void Update()
@@ -49,5 +57,16 @@ public class DoubleJumpState : StateBase
     {
         // Debug.Log("退出DoubleJump状态");
         this.player.GetModel<IPlayerModel>().AllowDoubleJump.Value = false;
+
+
+        //MMF
+        if (player.DoubleJumpEffect != null)
+        {
+            player.DoubleJumpEffect.StopFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("DoubleJumpEffect为null，无法停止效果");
+        } 
     }
 } 

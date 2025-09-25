@@ -221,9 +221,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""64b5a47a-0ebb-4ecd-a524-63a1b1c8a89c"",
                     ""path"": ""<Keyboard>/f"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""SwitchItem"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false

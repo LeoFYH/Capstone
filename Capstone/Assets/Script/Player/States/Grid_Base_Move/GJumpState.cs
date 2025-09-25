@@ -28,6 +28,16 @@ public class GJumpState : JumpState
 
         Vector2 currentVelocity = rb.linearVelocity;
         rb.linearVelocity = new Vector2(currentVelocity.x, playerModel.maxJumpForce.Value);
+
+               // 播放MMF效果
+        if (player.GJumpEffect != null)
+        {
+            player.GJumpEffect.PlayFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("JumpEffecttPlayer为null，无法播放效果");
+        } 
     }
 
     public override void Update()
@@ -61,6 +71,14 @@ public class GJumpState : JumpState
 
     public override void Exit()
     {
-
+         // 播放MMF效果
+        if (player.GJumpEffect != null)
+        {
+            player.GJumpEffect.StopFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("JumpEffecttPlayer为null，无法播放效果");
+        } 
     }
 }

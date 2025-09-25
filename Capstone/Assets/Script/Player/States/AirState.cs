@@ -23,7 +23,17 @@ public class AirState : StateBase
 
     public override void Enter()
     {
+        
          Debug.Log("进入空中状态");
+        // 播放MMF效果
+        if (player.AirEffect != null)
+        {
+            player.AirEffect.PlayFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("AirEffecttPlayer为null，无法播放效果");
+        }
     }
 
     public override void Update()
@@ -85,5 +95,15 @@ public class AirState : StateBase
     public override void Exit()
     {
         Debug.Log("退出空中状态");
+
+        if (player.AirEffect != null)
+        {
+            player.AirEffect.StopFeedbacks();
+
+        }
+        else
+        {
+            Debug.LogWarning("AirEffectPlayer为null，无法停止效果");
+        }
     }
 } 

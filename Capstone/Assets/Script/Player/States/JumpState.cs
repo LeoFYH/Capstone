@@ -37,6 +37,17 @@ public class JumpState : StateBase
         
         // 立即发送跳跃执行事件
         player.SendEvent<JumpExecuteEvent>();
+
+
+       // 播放MMF效果
+        if (player.JumpEffect != null)
+        {
+            player.JumpEffect.PlayFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("JumpEffecttPlayer为null，无法播放效果");
+        } 
     }
 
     public override void Update()
@@ -64,6 +75,15 @@ public class JumpState : StateBase
     public override void Exit()
     {
         // Debug.Log("退出Jump状态");
+         // 播放MMF效果
+        if (player.JumpEffect != null)
+        {
+            player.JumpEffect.StopFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("JumpEffecttPlayer为null，无法播放效果");
+        } 
     }
     
     private void UpdateGrindJumpTimer()

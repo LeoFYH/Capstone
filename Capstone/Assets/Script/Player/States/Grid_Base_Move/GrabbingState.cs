@@ -16,8 +16,19 @@ public class GrabbingState : StateBase
 
     public override void Enter()
     {
-        // Debug.Log("进入Grabbing状态");
+        Debug.Log("进入Grabbing状态");
         //can be damage
+
+
+                //MMF
+        if (player.GrabEffect != null)
+        {
+            player.GrabEffect.PlayFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("GrabEffect为null，无法播放效果");
+        } 
     }
 
     public override void Update()
@@ -45,5 +56,15 @@ public class GrabbingState : StateBase
     {
         // Debug.Log("退出Grabbing状态");
         //exit can be damage
+
+        //MMF
+        if (player.GrabEffect != null)
+        {
+            player.GrabEffect.StopFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("GrabEffect为null，无法播放效果");
+        } 
     }
 }

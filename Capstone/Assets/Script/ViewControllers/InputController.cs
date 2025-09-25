@@ -53,6 +53,7 @@ namespace SkateGame
 
 
         [Header("MMF效果")]
+        public MMF_Player moveEffect;
         public MMF_Player powerGrindEffect;
         public MMF_Player ReverseEffect;
         public MMF_Player GrindEffect;
@@ -60,6 +61,12 @@ namespace SkateGame
         public MMF_Player TrickAEffect;
         public MMF_Player TrickBEffect;
         public MMF_Player TrickABoostEffect;
+        public MMF_Player AirEffect;
+        public MMF_Player JumpEffect;
+        public MMF_Player GJumpEffect;
+        public MMF_Player DoubleJumpEffect;
+        public MMF_Player GrabEffect; // It is a OLD STATE 待删
+        public MMF_Player idleEffect; //DEBUG ONLY
         [Header("粒子特效容器")]
         public Transform particleEffectContainer; // 粒子特效容器
         private float lastMoveInput = 0f; // 上一帧的移动输入

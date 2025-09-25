@@ -29,6 +29,14 @@ public class MoveState : StateBase
     {
         //Debug.Log("进入Move状态");
         //currentVelocityX = rb.linearVelocity.x; // 保持当前水平速度
+        if (player.moveEffect != null)
+        {
+            player.moveEffect.PlayFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("moveEffectPlayer为null，无法播放效果");
+        }
     }
 
     public override void Update()
@@ -47,5 +55,13 @@ public class MoveState : StateBase
         //rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
         //currentVelocityX = 0f;
         // Debug.Log("退出Move状态");
+        if (player.moveEffect != null)
+        {
+            player.moveEffect.StopFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("moveEffectPlayer为null，无法播放效果");
+        }
     }
 } 

@@ -20,6 +20,16 @@ public class IdleState : StateBase
         // Debug.Log("进入Idle状态");
         ///
         /// 
+        /// 
+        ///                 //MMF
+        if (player.idleEffect != null)
+        {
+            player.idleEffect.PlayFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("idleEffect为null，无法播放效果");
+        } 
     }
 
     public override void Update()
@@ -32,5 +42,13 @@ public class IdleState : StateBase
     public override void Exit()
     {
         // Debug.Log("退出Idle状态");
+        if (player.idleEffect != null)
+        {
+            player.idleEffect.StopFeedbacks();
+        }
+        else
+        {
+            Debug.LogWarning("idleEffect为null，无法停止效果");
+        } 
     }
 } 
