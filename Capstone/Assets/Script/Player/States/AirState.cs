@@ -40,8 +40,9 @@ public class AirState : StateBase
     {
         
         // Air状态下发送移动事件
-        float moveInput = Input.GetAxisRaw("Horizontal");
-        player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
+        //float moveInput = Input.GetAxisRaw("Horizontal");
+        //player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
+        //玩家空中的控制应该和别的state保持一样，如果别的state无法控制空中移动，那么air也应该不可以
 
         // 检测技巧输入并切换到 TrickState
         if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.E))

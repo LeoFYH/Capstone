@@ -363,7 +363,7 @@ namespace SkateGame
         private void HandleAimAndShoot()
         {
             // 按住R键进入瞄准
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetMouseButtonDown(0))
             {
                 playerModel.IsAiming.Value = true;
                 playerModel.AimTimer.Value = 0f; // 重置计时器
@@ -374,7 +374,7 @@ namespace SkateGame
             }
 
             // 松开R键发射子弹
-            if (Input.GetKeyUp(KeyCode.R))
+            if (Input.GetMouseButtonUp(0))
             {
                 if (playerModel.IsAiming.Value)
                 {
