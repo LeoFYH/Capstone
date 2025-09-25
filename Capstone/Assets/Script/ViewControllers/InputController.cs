@@ -428,14 +428,21 @@ namespace SkateGame
             Vector2 direction = (mouseWorldPos - (Vector2)transform.position).normalized;
 
             GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-            Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
-            if (bulletRb != null)
+            var ice = bullet.GetComponent<IceBullet>();
+            if (ice != null)
             {
-                bulletRb.linearVelocity = direction * bulletSpeed;
+                ice.SetDirection(direction);
+            }
+            else
+            {
+                Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
+                if (bulletRb != null)
+                {
+                    bulletRb.linearVelocity = direction * bulletSpeed;
+                }
             }
 
-            Debug.Log($"发射子弹！方向: {direction}, 速度: {bulletSpeed}");
-            // 如果是轨道子弹，不需要方向参数，轨道始终水平生成
+           
         }
 
         // 颜色管理方法
