@@ -19,6 +19,10 @@ namespace SkateGame
         public E stateMachine;
         private Rigidbody2D rb;
 
+        [Header("Animation")]
+        public Animator animator;
+        public SpriteRenderer spriteRenderer;
+
         [Header("轨道设置")]
         public float grindJumpIgnoreTime = 0.2f;
         [Header("Jump Setting")]
@@ -126,6 +130,12 @@ namespace SkateGame
             
             IsGrounded();
             /// Warning 待创建一个落地状态
+            if (playerModel.IsGrounded.Value && currentState != "Move")
+            {
+                Debug.LogWarning("GROUNDED!");
+                animator.SetTrigger("land");
+            }
+
             if(playerModel.WasGrounded.Value){
                 playerModel.AllowDoubleJump.Value = true;
                 

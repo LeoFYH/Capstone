@@ -24,6 +24,7 @@ public class JumpState : StateBase
 
     public override void Enter()
     {
+        player.animator.SetTrigger("ollie");
         // Debug.Log("JumpState.Enter() - 开始跳跃");
         playerModel.GrindJumpTimer.Value = player.grindJumpIgnoreTime;
         isCharging = true;

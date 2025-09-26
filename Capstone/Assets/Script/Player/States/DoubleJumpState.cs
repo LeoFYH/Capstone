@@ -17,6 +17,7 @@ public class DoubleJumpState : StateBase
 
     public override void Enter()
     {
+        player.animator.SetTrigger("kickFlip");
         // 直接跳起来
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, playerModel.maxJumpForce.Value);
         Debug.Log("DoubleJumpState: 执行二段跳！");

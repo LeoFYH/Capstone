@@ -23,8 +23,9 @@ public class AirState : StateBase
 
     public override void Enter()
     {
-        
-         Debug.Log("进入空中状态");
+
+
+        Debug.Log("进入空中状态");
         // 播放MMF效果
         if (player.AirEffect != null)
         {

@@ -22,7 +22,7 @@ public class PowerGrindState : StateBase
 
     public override void Enter()
     {
-
+        player.animator.SetTrigger("noseGrind");
         direction = Mathf.Sign(rb.linearVelocity.x);
         if (direction == 0) direction = 1f;
         Debug.Log("PowerGrindState!!!!!");

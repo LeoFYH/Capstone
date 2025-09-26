@@ -25,8 +25,9 @@ public class GrindState : StateBase
 
     public override void Enter()
     {
+        player.animator.SetTrigger("noseGrind");
         // Debug.Log("E Grind");
-        
+
         // 检查currentTrack是否为null
         if (playerModel.CurrentTrack.Value == null)
         {
