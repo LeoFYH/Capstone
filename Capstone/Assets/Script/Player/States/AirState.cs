@@ -23,7 +23,7 @@ public class AirState : StateBase
 
     public override void Enter()
     {
-
+        player.animator.SetBool("isGrounded", false);
 
         Debug.Log("进入空中状态");
         // 播放MMF效果

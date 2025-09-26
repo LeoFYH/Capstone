@@ -130,11 +130,6 @@ namespace SkateGame
             
             IsGrounded();
             /// Warning 待创建一个落地状态
-            if (playerModel.IsGrounded.Value && currentState != "Move")
-            {
-                Debug.LogWarning("GROUNDED!");
-                animator.SetTrigger("land");
-            }
 
             if(playerModel.WasGrounded.Value){
                 playerModel.AllowDoubleJump.Value = true;

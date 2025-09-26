@@ -25,7 +25,7 @@ public class GrindState : StateBase
 
     public override void Enter()
     {
-        player.animator.SetTrigger("noseGrind");
+        player.animator.SetBool("isNoseGrinding", true);
         // Debug.Log("E Grind");
 
         // 检查currentTrack是否为null
@@ -122,7 +122,7 @@ public class GrindState : StateBase
         {
             Vector3 trackPos = playerModel.CurrentTrack.Value.GetTrackPosition();
             Vector3 playerPos = player.transform.position;
-            playerPos.y = trackPos.y+0.2f;
+            playerPos.y = trackPos.y+0.2f; 
             player.transform.position = playerPos;
         }
         else
@@ -133,6 +133,7 @@ public class GrindState : StateBase
 
     public override void Exit()
     {
+        player.animator.SetBool("isNoseGrinding", false);
         rb.gravityScale = normalG;
         isJumping = false;
         // Debug.Log("Exit Grind");
