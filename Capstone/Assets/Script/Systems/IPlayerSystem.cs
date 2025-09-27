@@ -1,6 +1,5 @@
 using QFramework;
 using UnityEngine;
-using System.Collections.Generic;
 
 namespace SkateGame
 {
@@ -20,7 +19,6 @@ namespace SkateGame
         {
             // 获取玩家控制器
             playerController = Object.FindFirstObjectByType<InputController>();
-            Debug.Log($"PlayerSystem初始化: playerController = {(playerController != null ? "找到" : "未找到")}");
             
             // 获取玩家参数
             playerModel = this.GetModel<IPlayerModel>();
@@ -79,25 +77,21 @@ namespace SkateGame
         {
             Debug.Log($"PlayerSystem: 接收到TrickAInputEvent");
             Debug.Log($"  - playerController存在: {playerController != null}");
-           
-
             if (playerController != null)
             {
                 if (playerController.TrickAEffect != null)
                 {
                     playerController.TrickAEffect.PlayFeedbacks();
                 }
-               
+
                 // 使用 Raycast 检测 InteractiveLayer 对象
                 DetectInteractiveObjectsWithRaycast();
-                 
             }
             
             if (playerController != null && !playerModel.IsGrounded.Value)
             {
                 Debug.Log("PlayerSystem: 在空中执行TrickA");
-                playerController.stateMachine.SwitchState("Trick", "TrickA");
-                
+                playerController.stateMachine.SwitchState(StateLayer.Action, "TrickA");
             }
             else
             {
@@ -110,7 +104,7 @@ namespace SkateGame
             if (playerController != null && !playerModel.IsGrounded.Value)
             {
                 // 直接切换到技巧状态，传递技巧名称
-                playerController.stateMachine.SwitchState("Trick", "TrickB");
+                playerController.stateMachine.SwitchState(StateLayer.Action, "TrickB");
                                  // Debug.Log("处理技巧B输入");
             }
         }
@@ -133,6 +127,9 @@ namespace SkateGame
                     rb.linearVelocity = new Vector2(currentHorizontalVelocity, jumpForce);
                     
                     Debug.Log($"系统执行跳跃 - 使用跳跃力: {jumpForce}, 水平速度: {currentHorizontalVelocity}");
+                    
+                    // 立即切换到Air状态
+                    playerController.stateMachine.SwitchState(StateLayer.Movement, "Air");
                 }
                 else
                 {
@@ -153,32 +150,32 @@ namespace SkateGame
             Debug.Log($"  - isNearTrack: {(playerController != null ? playerModel.IsNearTrack.Value.ToString() : "N/A")}");
             Debug.Log($"  - grindJumpTimer: {(playerController != null ? playerModel.GrindJumpTimer.Value.ToString() : "N/A")}");
             Debug.Log($"  - isNearWall: {(playerController != null ? playerModel.IsNearWall.Value.ToString() : "N/A")}");
-            Debug.Log($"  - grindJumpTimer: {(playerController != null ? playerModel.GrindJumpTimer.Value.ToString() : "N/A")}");
+            
             if (playerController != null)
             {
                 // 如果在地面上且靠近滑轨，直接切换到滑轨状态
                 if (playerModel.IsGrounded.Value && playerModel.IsNearTrack.Value && playerModel.GrindJumpTimer.Value <= 0f)
                 {
                     Debug.Log("在地面上切换到Grind状态");
-                    playerController.stateMachine.SwitchState("Grind");
+                    playerController.stateMachine.SwitchState(StateLayer.Action, "Grind");
                 }
                 // 如果在空中且靠近滑轨
                 else if (!playerModel.IsGrounded.Value && playerModel.IsNearTrack.Value && playerModel.GrindJumpTimer.Value <= 0f)
                 {
                     Debug.Log("在空中切换到Grind状态");
-                    playerController.stateMachine.SwitchState("Grind");
+                    playerController.stateMachine.SwitchState(StateLayer.Action, "Grind");
                 }
                 // 如果在空中且靠近墙壁
                 else if (!playerModel.IsGrounded.Value && playerModel.IsNearWall.Value)
                 {
                     Debug.Log("切换到WallRide状态");
-                    playerController.stateMachine.SwitchState("WallRide");
+                    playerController.stateMachine.SwitchState(StateLayer.Action, "WallRide");
                 }
                 // 如果在空中但不在滑轨或墙壁附近
                 else if (!playerModel.IsGrounded.Value)
                 {
                     Debug.Log("切换到Grab状态");
-                    playerController.stateMachine.SwitchState("Grab");
+                    playerController.stateMachine.SwitchState(StateLayer.Action, "Grab");
                 }
                 else
                 {
@@ -195,7 +192,7 @@ namespace SkateGame
         {
             if (playerController != null && playerModel.IsGrounded.Value)
             {
-                playerController.stateMachine.SwitchState("PowerGrind");
+                playerController.stateMachine.SwitchState(StateLayer.Movement, "PowerGrind");
                 // Debug.Log("切换到强力轨道状态");
             }
         }
@@ -204,7 +201,7 @@ namespace SkateGame
         {
             if (playerController != null && playerModel.IsGrounded.Value)
             {
-                playerController.stateMachine.SwitchState("Reverse");
+                playerController.stateMachine.SwitchState(StateLayer.Movement, "Reverse");
                 // Debug.Log("切换到反向状态");
             }
         }
@@ -213,34 +210,25 @@ namespace SkateGame
         {
             // Debug.Log($"状态切换: {evt.FromState} -> {evt.ToState}");
         }
-        
+
         // 使用 Raycast 检测 InteractiveLayer 对象
         private void DetectInteractiveObjectsWithRaycast()
         {
             if (playerController == null) return;
-            
+
             Vector2 playerPosition = playerController.transform.position;
             float detectionRadius = 2f; // 检测半径
             
             // 方法1: 使用 Physics2D.OverlapCircle 检测圆形区域
             Collider2D[] colliders = Physics2D.OverlapCircleAll(playerPosition, detectionRadius, LayerMask.GetMask("InteractiveLayer"));
-            
-            if (colliders.Length > 0)
+            if(colliders.Length > 0)
             {
-               
                 this.GetModel<IPlayerModel>().isInPower.Value = true;
                 if(this.GetModel<IPlayerModel>().isInPower.Value){
                     playerController.TrickABoostEffect.PlayFeedbacks();
-                    
+                
                 }
-                Debug.Log("isInPower: " + this.GetModel<IPlayerModel>().isInPower.Value);
-              
             }
-          
-
         }
-        
-        // 使用多个方向的射线检测
-       
     }
 }

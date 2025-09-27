@@ -14,7 +14,7 @@ namespace SkateGame
             this.RegisterModel<IGameModel>(new GameModel());
             
             // 注册业务系统
-            this.RegisterSystem<ITrickSystem>(new TrickSystem());
+            // this.RegisterSystem<ITrickSystem>(new TrickSystem());
             this.RegisterSystem<IPlayerSystem>(new PlayerSystem());
             this.RegisterSystem<IScoreSystem>(new ScoreSystem());
             this.RegisterSystem<IAudioSystem>(new AudioSystem());
