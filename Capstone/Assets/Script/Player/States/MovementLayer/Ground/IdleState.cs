@@ -14,6 +14,7 @@ public class IdleState : GroundMovementState
 
     public override void Enter()
     {
+        player.animator.SetBool("isOllie", false);
         player.animator.SetBool("isGrounded", true);
         player.animator.SetBool("isPlayingLand", false);
         // Debug.Log("进入Idle状态");

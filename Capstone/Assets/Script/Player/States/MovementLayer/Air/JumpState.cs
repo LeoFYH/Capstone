@@ -22,7 +22,7 @@ public class JumpState : AirborneMovementState
 
     public override void Enter()
     {
-        player.animator.SetTrigger("ollie");
+        player.animator.SetBool("isOllie", true);
         player.animator.SetBool("isGrounded", false);
         // Debug.Log("JumpState.Enter() - 开始跳跃");
         playerModel.GrindJumpTimer.Value = player.grindJumpIgnoreTime;
