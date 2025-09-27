@@ -48,6 +48,28 @@ public class GrabbingState : StateBase
 
         // WallRide状态下的逻辑
         // add combo point
+//if (inputModel.Grind.Value == false)
+    //{
+       // player.stateMachine.SwitchState(StateLayer.Action, "None");
+        
+        // 根据玩家当前状态决定Movement层的切换
+        //if (!playerModel.IsGrounded.Value)
+        //{
+            // 在空中，切换到Air状态以继续空中控制
+          //  player.stateMachine.SwitchState(StateLayer.Movement, "Air");
+            //Debug.Log("退出Grab状态，切换到Air状态");
+        //}
+        //else
+        //{
+            // 已落地，切换到Idle状态
+          //  player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
+            //Debug.Log("退出Grab状态，切换到Idle状态");
+        //}
+    }
+        
+
+
+        
     }
 
     public override void Exit()
