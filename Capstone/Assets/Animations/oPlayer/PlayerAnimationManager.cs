@@ -18,4 +18,14 @@ public class PlayerAnimationManager : MonoBehaviour
     {
         animator.Play("oPlayer@Push");
     }
+
+    public void LockAnimation()
+    {
+        animator.SetBool("isAnimationLocked", true);
+    }
+
+    public void UnlockAnimation()
+    {
+        animator.SetBool("isAnimationLocked", false);
+    }
 }
