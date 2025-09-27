@@ -1,5 +1,5 @@
-using UnityEngine;
 using SkateGame;
+using UnityEngine;
 
 public class GrabbingState : StateBase
 {
@@ -18,7 +18,7 @@ public class GrabbingState : StateBase
         //can be damage
 
 
-                //MMF
+        //MMF
         if (player.GrabEffect != null)
         {
             player.GrabEffect.PlayFeedbacks();
@@ -26,50 +26,50 @@ public class GrabbingState : StateBase
         else
         {
             Debug.LogWarning("GrabEffect为null，无法播放效果");
-        } 
+        }
     }
 
     public override void Update()
     {
         // Debug.Log("Keep Grabbing");
 
-        if (inputModel.Grind.Value == false)
-        {
-            player.stateMachine.SwitchState(StateLayer.Action, "None");
-            player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
-        }
+        //if (inputModel.Grind.Value == false)
+        //{
+        //    player.stateMachine.SwitchState(StateLayer.Action, "None");
+        //    player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
+        //}
         //else if (player.isEHeld == true && player.DetectNearbyPole() != null)
         //{
         //    player.currentTrack = player.DetectNearbyPole();
         //    player.stateMachine.SwitchState("Grind");
-            
+
         //}
 
 
-        // WallRide状态下的逻辑
-        // add combo point
-//if (inputModel.Grind.Value == false)
-    //{
-       // player.stateMachine.SwitchState(StateLayer.Action, "None");
-        
-        // 根据玩家当前状态决定Movement层的切换
-        //if (!playerModel.IsGrounded.Value)
-        //{
-            // 在空中，切换到Air状态以继续空中控制
-          //  player.stateMachine.SwitchState(StateLayer.Movement, "Air");
-            //Debug.Log("退出Grab状态，切换到Air状态");
-        //}
-        //else
-        //{
-            // 已落地，切换到Idle状态
-          //  player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
-            //Debug.Log("退出Grab状态，切换到Idle状态");
-        //}
-    }
-        
+        //WallRide状态下的逻辑
+        //add combo point
+        if (inputModel.Grind.Value == false)
+        {
+            player.stateMachine.SwitchState(StateLayer.Action, "None");
+
+            //根据玩家当前状态决定Movement层的切换
+            if (!playerModel.IsGrounded.Value)
+            {
+                //在空中，切换到Air状态以继续空中控制
+                player.stateMachine.SwitchState(StateLayer.Movement, "Air");
+                Debug.Log("退出Grab状态，切换到Air状态");
+            }
+            else
+            {
+                //已落地，切换到Idle状态
+                player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
+                Debug.Log("退出Grab状态，切换到Idle状态");
+            }
+        }
 
 
-        
+
+
     }
 
     public override void Exit()
@@ -85,6 +85,6 @@ public class GrabbingState : StateBase
         else
         {
             Debug.LogWarning("GrabEffect为null，无法播放效果");
-        } 
+        }
     }
 }
