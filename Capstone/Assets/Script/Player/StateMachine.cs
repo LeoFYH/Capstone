@@ -30,25 +30,34 @@ public class E
         }
     }
     
-    // 切换到指定状态（无参数）
     public void SwitchState(string stateName)
-    {
-        SwitchState(stateName, null);
-    }
-    
-    // 切换到指定状态（带参数）
-    public void SwitchState(string stateName, object data)
     {   
         if (currentState == null)
         {
-            EnterState(stateName, data);
+            EnterState(stateName);
         }
         else if (currentState.GetStateName() != stateName)
         {
             StateBase oldState = currentState;
             currentState.Exit();
-            EnterState(stateName, data, oldState);
+            EnterState(stateName, oldState);
             
+            // 退出当前状态
+            if (currentState != null)
+            {
+                currentState.Exit();
+            }
+            
+            // 切换到新状态
+            currentState = states[stateName];
+            currentState.Enter();
+            
+            // 触发状态切换事件
+            OnStateChanged?.Invoke(oldState, currentState);
+        }
+        else
+        {
+            // Debug.LogWarning($"状态 '{stateName}' 不存在！");
         }
     }
     
@@ -95,19 +104,22 @@ public class E
         states.Clear();
         currentState = null;
     }
-    // 进入新状态（传递数据）
-    public void EnterState(string stateName, object data, StateBase oldState = null)
+    // 进入新状态
+    public void EnterState(string stateName,StateBase oldState = null)
     {
         currentState = states[stateName];
-        if (currentState is TrickState trickState && data is string trickName)
-        {
-            //调用trickstate的settrickname方法来传入特技名称
-            trickState.SetTrickName(trickName);
-        }
         currentState.Enter();
 
         // 触发状态切换事件
         OnStateChanged?.Invoke(oldState, currentState);
         Debug.Log("SwitchState to " + stateName);
+    }
+    public StateBase TryGetState(string stateName)
+    {
+        if (states.ContainsKey(stateName))
+        {
+            return states[stateName];
+        }
+        return null;
     }
 } 

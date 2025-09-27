@@ -2,6 +2,7 @@ using UnityEngine;
 using QFramework;
 using System.Collections;
 using MoreMountains.Feedbacks;
+using System;
 
 namespace SkateGame
 {
@@ -14,27 +15,33 @@ namespace SkateGame
     {
         private IPlayerModel playerModel;
         private IInputModel inputModel;
-
         [Header("状态机")]
-        public E stateMachine;
+        public LayeredStateMachine stateMachine;
         private Rigidbody2D rb;
 
         [Header("轨道设置")]
         public float grindJumpIgnoreTime = 0.2f;
-        [Header("Jump Setting")]
-        public float jumpTime = 0.2f;
+        public float grindJumpTimer = 0f;
+
+        [Header("空中设置")]
+        public bool isInAir = false;
+        public float airTime = 0f;
+        public int airCombo = 0;
 
         [Header("Wall Setting")]
         public Wall currentWall;
 
-        [Header("Button Check")]
-        private bool hasJumpedThisFrame = false; // 防止同一帧重复跳跃
-
         [Header("Ground Detection")]
         public LayerMask groundLayer = 1; // 地面层级
 
+        [Header("Life Setting")]
+        public bool canBeHurt;
+
         [Header("Combat Setting")]
-        public float reverseInputWindow = 2.0f; 
+        public bool isPowerGrinding;
+        private bool isCheckingReverseWindow = false;
+        public float reverseInputWindow = 2.0f;
+        private float reverseTimer = 0f;
 
         [Header("瞄准与射击设置")]
         public LineRenderer aimLine;      // 瞄准线
@@ -51,7 +58,6 @@ namespace SkateGame
         [Header("瞄准时间奖励")]
         private float _baseMaxAimTime = 3f; // 基础瞄准时间上限
 
-
         [Header("MMF效果")]
         public MMF_Player moveEffect;
         public MMF_Player powerGrindEffect;
@@ -65,18 +71,19 @@ namespace SkateGame
         public MMF_Player JumpEffect;
         public MMF_Player GJumpEffect;
         public MMF_Player DoubleJumpEffect;
-        public MMF_Player GrabEffect; // It is a OLD STATE 待删
-        public MMF_Player idleEffect; //DEBUG ONLY
+        public MMF_Player GrabEffect;
+        public MMF_Player IdleEffect;
         [Header("粒子特效容器")]
         public Transform particleEffectContainer; // 粒子特效容器
-        private float lastMoveInput = 0f; // 上一帧的移动输入
+        private float lastMoveInput = 0f; //上一帧的移动输入
         private bool isFacingRight = true; // 当前面向方向
-
+        public MMF_Player powerGrindEffectPlayer; 
+        
         protected override void InitializeController()
         {
+            // Debug.Log("玩家控制器初始化完成");
             // 获取玩家参数
             playerModel = this.GetModel<IPlayerModel>();
-
             inputModel = this.GetModel<IInputModel>();
             
             // 获取组件
@@ -92,117 +99,75 @@ namespace SkateGame
                 }
             }
 
-            // 保存原始颜色 （待删）
+            // 保存原始颜色
             if (playerSprite != null)
             {
                 originalColor = playerSprite.color;
             }
 
             // 初始化瞄准时间
-            playerModel.MaxAimTime.Value = baseMaxAimTime;
+            playerModel.MaxAimTime.Value = _baseMaxAimTime;
 
-            // 初始化状态机
-            stateMachine = new E();
-            stateMachine.AddState("Idle", new IdleState(this, rb));
-            stateMachine.AddState("Jump", new JumpState(this, rb));
-            stateMachine.AddState("Move", new MoveState(this, rb));
-            stateMachine.AddState("Grind", new GrindState(this, rb));
-            stateMachine.AddState("Air", new AirState(this, rb));
-            stateMachine.AddState("Trick", new TrickState(this, rb));
-            stateMachine.AddState("GJump", new GJumpState(this, rb));
-            stateMachine.AddState("DoubleJump", new DoubleJumpState(this, rb));
-            stateMachine.AddState("Grab", new GrabbingState(this, rb));
-            stateMachine.AddState("WallRide", new WallRideState(this, rb));
-            stateMachine.AddState("Reverse", new ReverseState(this, rb));
-            stateMachine.AddState("PowerGrind", new PowerGrindState(this, rb));
+            // 初始化分层状态机
+            stateMachine = new LayeredStateMachine();
+            
+            // Movement Layer
+            stateMachine.AddState("Idle", new IdleState(this, rb), StateLayer.Movement);
+            stateMachine.AddState("Jump", new JumpState(this, rb), StateLayer.Movement);
+            stateMachine.AddState("GJump", new GJumpState(this, rb), StateLayer.Movement);
+            stateMachine.AddState("Move", new MoveState(this, rb), StateLayer.Movement);
+            stateMachine.AddState("Air", new AirState(this, rb), StateLayer.Movement);
+            stateMachine.AddState("DoubleJump", new DoubleJumpState(this, rb), StateLayer.Movement);
+            stateMachine.AddState("PowerGrind", new PowerGrindState(this, rb), StateLayer.Movement);
+            stateMachine.AddState("Reverse", new ReverseState(this, rb), StateLayer.Movement);
+            stateMachine.AddState("Land", new LandState(this, rb), StateLayer.Movement);
+            // Action Layer
+            stateMachine.AddState("None", new NoActionState(), StateLayer.Action);
+            stateMachine.AddState("TrickA", new TrickAState(this, rb), StateLayer.Action);
+            stateMachine.AddState("Grind", new GrindState(this, rb), StateLayer.Action);
+            stateMachine.AddState("Grab", new GrabbingState(this, rb), StateLayer.Action);
+            stateMachine.AddState("WallRide", new WallRideState(this, rb), StateLayer.Action);
 
-            stateMachine.SwitchState("Idle");
+            // 初始各层状态
+            stateMachine.SwitchState(StateLayer.Movement, "Idle");
+            stateMachine.SwitchState(StateLayer.Action, "None");
         }
 
         protected override void OnRealTimeUpdate()
         {
-            // 更新状态机
-            string currentState = stateMachine.GetCurrentStateName();
-            
             IsGrounded();
             /// Warning 待创建一个落地状态
             if(playerModel.WasGrounded.Value){
                 playerModel.AllowDoubleJump.Value = true;
-                
-            }
-            // 如果离地但非跳跃，切换到Air状态
-            if(playerModel.WasGrounded.Value && !playerModel.IsGrounded.Value && currentState != "Jump")
-            {
-                stateMachine.SwitchState("Air");
             }
 
             // 更新当前State
             stateMachine.UpdateCurrentState();
 
-            /// Warning 移动到grindstate
+            /* 移动由OnMoveInput事件处理 */
+            float moveInput = inputModel.Move.Value.x;
+            this.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
 
-            // 更新反向检测计时器
-            if (playerModel.IsCheckingReverseWindow.Value)
-            {
-                playerModel.ReverseTimer.Value += Time.deltaTime;
-                if (playerModel.ReverseTimer.Value >= reverseInputWindow)
-                {
-                    playerModel.IsCheckingReverseWindow.Value = false;
-                    playerModel.ReverseTimer.Value = 0f;
-                    Debug.Log("反向检测计时窗口结束");
-                }
-            }
+            // 更新着地状态
+            playerModel.WasGrounded.Value = IsGrounded();
 
-            // 重置跳跃标志
-            hasJumpedThisFrame = false;
-
+            // 发送移动输入事件
+            this.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
             // 检测输入并发送事件
             DetectInput();
 
             HandleAimAndShoot();
-            
+
             // 检测玩家方向变化并更新粒子特效
             CheckPlayerDirectionChange();
         }
 
-        private void Move()
+        // 提供给状态机使用的方法
+        public void DetectInput()
         {
-            float moveInput = inputModel.Move.Value.x;
-            
-            // 移动状态切换 移动由OnMoveInput事件处理
-            string currentState = stateMachine.GetCurrentStateName();
-            if (currentState == "Idle" && Mathf.Abs(moveInput) > 0.01f && playerModel.WasGrounded.Value)
-            {
-                stateMachine.SwitchState("Move");
-            }
-            else if (currentState == "Move" && Mathf.Abs(moveInput) <= 0.01f && playerModel.WasGrounded.Value)
-            {
-                stateMachine.SwitchState("Idle");
-                Debug.Log("2222:" + currentState);
-            }
-        }
-
-        #region Player Actions
-        
-        private void DetectInput()
-        {
-            Move();
-            Jump();
             Grind();
             SwitchItem();
-            PowerGrind();
             Trick();
-        }
-        private void Jump()
-        {
-            if (inputModel.Jump.Value && stateMachine.GetCurrentStateName() != "Air")
-            {
-                if (playerModel.WasGrounded.Value)
-                {
-                    hasJumpedThisFrame = true;
-                    stateMachine.SwitchState("Jump");
-                }
-            }
         }
 
         private void Grind()
@@ -220,28 +185,16 @@ namespace SkateGame
                 Debug.Log("当前子弹类型: " + playerModel.CurrentBulletIndex.Value);
             }
         }
-        private void PowerGrind()
-        {
-            if (inputModel.TrickStart.Value && playerModel.WasGrounded.Value)
-            {
-                if (!playerModel.IsCheckingReverseWindow.Value)
-                {
-                    CheckReverseWindow();
-                }
-                stateMachine.SwitchState("PowerGrind");
-            }
-        }
         private void Trick()
         {
-            if (inputModel.TrickStart.Value && stateMachine.GetCurrentStateName() == "Air")
+            if (inputModel.TrickStart.Value && stateMachine.GetMovementStateName() == "Air")
             {
                 this.SendEvent<TrickAInputEvent>();
             }
         }
-        #endregion
 
         #region Collision
-        public void IsGrounded()
+        public bool IsGrounded()
         {
             // 使用多个射线检测来提高准确性
             Vector2 rayStart = transform.position;
@@ -271,14 +224,12 @@ namespace SkateGame
             }
 
             bool grounded = hit.collider != null;
-            
-            // 记录上一帧落地状态
             playerModel.WasGrounded.Value = playerModel.IsGrounded.Value;
             playerModel.IsGrounded.Value = grounded;
+            return grounded;
         }
         #endregion
 
-        // 提供给状态机使用的方法
         public Rigidbody2D GetRigidbody()
         {
             return rb;
@@ -300,18 +251,10 @@ namespace SkateGame
         public IEnumerator SwitchToStateDelayed(string stateName)
         {
             yield return new WaitForSeconds(0.1f);
-            stateMachine.SwitchState(stateName);
+            stateMachine.SwitchState(StateLayer.Action, stateName);
         }
 
-        // 反向输入检测 - 只负责计时
-        private void CheckReverseWindow()
-        {
-            playerModel.IsCheckingReverseWindow.Value = true;
-            playerModel.ReverseTimer.Value = 0f;
-            Debug.Log("开始反向检测计时窗口");
-        }
-
-        #region Interaction Trigger
+        // 碰撞检测
         void OnTriggerEnter2D(Collider2D other)
         {
             Debug.Log($"OnTriggerEnter2D: {other.name} (isTrigger: {other.isTrigger})");
@@ -359,7 +302,7 @@ namespace SkateGame
                 }
             }
         }
-        #endregion
+
         private void HandleAimAndShoot()
         {
             // 按住R键进入瞄准
@@ -370,13 +313,12 @@ namespace SkateGame
                 Time.timeScale = 0.2f;
                 Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 if (aimLine != null) aimLine.enabled = true;
-                Debug.Log("开始瞄准模式");
             }
 
             // 松开R键发射子弹
             if (Input.GetMouseButtonUp(0))
             {
-                if (playerModel.IsAiming.Value)
+                if(playerModel.IsAiming.Value)
                 {
                     FireBullet();
                 }
@@ -414,7 +356,6 @@ namespace SkateGame
             playerModel.AimTimer.Value = 0f;
             Time.timeScale = 1f;
             if (aimLine != null) aimLine.enabled = false;
-            Debug.Log("结束瞄准模式");
         }
 
         private void FireBullet()
@@ -442,7 +383,6 @@ namespace SkateGame
                 }
             }
 
-           
         }
 
         // 颜色管理方法
@@ -481,7 +421,7 @@ namespace SkateGame
             if (playerModel.HasPerformedTrickInAir.Value)
             {
                 // 增加瞄准时间上限1秒
-                    playerModel.MaxAimTime.Value += 1f;
+                playerModel.MaxAimTime.Value += 1f;
                 Debug.Log($"InputController: 落地奖励！瞄准时间上限增加1秒，当前上限: {playerModel.MaxAimTime.Value}秒");
 
                 // 重置标志
@@ -499,26 +439,24 @@ namespace SkateGame
         // 获取基础瞄准时间上限（供UI使用）
         public float baseMaxAimTime => _baseMaxAimTime;
 
-        // 检测玩家方向变化并更新粒子特效容器
+        // 检测玩家方向并更新例子特效容器
         private void CheckPlayerDirectionChange()
         {
-            float currentMoveInput = Input.GetAxisRaw("Horizontal");
+            float currentMoveInput = inputModel.Move.Value.x;
             
-            // 检查是否有移动输入
-            if (Mathf.Abs(currentMoveInput) > 0.01f)
+            // 检测是否有移动输入
+            if(Mathf.Abs(currentMoveInput) > 0.01f)
             {
                 bool shouldFaceRight = currentMoveInput > 0;
-                
-                // 检查方向是否改变
-                if (isFacingRight != shouldFaceRight)
+                // 检测方向是否改变
+                if(shouldFaceRight != isFacingRight)
                 {
-                    // 方向改变，旋转粒子特效容器180度
-                    if (particleEffectContainer != null)
+                    // 方向改变，粒子特效容器旋转180度
+                    if(particleEffectContainer != null)
                     {
                         Vector3 currentRotation = particleEffectContainer.localEulerAngles;
                         particleEffectContainer.localEulerAngles = new Vector3(currentRotation.x, currentRotation.y + 180f, currentRotation.z);
                         isFacingRight = shouldFaceRight;
-                        
                     }
                 }
             }
@@ -526,7 +464,4 @@ namespace SkateGame
             lastMoveInput = currentMoveInput;
         }
     }
-
-
 }
-

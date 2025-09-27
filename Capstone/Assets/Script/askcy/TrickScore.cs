@@ -42,13 +42,13 @@ public class TrickScore : ViewerControllerBase
         }
     }
 
-    public void AddTrickScore(TrickBase trickBase)
+    public void AddTrickScore(TrickState trickBase)
     {
         TrickInfo newTrick = new TrickInfo(trickBase);
         trickInfos.Add(newTrick);
-        totalScore += trickBase.scoreValue;
+        totalScore += trickBase.ScoreValue;
         
-        Debug.Log($"添加技巧: {trickBase.trickName}, 分数: {trickBase.scoreValue}");
+        Debug.Log($"添加技巧: {trickBase.TrickName}, 分数: {trickBase.ScoreValue}");
         
         // 直接更新模型，不再发送事件
         // UIController会监听模型变化自动更新UI
@@ -57,17 +57,17 @@ public class TrickScore : ViewerControllerBase
         
         trickModel.CurrentTricks.Value.Add(newTrick);
         scoreModel.TotalScore.Value = totalScore;
-        trickModel.CurrentTrickName.Value = trickBase.trickName;
+        trickModel.CurrentTrickName.Value = trickBase.TrickName;
     }
     
-    public void RemoveTrickScore(TrickBase trickBase)
+    public void RemoveTrickScore(TrickState trickBase)
     {
         // Find and remove the specific trick info
         TrickInfo trickToRemove = trickInfos.Find(trick => trick.trickBase == trickBase);
         if (trickToRemove != null)
         {
             trickInfos.Remove(trickToRemove);
-            totalScore -= trickBase.scoreValue;
+            totalScore -= trickBase.ScoreValue;
             
             // 直接更新模型，不再发送事件
             var trickModel = this.GetModel<ITrickModel>();
@@ -142,14 +142,14 @@ public class TrickScore : ViewerControllerBase
 
 public class TrickInfo
 {
-    public TrickBase trickBase;
+    public ActionStateBase trickBase;
     public string trickName;
     public int trickScore;
 
-    public TrickInfo(TrickBase trickBase)
+    public TrickInfo(TrickState trickBase)
     {
         this.trickBase = trickBase;
-        this.trickName = trickBase.trickName;
-        this.trickScore = trickBase.scoreValue;
+        this.trickName = trickBase.TrickName;
+        this.trickScore = trickBase.ScoreValue;
     }
 }
