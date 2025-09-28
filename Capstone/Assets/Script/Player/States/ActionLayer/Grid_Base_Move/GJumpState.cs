@@ -25,7 +25,7 @@ public class GJumpState : JumpState
         rb.gravityScale = 1f;
 
         Vector2 currentVelocity = rb.linearVelocity;
-        rb.linearVelocity = new Vector2(currentVelocity.x, playerModel.maxJumpForce.Value);
+        rb.linearVelocity = new Vector2(currentVelocity.x, playerModel.Config.Value.maxJumpForce);
 
                // 播放MMF效果
         if (player.GJumpEffect != null)
@@ -45,10 +45,10 @@ public class GJumpState : JumpState
 
         if (Mathf.Abs(moveInput) > 0.01f)
         {
-            rb.AddForce(Vector2.right * moveInput * playerModel.airControlForce.Value, ForceMode2D.Force);
+            rb.AddForce(Vector2.right * moveInput * playerModel.Config.Value.airControlForce, ForceMode2D.Force);
 
 
-            float max = playerModel.maxAirHorizontalSpeed.Value;
+            float max = playerModel.Config.Value.maxAirHorizontalSpeed;
                             rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -max, max), rb.linearVelocity.y);
         }
 

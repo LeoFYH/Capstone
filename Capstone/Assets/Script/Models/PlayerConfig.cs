@@ -10,7 +10,6 @@ namespace SkateGame
         public float minJumpForce = 0f;
         public float doubleJumpForce = 8f;
         public float maxChargeTime = 2f;
-        public bool allowDoubleJump = true;
 
         [Header("移动设置")]
         public float moveSpeed = 5f;

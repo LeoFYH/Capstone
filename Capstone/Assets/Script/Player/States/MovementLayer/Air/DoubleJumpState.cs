@@ -17,7 +17,7 @@ public class DoubleJumpState : AirborneMovementState
     {
         player.animator.SetTrigger("kickFlip");
         // 直接跳起来
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, playerModel.maxJumpForce.Value);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, playerModel.Config.Value.maxJumpForce);
         Debug.Log("DoubleJumpState: 执行二段跳！");
         
         // 发送技巧执行事件给系统，更新UIController
@@ -49,13 +49,13 @@ public class DoubleJumpState : AirborneMovementState
             player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
             Debug.Log("2222:" + player.stateMachine.GetMovementStateName());
         }
-        this.player.GetModel<IPlayerModel>().AllowDoubleJump.Value = false;
+        this.player.GetModel<IPlayerModel>().CanDoubleJump.Value = false;
     }
 
     public override void Exit()
     {
         // Debug.Log("退出DoubleJump状态");
-        this.player.GetModel<IPlayerModel>().AllowDoubleJump.Value = false;
+        this.player.GetModel<IPlayerModel>().CanDoubleJump.Value = false;
 
 
         //MMF

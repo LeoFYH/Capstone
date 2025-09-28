@@ -50,7 +50,6 @@ namespace SkateGame
         [Header("瞄准与射击设置")]
         public LineRenderer aimLine;      // 瞄准线
         public float aimLineLength = 10f; // 瞄准线长度
-        public LayerMask shootLayer;
 
         public GameObject[] bulletPrefabs;   // 可切换的子弹类型
         public float bulletSpeed = 15f;
@@ -77,12 +76,12 @@ namespace SkateGame
         public MMF_Player DoubleJumpEffect;
         public MMF_Player GrabEffect;
         public MMF_Player IdleEffect;
+        public MMF_Player powerGrindEffectPlayer; 
+        
         [Header("粒子特效容器")]
         public Transform particleEffectContainer; // 粒子特效容器
         private float lastMoveInput = 0f; //上一帧的移动输入
         private bool isFacingRight = true; // 当前面向方向
-        public MMF_Player powerGrindEffectPlayer; 
-        
         protected override void InitializeController()
         {
             // Debug.Log("玩家控制器初始化完成");
@@ -142,8 +141,9 @@ namespace SkateGame
             IsGrounded();
             /// Warning 待创建一个落地状态
 
-            if(playerModel.WasGrounded.Value){
-                playerModel.AllowDoubleJump.Value = true;
+            if(playerModel.WasGrounded.Value)
+            {
+                playerModel.CanDoubleJump.Value = true;
             }
 
             // 更新当前State

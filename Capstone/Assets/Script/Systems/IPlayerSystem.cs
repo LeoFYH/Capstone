@@ -123,7 +123,7 @@ namespace SkateGame
                     float currentHorizontalVelocity = rb.linearVelocity.x;
                     
                     // 执行跳跃
-                    float jumpForce = playerModel.maxJumpForce.Value;
+                    float jumpForce = playerModel.Config.Value.maxJumpForce;
                     rb.linearVelocity = new Vector2(currentHorizontalVelocity, jumpForce);
                     
                     Debug.Log($"系统执行跳跃 - 使用跳跃力: {jumpForce}, 水平速度: {currentHorizontalVelocity}");
