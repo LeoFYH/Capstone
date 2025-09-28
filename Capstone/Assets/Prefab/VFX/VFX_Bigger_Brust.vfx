@@ -88,7 +88,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d4c867f6b72b714dbb5fd1780afe208, type: 3}
-  m_Name: VFX_Brust
+  m_Name: VFX_Bigger_Brust
   m_EditorClassIdentifier: 
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 0}
@@ -126,7 +126,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Gradient, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"colorKeys":[{"color":{"r":16.659090042114259,"g":5.4973344802856449,"b":3.0646440982818605,"a":1.0},"time":0.09117265790700913},{"color":{"r":2.9811322689056398,"g":1.4664283990859986,"b":0.6087127923965454,"a":1.0},"time":0.4764782190322876},{"color":{"r":0.7452831268310547,"g":0.41295671463012698,"b":0.1511659026145935,"a":1.0},"time":0.9088273644447327}],"alphaKeys":[{"alpha":0.0,"time":0.0},{"alpha":1.0,"time":0.1441214680671692},{"alpha":1.0,"time":0.6500037908554077},{"alpha":0.0,"time":1.0}],"gradientMode":0}'
+      m_SerializableObject: '{"colorKeys":[{"color":{"r":20.772432327270509,"g":3.0265860557556154,"b":2.841512680053711,"a":1.0},"time":0.09117265790700913},{"color":{"r":3.6421170234680177,"g":0.904060423374176,"b":0.738731324672699,"a":1.0},"time":0.4764782190322876},{"color":{"r":1.0,"g":0.23984451591968537,"b":0.07075470685958862,"a":1.0},"time":0.9088273644447327}],"alphaKeys":[{"alpha":0.0,"time":0.0},{"alpha":1.0,"time":0.1441214680671692},{"alpha":1.0,"time":0.6500037908554077},{"alpha":0.0,"time":1.0}],"gradientMode":0}'
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -142,7 +142,7 @@ VisualEffectResource:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VFX_Brust
+  m_Name: VFX_Bigger_Brust
   m_Graph: {fileID: 114350483966674976}
   m_Infos:
     m_RendererSettings:
@@ -4741,7 +4741,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 250
+      m_SerializableObject: 350
     m_Space: -1
   m_Property:
     name: _Size
@@ -5368,7 +5368,7 @@ MonoBehaviour:
     linkedSlots:
     - outputSlot: {fileID: 8926484042661615260}
       inputSlot: {fileID: 8926484042661615262}
-    position: {x: 433, y: 2802}
+    position: {x: 338, y: 2917}
     expandedSlots: []
     expanded: 1
     supecollapsed: 0
@@ -5397,7 +5397,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Gradient, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"colorKeys":[{"color":{"r":16.659090042114259,"g":5.4973344802856449,"b":3.0646440982818605,"a":1.0},"time":0.09117265790700913},{"color":{"r":2.9811322689056398,"g":1.4664283990859986,"b":0.6087127923965454,"a":1.0},"time":0.4764782190322876},{"color":{"r":0.7452831268310547,"g":0.41295671463012698,"b":0.1511659026145935,"a":1.0},"time":0.9088273644447327}],"alphaKeys":[{"alpha":0.0,"time":0.0},{"alpha":1.0,"time":0.1441214680671692},{"alpha":1.0,"time":0.6500037908554077},{"alpha":0.0,"time":1.0}],"gradientMode":0}'
+      m_SerializableObject: '{"colorKeys":[{"color":{"r":20.772432327270509,"g":3.0265860557556154,"b":2.841512680053711,"a":1.0},"time":0.09117265790700913},{"color":{"r":3.6421170234680177,"g":0.904060423374176,"b":0.738731324672699,"a":1.0},"time":0.4764782190322876},{"color":{"r":1.0,"g":0.23984451591968537,"b":0.07075470685958862,"a":1.0},"time":0.9088273644447327}],"alphaKeys":[{"alpha":0.0,"time":0.0},{"alpha":1.0,"time":0.1441214680671692},{"alpha":1.0,"time":0.6500037908554077},{"alpha":0.0,"time":1.0}],"gradientMode":0}'
     m_Space: -1
   m_Property:
     name: o
@@ -7601,7 +7601,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":4.0,"y":1.8229804039001465,"z":0.735849142074585}'
+      m_SerializableObject: '{"x":3.999999523162842,"y":0.900724470615387,"z":0.7539266347885132}'
     m_Space: -1
   m_Property:
     name: _Color

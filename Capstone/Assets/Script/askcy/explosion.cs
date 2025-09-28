@@ -1,20 +1,20 @@
 using UnityEngine;
+using MoreMountains.Feedbacks;
 
 public class explosion : MonoBehaviour
 {
-    public float explosionForce = 10f;     // µ¯·ÉÁ¦¶È
-    public float duration = 0.2f;          // ±¬Õ¨´æÔÚÊ±¼ä
-    public LayerMask affectedLayer;        // ÊÜÓ°ÏìµÄ¶ÔÏó²ã
-
+    public float explosionForce = 10f;     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½       // ï¿½ï¿½Õ¨ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+    public LayerMask affectedLayer;        // ï¿½ï¿½Ó°ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½
+    public MMF_Player OnSpawnEffect;
     private void Start()
     {
-        // ÑÓ³ÙÏú»Ù£¬±£Ö¤´¥·¢Íê
-        Destroy(gameObject, duration);
+        // ï¿½Ó³ï¿½ï¿½ï¿½ï¿½Ù£ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        OnSpawnEffect.PlayFeedbacks();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Ö»Ó°ÏìÖ¸¶¨²ã
+        // Ö»Ó°ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½
         if (((1 << other.gameObject.layer) & affectedLayer) != 0)
         {
             Rigidbody2D rb = other.GetComponent<Rigidbody2D>();
