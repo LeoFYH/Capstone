@@ -5,22 +5,21 @@ namespace SkateGame
 {
     public interface IPlayerModel : IModel
     {
+        // Reference to PlayerConfig
+        BindableProperty<PlayerConfig> Config { get; }
+
+        // Player Parameters
         BindableProperty<string> CurrentState { get; }
         BindableProperty<bool> IsGrounded { get; }
         BindableProperty<bool> IsInAir { get; }
         BindableProperty<float> AirTime { get; }
-        BindableProperty<int> AirCombo { get; }
         BindableProperty<bool> IsNearTrack { get; }
         BindableProperty<bool> IsNearWall { get; }
-        BindableProperty<float> MoveSpeed { get; }
-        BindableProperty<float> JumpForce { get; }
-        BindableProperty<float> StateTimer { get; }
+        BindableProperty<float> StateTimer { get; } // 当前状态持续时间
 
         /// <summary>
         /// air相关
         /// </summary>
-        BindableProperty<float> AirControlForce { get; }
-        BindableProperty<float> MaxAirHorizontalSpeed { get; }
         BindableProperty<bool> CanDoubleJump { get; }
 
         /// <summary>
@@ -56,28 +55,17 @@ namespace SkateGame
         /// <summary>
         /// Trick相关
         /// </summary>
-        BindableProperty<float> TrickADuration { get; }
-        BindableProperty<int> TrickAScore { get; }
-        BindableProperty<float> TrickBDuration { get; }
-        BindableProperty<int> TrickBScore { get; }
         BindableProperty<bool> isInPower { get; }
 
         ///———————从inputcontroller迁移———————
         /// <summary>
         /// 跳跃设置
         /// </summary>
-        BindableProperty<float> maxJumpForce { get; }
-        BindableProperty<float> minJumpForce { get; }
-        BindableProperty<float> doubleJumpForce { get; }
         BindableProperty<float> maxChargeTime { get; }
-        BindableProperty<bool> AllowDoubleJump { get; }
-        [Header("移动设置")]
-        BindableProperty<float> moveSpeed { get; }
-        BindableProperty<float> airControlForce { get; }
-        BindableProperty<float> maxAirHorizontalSpeed { get; }
-        BindableProperty<float> groundAccel { get; }
-        BindableProperty<float> groundDecel { get; }
-        BindableProperty<float> turnDecel { get; }
+        
+        /// <summary>
+        /// 移动设置
+        /// </summary>
         
         // 非输入的运行时/调参（来自 InputController，但不包含 isEHeld/isWHeld 等原始输入）
         BindableProperty<Track> CurrentTrack { get; }
@@ -94,20 +82,16 @@ namespace SkateGame
 
     public class PlayerModel : AbstractModel, IPlayerModel
     {
+        public BindableProperty<PlayerConfig> Config { get; } = new BindableProperty<PlayerConfig>(null);
         public BindableProperty<string> CurrentState { get; } = new BindableProperty<string>("Idle");
         public BindableProperty<bool> IsGrounded { get; } = new BindableProperty<bool>(true);
         public BindableProperty<bool> IsInAir { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> AirTime { get; } = new BindableProperty<float>(0f);
-        public BindableProperty<int> AirCombo { get; } = new BindableProperty<int>(0);
         public BindableProperty<bool> IsNearTrack { get; } = new BindableProperty<bool>(false);
         public BindableProperty<bool> IsNearWall { get; } = new BindableProperty<bool>(false);
-        public BindableProperty<float> MoveSpeed { get; } = new BindableProperty<float>(5f);
-        public BindableProperty<float> JumpForce { get; } = new BindableProperty<float>(0f);
         public BindableProperty<float> StateTimer { get; } = new BindableProperty<float>(0f);
         
         // air相关
-        public BindableProperty<float> AirControlForce { get; } = new BindableProperty<float>(10f);
-        public BindableProperty<float> MaxAirHorizontalSpeed { get; } = new BindableProperty<float>(8f);
         public BindableProperty<bool> CanDoubleJump { get; } = new BindableProperty<bool>(true);
 
         // grind相关
@@ -133,23 +117,13 @@ namespace SkateGame
         public BindableProperty<float> PowerGrindDirection { get; } = new BindableProperty<float>(0f);
 
         // Trick相关
-        public BindableProperty<float> TrickADuration { get; } = new BindableProperty<float>(1.5f);
-        public BindableProperty<int> TrickAScore { get; } = new BindableProperty<int>(20);
-        public BindableProperty<float> TrickBDuration { get; } = new BindableProperty<float>(1.5f);
-        public BindableProperty<int> TrickBScore { get; } = new BindableProperty<int>(20);
+        
         public BindableProperty<bool> isInPower { get; } = new BindableProperty<bool>(false);
 
         // 跳跃设置
-        public BindableProperty<float> maxJumpForce { get; } = new BindableProperty<float>(6f);
-        public BindableProperty<float> minJumpForce { get; } = new BindableProperty<float>(0f);
-        public BindableProperty<float> doubleJumpForce { get; } = new BindableProperty<float>(8f);
         public BindableProperty<float> maxChargeTime { get; } = new BindableProperty<float>(2f);
-        public BindableProperty<bool> AllowDoubleJump { get; } = new BindableProperty<bool>(true);
 
         // 移动设置
-        public BindableProperty<float> moveSpeed { get; } = new BindableProperty<float>(5f);
-        public BindableProperty<float> airControlForce { get; } = new BindableProperty<float>(5f);
-        public BindableProperty<float> maxAirHorizontalSpeed { get; } = new BindableProperty<float>(10f);
         public BindableProperty<float> groundAccel { get; } = new BindableProperty<float>(20f);
         public BindableProperty<float> groundDecel { get; } = new BindableProperty<float>(10f);
         public BindableProperty<float> turnDecel { get; } = new BindableProperty<float>(40f);

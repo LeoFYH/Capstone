@@ -12,8 +12,8 @@ public class AirState : AirborneMovementState
     {
         this.player = player;
         this.rb = rb;
-        airControlForce = playerModel.AirControlForce.Value/2;
-        maxAirHorizontalSpeed = playerModel.MaxAirHorizontalSpeed.Value/2;
+        airControlForce = playerModel.Config.Value.airControlForceConfig / 2f;
+        maxAirHorizontalSpeed = playerModel.Config.Value.maxAirHorizontalSpeedConfig / 2f;
         canDoubleJump = playerModel.CanDoubleJump.Value;
     }
 
