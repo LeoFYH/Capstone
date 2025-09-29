@@ -12,9 +12,11 @@ namespace SkateGame
         public float maxChargeTime = 2f;
 
         [Header("移动设置")]
-        public float moveSpeed = 5f;
-        public float airControlForce = 5f;
+        public float maxMoveSpeed = 5f;
         public float maxAirHorizontalSpeed = 10f;
+        public float airControlForce = 5f;
+        public float airAccel = 20f;
+        public float airDecel = 10f;
         public float groundAccel = 20f;
         public float groundDecel = 10f;
         public float turnDecel = 40f;

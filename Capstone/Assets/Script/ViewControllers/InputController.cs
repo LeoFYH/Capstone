@@ -98,9 +98,6 @@ namespace SkateGame
 
             // 更新着地状态
             playerModel.WasGrounded.Value = IsGrounded();
-
-            // 发送移动输入事件
-            this.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
             // 检测输入并发送事件
             DetectInput();
 

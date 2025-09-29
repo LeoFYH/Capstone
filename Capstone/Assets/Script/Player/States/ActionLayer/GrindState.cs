@@ -38,7 +38,7 @@ public class GrindState : ActionStateBase
         {
             Vector2 trackDir = playerModel.CurrentTrack.Value.GetTrackDirection();
             direction = new Vector2(trackDir.x, 0).normalized;
-            speed = playerModel.Config.Value.moveSpeed;
+            speed = playerModel.Config.Value.maxMoveSpeed;
         }
         else
         {
