@@ -6,14 +6,12 @@ public class GrindState : ActionStateBase
 {    private float speed;
     private Vector2 direction;
     private float normalG;
-    private bool isJumping;
   
     public GrindState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
         speed = playerModel.Speed.Value;
         direction = playerModel.GrindDirection.Value;
         normalG = playerModel.NormalG.Value;
-        isJumping = playerModel.IsJumping.Value;
         isLoop = true;
         isIgnoringMovementLayer = true;
         isRecovering = false;
@@ -85,8 +83,6 @@ public class GrindState : ActionStateBase
             return;
         }
 
-        if (isJumping) return;
-
         // 再次检查currentTrack，确保安全
         if (playerModel.CurrentTrack.Value != null)
         {
@@ -99,9 +95,8 @@ public class GrindState : ActionStateBase
             rb.linearVelocity = new Vector2(direction.x * speed, 0);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (inputModel.Jump.Value)
         {
-            isJumping = true;
             rb.gravityScale = 1f;
             rb.linearVelocity = new Vector2(direction.x * speed, 10f);
 
@@ -135,7 +130,6 @@ public class GrindState : ActionStateBase
     {
         player.animator.SetBool("isNoseGrinding", false);
         rb.gravityScale = normalG;
-        isJumping = false;
         // Debug.Log("Exit Grind");
         
         // 结束滑轨计分

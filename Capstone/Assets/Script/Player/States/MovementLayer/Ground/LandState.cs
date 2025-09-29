@@ -4,6 +4,8 @@ using QFramework;
 
 public class LandState : GroundMovementState
 {
+    private float landTimer = 0.5f;
+
     public LandState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
@@ -18,12 +20,18 @@ public class LandState : GroundMovementState
 
     protected override void UpdateGroundMovement()
     {
-        float moveInput = inputModel.Move.Value.x;
-
-        /* 状态切换 */
-        // 移动 
-        if (rb.linearVelocity.x == 0)player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
-        else player.stateMachine.SwitchState(StateLayer.Movement, "Move");
+        landTimer -= Time.deltaTime;
+        if(landTimer <= 0)
+        {
+            if(rb.linearVelocity.x == 0)
+            {
+                player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
+            }
+            else
+            {
+                player.stateMachine.SwitchState(StateLayer.Movement, "Move");
+            }
+        }
     }
 
     public override void Exit()

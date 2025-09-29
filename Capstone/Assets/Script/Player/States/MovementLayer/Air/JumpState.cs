@@ -6,16 +6,12 @@ public class JumpState : AirborneMovementState
 {
     private float chargeTime;
     private bool isCharging;
-    private bool hasJumped;
-    private float initialHorizontalVelocity;
     public JumpState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
         chargeTime = playerModel.ChargeTime.Value;
         isCharging = playerModel.IsCharging.Value;
-        hasJumped = playerModel.HasJumped.Value;
-        initialHorizontalVelocity = playerModel.InitialHorizontalVelocity.Value;
     }
 
     public override string GetStateName() => "Jump";
@@ -28,8 +24,6 @@ public class JumpState : AirborneMovementState
         playerModel.GrindJumpTimer.Value = playerModel.Config.Value.grindJumpIgnoreTime;
         isCharging = true;
         chargeTime = 0f;
-        hasJumped = false;
-        initialHorizontalVelocity = rb.linearVelocity.x;
         // Debug.Log($"初始水平速度: {initialHorizontalVelocity}");
         
         // 立即发送跳跃执行事件

@@ -4,16 +4,12 @@ using QFramework;
 
 public class AirState : AirborneMovementState
 { 
-    private float airControlForce;
-    private float maxAirHorizontalSpeed;
     private bool canDoubleJump;
 
     public AirState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
-        airControlForce = playerModel.Config.Value.airControlForceConfig / 2f;
-        maxAirHorizontalSpeed = playerModel.Config.Value.maxAirHorizontalSpeedConfig / 2f;
         canDoubleJump = playerModel.CanDoubleJump.Value;
     }
 
@@ -27,15 +23,6 @@ public class AirState : AirborneMovementState
 
     protected override void UpdateAirMovement()
     {
-        // 二段跳检测
-        if (Input.GetKeyDown(KeyCode.Space) && canDoubleJump)
-        {
-            // 切换到DoubleJump状态，让DoubleJumpState处理二段跳逻辑和事件发送
-            Debug.Log("AirState: 检测到二段跳输入，切换到DoubleJump状态");
-            canDoubleJump = false; // 禁用二段跳
-            player.stateMachine.SwitchState(StateLayer.Movement, "DoubleJump");
-        }
-
         // 检测落地
         if (player.IsGrounded())
         {
@@ -53,5 +40,15 @@ public class AirState : AirborneMovementState
     public override void Exit()
     {
         Debug.Log("退出空中状态");
+    }
+    
+    // state change
+    private void StateChange()
+    {
+        if (canDoubleJump && inputModel.Jump.Value)
+        {
+            canDoubleJump = false;
+            player.stateMachine.SwitchState(StateLayer.Movement, "DoubleJump");
+        }
     }
 } 

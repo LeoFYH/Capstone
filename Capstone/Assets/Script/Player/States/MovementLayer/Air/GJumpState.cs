@@ -3,7 +3,6 @@ using SkateGame;
 
 public class GJumpState : JumpState
 {
-    private bool hasJumped = false;
     public bool canDoubleJump = true;
 
     public GJumpState(PlayerController player, Rigidbody2D rb) : base(player, rb)
@@ -19,7 +18,6 @@ public class GJumpState : JumpState
         Debug.Log("GJ");
         
         playerModel.GrindJumpTimer.Value = playerModel.Config.Value.grindJumpIgnoreTime;
-        hasJumped = true;
         canDoubleJump = true;
 
         rb.gravityScale = 1f;
@@ -40,9 +38,9 @@ public class GJumpState : JumpState
 
     protected override void UpdateAirMovement()
     {
-        float moveInput = Input.GetAxisRaw("Horizontal");
+        StateChange();
 
-
+        float moveInput = inputModel.Move.Value.x;
         if (Mathf.Abs(moveInput) > 0.01f)
         {
             rb.AddForce(Vector2.right * moveInput * playerModel.Config.Value.airControlForce, ForceMode2D.Force);
@@ -50,19 +48,6 @@ public class GJumpState : JumpState
 
             float max = playerModel.Config.Value.maxAirHorizontalSpeed;
                             rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -max, max), rb.linearVelocity.y);
-        }
-
-
-        if (hasJumped && canDoubleJump && Input.GetKeyDown(KeyCode.Space))
-        {
-            canDoubleJump = false;
-            player.stateMachine.SwitchState(StateLayer.Movement, "DoubleJump");
-            Debug.Log("DoubleJump88888888888!");
-        }
-
-        if (playerModel.WasGrounded.Value && rb.linearVelocity.y <= 0.01f)
-        {
-            player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
         }
     }
 
@@ -77,5 +62,15 @@ public class GJumpState : JumpState
         {
             Debug.LogWarning("JumpEffecttPlayer为null，无法播放效果");
         } 
+    }
+
+    // state change
+    private void StateChange()
+    {       
+         if (canDoubleJump && inputModel.Jump.Value)
+        {
+            canDoubleJump = false;
+            player.stateMachine.SwitchState(StateLayer.Movement, "DoubleJump");
+        }
     }
 }
