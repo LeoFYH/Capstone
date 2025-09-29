@@ -85,7 +85,7 @@ public class GrindState : ActionStateBase
             rb.linearVelocity = new Vector2(direction.x * speed, 0);
         }
 
-        if (inputModel.Jump.Value)
+        if (inputModel.JumpStart.Value)
         {
             rb.gravityScale = 1f;
             rb.linearVelocity = new Vector2(direction.x * speed, 10f);

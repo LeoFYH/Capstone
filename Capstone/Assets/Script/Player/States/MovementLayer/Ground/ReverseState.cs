@@ -24,10 +24,6 @@ public class ReverseState : GroundMovementState
             player.ReverseEffect.PlayFeedbacks();
 
         }
-        else
-        {
-            Debug.LogWarning("ReverseEffect为null，无法播放效果");
-        }
     }
 
     protected override void UpdateGroundMovement()

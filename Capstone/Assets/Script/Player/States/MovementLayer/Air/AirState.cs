@@ -15,19 +15,16 @@ public class AirState : AirborneMovementState
 
     public override void Enter()
     {
-        Debug.Log("AirState: Enter");
     }
 
     protected override void UpdateAirMovement()
     {
+        StateChange();
         // 检测落地
-        if (player.IsGrounded())
+        if (playerModel.IsGrounded.Value)
         {
             // 处理瞄准时间奖励（如果执行了trick）
             player.HandleLandingAimTimeBonus();
-            
-            // 发送玩家落地事件，让系统处理
-            //player.SendEvent<PlayerLandedEvent>(new PlayerLandedEvent());
             
             player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
         }
@@ -40,7 +37,7 @@ public class AirState : AirborneMovementState
     // state change
     private void StateChange()
     {
-        if (playerModel.CanDoubleJump.Value && inputModel.Jump.Value)
+        if (playerModel.CanDoubleJump.Value && inputModel.JumpStart.Value)
         {
             playerModel.CanDoubleJump.Value = false;
             player.stateMachine.SwitchState(StateLayer.Movement, "DoubleJump");

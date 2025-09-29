@@ -55,7 +55,7 @@ public class GJumpState : JumpState
     // state change
     private void StateChange()
     {       
-         if (playerModel.CanDoubleJump.Value && inputModel.Jump.Value)
+         if (playerModel.CanDoubleJump.Value && inputModel.JumpStart.Value)
         {
             playerModel.CanDoubleJump.Value = false;
             player.stateMachine.SwitchState(StateLayer.Movement, "DoubleJump");
