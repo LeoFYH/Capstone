@@ -7,7 +7,7 @@ public abstract class ActionStateBase : StateBase
 {
     protected float stateTimer;
     protected float stateTotalDuration = 0;
-    protected bool isLoop = false;
+    protected bool isLoop = true;
     protected bool isIgnoringMovementLayer = true;
     protected bool isRecovering = false;
     protected Vector2 ignoreMovementLayerDuration; // 第一个参数是开始忽略的时间，第二个参数是结束忽略的时间
@@ -90,6 +90,7 @@ public abstract class ActionStateBase : StateBase
         // 其次Grind
         else if (inputModel.Grind.Value)
         {
+            Debug.Log("GrindInput");
             GrindInput();
         }
     }

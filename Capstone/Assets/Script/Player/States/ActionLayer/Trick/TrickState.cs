@@ -14,13 +14,13 @@ public class TrickState : ActionStateBase
 
     public TrickState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
+        isLoop = false;
     }
 
     public override string GetStateName() => "Trick";
 
     protected override void EnterActionState()
     {
-        Debug.Log("TrickState: Enter");
         PerformTrick();
     }
 

@@ -14,8 +14,8 @@ public class WallRideState : ActionStateBase
     protected override void EnterActionState()
     {
 
-        // normalGravity = rb.gravityScale;
-        // rb.gravityScale = onWallGravity;
+        normalGravity = rb.gravityScale;
+        rb.gravityScale = onWallGravity;
 
         if (player.WallRideEffect != null)
         {
@@ -34,6 +34,7 @@ public class WallRideState : ActionStateBase
 
     protected override void ExitActionState()
     {   
+        rb.gravityScale = normalGravity;
         if (player.WallRideEffect != null)
         {
             player.WallRideEffect.StopFeedbacks();
