@@ -16,9 +16,11 @@ MonoBehaviour:
   minJumpForce: 0
   doubleJumpForce: 8
   maxChargeTime: 2
-  moveSpeed: 6
-  airControlForce: 5
+  maxMoveSpeed: 5
   maxAirHorizontalSpeed: 10
+  airControlForce: 5
+  airAccel: 20
+  airDecel: 10
   groundAccel: 20
   groundDecel: 10
   turnDecel: 40
@@ -35,7 +37,11 @@ MonoBehaviour:
   trickAScore: 20
   trickBDuration: 1.5
   trickBScore: 20
-  maxAimTime: 3
+  baseMaxAimTime: 3
+  bulletPrefabs:
+  - {fileID: 9141978474503307967, guid: f82702240d0fd6445947da81cd3c4534, type: 3}
+  - {fileID: 7146688517163803356, guid: 4e564305779436844a5e928b7bb74b4f, type: 3}
+  bulletSpeed: 15
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
