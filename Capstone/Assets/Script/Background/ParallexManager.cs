@@ -9,7 +9,7 @@ public class ParallexManager : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        playerRb = FindFirstObjectByType<InputController>().GetComponent<Rigidbody2D>();
+        playerRb = FindFirstObjectByType<PlayerController>().GetComponent<Rigidbody2D>();
     }
 
     void FixedUpdate()
