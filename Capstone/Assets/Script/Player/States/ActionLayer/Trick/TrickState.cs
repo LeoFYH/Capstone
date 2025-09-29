@@ -26,7 +26,7 @@ public class TrickState : ActionStateBase
 
     private void PerformTrick()
     {
-        player.SendEvent<TrickPerformedEvent>(new TrickPerformedEvent { TrickName = trickName });
+        // player.SendEvent<TrickPerformedEvent>(new TrickPerformedEvent { TrickName = trickName });
         
         PerformTrick(player);
         

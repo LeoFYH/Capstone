@@ -9,16 +9,9 @@ namespace SkateGame
     {
     }
     
-    // 技巧执行事件
-    public struct TrickPerformedEvent
-    {
-        public string TrickName;
-    }
     
-    // 技巧完成事件
-    public struct TrickCompletedEvent
-    {
-    }
+    
+    
     
     // 状态切换事件
     public struct StateChangedEvent
@@ -53,6 +46,15 @@ namespace SkateGame
     {
     }
     
+    // 强力轨道输入事件
+    public struct PowerGrindInputEvent
+    {
+    }
+    
+    // 反向输入事件
+    public struct ReverseInputEvent
+    {
+    }
     
     // 跳跃执行事件
     public struct JumpExecuteEvent
@@ -82,19 +84,7 @@ namespace SkateGame
     }
     
     // 技巧显示事件
-    public struct TrickDisplayEvent
-    {
-        public string TrickName;
-        public Text TextComponent;
-    }
-    
-    // 技巧列表显示事件
-    public struct TrickListDisplayEvent
-    {
-        public List<TrickInfo> Tricks;
-        public Text TextComponent;
-    }
-    
+   
     // 连击显示事件
     public struct ComboDisplayEvent
     {
