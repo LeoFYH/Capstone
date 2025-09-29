@@ -13,6 +13,7 @@ namespace SkateGame
     /// </summary>
     public class InputController : ViewerControllerBase
     {
+        public PlayerConfig playerConfig;
         private IPlayerModel playerModel;
         private IInputModel inputModel;
         [Header("状态机")]
@@ -88,6 +89,7 @@ namespace SkateGame
             // 获取玩家参数
             playerModel = this.GetModel<IPlayerModel>();
             inputModel = this.GetModel<IInputModel>();
+            this.GetSystem<IPlayerAssetSystem>().SetPlayerConfig(playerConfig);
             
             // 获取组件
             rb = GetComponent<Rigidbody2D>();
