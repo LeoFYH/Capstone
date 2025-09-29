@@ -1,18 +1,16 @@
 using SkateGame;
 using UnityEngine;
 
-public class GrabbingState : StateBase
+public class GrabbingState : ActionStateBase
 {
 
-    public GrabbingState(InputController player, Rigidbody2D rb)
+    public GrabbingState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
-        this.player = player;
-        this.rb = rb;
     }
 
     public override string GetStateName() => "Grab";
 
-    public override void Enter()
+    protected override void EnterActionState()
     {
         Debug.Log("进入Grabbing状态");
         //can be damage
@@ -29,7 +27,7 @@ public class GrabbingState : StateBase
         }
     }
 
-    public override void Update()
+    protected override void UpdateActionState()
     {
         // Debug.Log("Keep Grabbing");
 
@@ -72,7 +70,7 @@ public class GrabbingState : StateBase
 
     }
 
-    public override void Exit()
+    protected override void ExitActionState()
     {
         // Debug.Log("退出Grabbing状态");
         //exit can be damage

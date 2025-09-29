@@ -4,7 +4,7 @@ using QFramework;
 
 public class LandState : GroundMovementState
 {
-    public LandState(InputController player, Rigidbody2D rb)
+    public LandState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;

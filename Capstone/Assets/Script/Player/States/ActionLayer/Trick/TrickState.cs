@@ -12,15 +12,13 @@ public class TrickState : ActionStateBase
     public string TrickName => trickName;
     public float StateTotalDuration => stateTotalDuration;
 
-    public TrickState(InputController player, Rigidbody2D rb)
+    public TrickState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
-        this.player = player;
-        this.rb = rb;
     }
 
     public override string GetStateName() => "Trick";
 
-    public override void Enter()
+    protected override void EnterActionState()
     {
         Debug.Log("TrickState: Enter");
         PerformTrick();
@@ -45,20 +43,13 @@ public class TrickState : ActionStateBase
         }
     }
 
-
-    public override void Exit()
-    {
-        player.ResetPlayerColor();
-    }
-    private void PerformTrick(InputController player)
-    {
-        player.ChangePlayerColor(Color.red);
-        
+    private void PerformTrick(PlayerController player)
+    {   
         // 检测是否在能量状态，如果是则给予奖励
         CheckIfInPower(player);
         
     }
-    private void CheckIfInPower(InputController player)
+    private void CheckIfInPower(PlayerController player)
     {
         if (playerModel.isInPower.Value)
             {

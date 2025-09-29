@@ -6,7 +6,7 @@ public class GJumpState : JumpState
     private bool hasJumped = false;
     public bool canDoubleJump = true;
 
-    public GJumpState(InputController player, Rigidbody2D rb) : base(player, rb)
+    public GJumpState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
         this.player = player;
         this.rb = rb;
@@ -18,7 +18,7 @@ public class GJumpState : JumpState
     {
         Debug.Log("GJ");
         
-        playerModel.GrindJumpTimer.Value = player.grindJumpIgnoreTime;
+        playerModel.GrindJumpTimer.Value = playerModel.Config.Value.grindJumpIgnoreTime;
         hasJumped = true;
         canDoubleJump = true;
 

@@ -10,7 +10,7 @@ public class MoveState : GroundMovementState
     private float deceleration;
     private float maxSpeed;
 
-    public MoveState(InputController player, Rigidbody2D rb)
+    public MoveState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;

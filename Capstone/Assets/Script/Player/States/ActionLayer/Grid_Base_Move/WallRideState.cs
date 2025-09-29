@@ -1,22 +1,20 @@
 using UnityEngine;
 using SkateGame;
 
-public class WallRideState : StateBase
+public class WallRideState : ActionStateBase
 {
     private float normalGravity;
     private float onWallGravity = 0.1f;
 
     private float lockedDirection = 0f; 
 
-    public WallRideState(InputController player, Rigidbody2D rb)
+    public WallRideState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
-        this.player = player;
-        this.rb = rb;
     }
 
     public override string GetStateName() => "WallRide";
 
-    public override void Enter()
+    protected override void EnterActionState()
     {
         float input = Input.GetAxisRaw("Horizontal");
         if (Mathf.Abs(input) > 0.01f)
@@ -41,17 +39,17 @@ public class WallRideState : StateBase
         }
     }
 
-    public override void Update()
+    protected override void UpdateActionState()
     {
         rb.gravityScale = onWallGravity;
-        if (player.currentWall == null || !inputModel.Grind.Value)
+        if (playerModel.CurrentWall.Value == null || !inputModel.Grind.Value)
         {
             player.stateMachine.SwitchState(StateLayer.Action, "None");
             player.stateMachine.SwitchState(StateLayer.Movement, "Jump");
         }
     }
 
-    public override void Exit()
+    protected override void ExitActionState()
     {
         rb.gravityScale = normalGravity;
         // Debug.Log("退出WallRide状态");

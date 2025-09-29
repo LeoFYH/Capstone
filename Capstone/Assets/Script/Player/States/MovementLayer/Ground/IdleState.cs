@@ -4,7 +4,7 @@ using QFramework;
 
 public class IdleState : GroundMovementState
 {
-    public IdleState(InputController player, Rigidbody2D rb)
+    public IdleState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;

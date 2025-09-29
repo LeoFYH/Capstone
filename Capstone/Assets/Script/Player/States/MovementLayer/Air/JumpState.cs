@@ -8,7 +8,7 @@ public class JumpState : AirborneMovementState
     private bool isCharging;
     private bool hasJumped;
     private float initialHorizontalVelocity;
-    public JumpState(InputController player, Rigidbody2D rb)
+    public JumpState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
@@ -25,7 +25,7 @@ public class JumpState : AirborneMovementState
         player.animator.SetBool("isOllie", true);
         player.animator.SetBool("isGrounded", false);
         // Debug.Log("JumpState.Enter() - 开始跳跃");
-        playerModel.GrindJumpTimer.Value = player.grindJumpIgnoreTime;
+        playerModel.GrindJumpTimer.Value = playerModel.Config.Value.grindJumpIgnoreTime;
         isCharging = true;
         chargeTime = 0f;
         hasJumped = false;

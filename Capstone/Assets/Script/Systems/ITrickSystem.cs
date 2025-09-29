@@ -14,10 +14,10 @@ namespace SkateGame
 
     public class TrickSystem : AbstractSystem, ITrickSystem
     {
-        private InputController playerController;
+        private PlayerController playerController;
         protected override void OnInit()
         {
-            playerController = Object.FindFirstObjectByType<InputController>();
+            playerController = Object.FindFirstObjectByType<PlayerController>();
             // 监听玩家落地事件
             this.RegisterEvent<PlayerLandedEvent>(OnPlayerLanded);
             // 监听技巧执行事件
@@ -30,7 +30,7 @@ namespace SkateGame
             trickModel.CurrentTrickName.Value = trickName;
             
             // 获取玩家控制器
-            InputController playerController = Object.FindFirstObjectByType<InputController>();
+            PlayerController playerController = Object.FindFirstObjectByType<PlayerController>();
             
             // 创建技巧实例
             TrickState trick = playerController.stateMachine.TryGetState(trickName, StateLayer.Action) as TrickState;

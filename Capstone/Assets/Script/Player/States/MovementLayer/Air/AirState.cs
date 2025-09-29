@@ -8,7 +8,7 @@ public class AirState : AirborneMovementState
     private float maxAirHorizontalSpeed;
     private bool canDoubleJump;
 
-    public AirState(InputController player, Rigidbody2D rb)
+    public AirState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
@@ -21,9 +21,6 @@ public class AirState : AirborneMovementState
 
     public override void Enter()
     {
-        player.isInAir = true;
-        player.airTime = 0f;
-        player.airCombo = 0;
         canDoubleJump = true; // 重置二段跳
          Debug.Log("进入空中状态");
     }
@@ -40,21 +37,10 @@ public class AirState : AirborneMovementState
         }
 
         // 检测落地
-        if (player.IsGrounded() && player.isInAir)
+        if (player.IsGrounded())
         {
-            player.isInAir = false;
-            // 落地时根据连击数给予奖励
-            if (player.airCombo > 0)
-            {
-                // Debug.Log($"空中连击完成！连击数: {player.airCombo}");
-                // 这里可以添加连击奖励逻辑
-            }
-            
             // 处理瞄准时间奖励（如果执行了trick）
             player.HandleLandingAimTimeBonus();
-            
-            // 确保颜色恢复为白色
-            player.ResetPlayerColor();
             
             // 发送玩家落地事件，让系统处理
             //player.SendEvent<PlayerLandedEvent>(new PlayerLandedEvent());
@@ -66,7 +52,6 @@ public class AirState : AirborneMovementState
 
     public override void Exit()
     {
-        player.isInAir = false;
         Debug.Log("退出空中状态");
     }
 } 

@@ -12,13 +12,13 @@ namespace SkateGame
 
     public class PlayerSystem : AbstractSystem, IPlayerSystem, ICanSendCommand
     {
-        private InputController playerController;
+        private PlayerController playerController;
         private IPlayerModel playerModel;
         
         protected override void OnInit()
         {
             // 获取玩家控制器
-            playerController = Object.FindFirstObjectByType<InputController>();
+            playerController = Object.FindFirstObjectByType<PlayerController>();
             
             // 获取玩家参数
             playerModel = this.GetModel<IPlayerModel>();

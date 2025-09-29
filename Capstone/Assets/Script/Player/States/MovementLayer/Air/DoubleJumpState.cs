@@ -5,7 +5,7 @@ using QFramework;
 public class DoubleJumpState : AirborneMovementState
 {
     
-    public DoubleJumpState(InputController player, Rigidbody2D rb)
+    public DoubleJumpState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;

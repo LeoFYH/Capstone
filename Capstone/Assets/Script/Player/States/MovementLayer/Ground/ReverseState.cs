@@ -4,7 +4,7 @@ using SkateGame;
 public class ReverseState : GroundMovementState
 {
 
-    public ReverseState(InputController player, Rigidbody2D rb)
+    public ReverseState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;

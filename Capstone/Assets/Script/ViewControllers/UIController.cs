@@ -207,7 +207,7 @@ namespace SkateGame
             if (aimTimeText != null)
             {
                 // 获取InputController来获取当前瞄准状态
-                InputController playerController = Object.FindFirstObjectByType<InputController>();
+                PlayerController playerController = Object.FindFirstObjectByType<PlayerController>();
                 if (playerController != null)
                 {
                     if (playerModel.IsAiming.Value)

@@ -16,7 +16,6 @@ MonoBehaviour:
   minJumpForce: 0
   doubleJumpForce: 8
   maxChargeTime: 2
-  allowDoubleJump: 1
   moveSpeed: 6
   airControlForce: 5
   maxAirHorizontalSpeed: 10
@@ -30,8 +29,13 @@ MonoBehaviour:
   moveDeceleration: 20
   maxSpeed: 5
   powerGrindDeceleration: 1
+  reverseInputWindow: 2
+  grindJumpIgnoreTime: 0.2
   trickADuration: 1.5
   trickAScore: 20
   trickBDuration: 1.5
   trickBScore: 20
   maxAimTime: 3
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64

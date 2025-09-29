@@ -6,11 +6,11 @@ public class PlayerAnimationManager : MonoBehaviour
     public Animator animator;
     public SpriteRenderer spriteRenderer;
 
-    InputController playerController;
+    PlayerController playerController;
 
     void Start()
     {
-        playerController = Object.FindFirstObjectByType<InputController>();
+        playerController = Object.FindFirstObjectByType<PlayerController>();
     }
 
     // Update is called once per frame

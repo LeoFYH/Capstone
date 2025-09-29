@@ -11,7 +11,7 @@ namespace SkateGame
     /// 集成了输入检测、状态机管理和物理控制
     /// 替代原来的PlayerScript
     /// </summary>
-    public class InputController : ViewerControllerBase
+    public class PlayerController : ViewerControllerBase
     {
         public PlayerConfig playerConfig;
         private IPlayerModel playerModel;
@@ -22,45 +22,10 @@ namespace SkateGame
 
         [Header("Animation")]
         public Animator animator;
-        public SpriteRenderer spriteRenderer;
-
-        [Header("轨道设置")]
-        public float grindJumpIgnoreTime = 0.2f;
-        public float grindJumpTimer = 0f;
-
-        [Header("空中设置")]
-        public bool isInAir = false;
-        public float airTime = 0f;
-        public int airCombo = 0;
-
-        [Header("Wall Setting")]
-        public Wall currentWall;
-
-        [Header("Ground Detection")]
-        public LayerMask groundLayer = 1; // 地面层级
-
-        [Header("Life Setting")]
-        public bool canBeHurt;
-
-        [Header("Combat Setting")]
-        public bool isPowerGrinding;
-        private bool isCheckingReverseWindow = false;
-        public float reverseInputWindow = 2.0f;
-        private float reverseTimer = 0f;
 
         [Header("瞄准与射击设置")]
-        public LineRenderer aimLine;      // 瞄准线
+        public LineRenderer aimLine;      // 瞄准线 temp
         public float aimLineLength = 10f; // 瞄准线长度
-
-        public GameObject[] bulletPrefabs;   // 可切换的子弹类型
-        public float bulletSpeed = 15f;
-
-        [Header("颜色设置")]
-        public SpriteRenderer playerSprite; // 玩家精灵渲染器
-        private Color originalColor = Color.white; // 原始颜色
-
-        [Header("瞄准时间奖励")]
-        private float _baseMaxAimTime = 3f; // 基础瞄准时间上限
 
         [Header("MMF效果")]
         public MMF_Player moveEffect;
@@ -81,8 +46,6 @@ namespace SkateGame
         
         [Header("粒子特效容器")]
         public Transform particleEffectContainer; // 粒子特效容器
-        private float lastMoveInput = 0f; //上一帧的移动输入
-        private bool isFacingRight = true; // 当前面向方向
         protected override void InitializeController()
         {
             // Debug.Log("玩家控制器初始化完成");
@@ -94,24 +57,8 @@ namespace SkateGame
             // 获取组件
             rb = GetComponent<Rigidbody2D>();
 
-            // 获取玩家精灵渲染器
-            if (playerSprite == null)
-            {
-                playerSprite = GetComponentInChildren<SpriteRenderer>();
-                if (playerSprite == null)
-                {
-                    playerSprite = GetComponent<SpriteRenderer>();
-                }
-            }
-
-            // 保存原始颜色
-            if (playerSprite != null)
-            {
-                originalColor = playerSprite.color;
-            }
-
             // 初始化瞄准时间
-            playerModel.MaxAimTime.Value = _baseMaxAimTime;
+            playerModel.MaxAimTime.Value = playerModel.Config.Value.baseMaxAimTime;
 
             // 初始化分层状态机
             stateMachine = new LayeredStateMachine();
@@ -127,7 +74,7 @@ namespace SkateGame
             stateMachine.AddState("Reverse", new ReverseState(this, rb), StateLayer.Movement);
             stateMachine.AddState("Land", new LandState(this, rb), StateLayer.Movement);
             // Action Layer
-            stateMachine.AddState("None", new NoActionState(), StateLayer.Action);
+            stateMachine.AddState("None", new NoActionState(this, rb), StateLayer.Action);
             stateMachine.AddState("TrickA", new TrickAState(this, rb), StateLayer.Action);
             stateMachine.AddState("Grind", new GrindState(this, rb), StateLayer.Action);
             stateMachine.AddState("Grab", new GrabbingState(this, rb), StateLayer.Action);
@@ -188,7 +135,8 @@ namespace SkateGame
         {
             if (inputModel.SwitchItem.Value)
             {
-                playerModel.CurrentBulletIndex.Value = (playerModel.CurrentBulletIndex.Value + 1) % bulletPrefabs.Length;
+                playerModel.CurrentBulletIndex.Value = 
+                (playerModel.CurrentBulletIndex.Value + 1) % playerModel.Config.Value.bulletPrefabs.Length;
                 Debug.Log("当前子弹类型: " + playerModel.CurrentBulletIndex.Value);
             }
         }
@@ -209,7 +157,7 @@ namespace SkateGame
             float rayDistance = 0.35f; // 减少检测距离，避免误判
 
             // 主射线检测
-            RaycastHit2D hit = Physics2D.Raycast(rayStart, rayDirection, rayDistance, groundLayer);
+            RaycastHit2D hit = Physics2D.Raycast(rayStart, rayDirection, rayDistance, playerModel.Config.Value.groundLayer);
 
             // 如果主射线没检测到，尝试左右偏移的射线
             if (hit.collider == null)
@@ -217,8 +165,8 @@ namespace SkateGame
                 Vector2 leftRayStart = rayStart + Vector2.left * 0.3f;
                 Vector2 rightRayStart = rayStart + Vector2.right * 0.3f;
 
-                RaycastHit2D leftHit = Physics2D.Raycast(leftRayStart, rayDirection, rayDistance, groundLayer);
-                RaycastHit2D rightHit = Physics2D.Raycast(rightRayStart, rayDirection, rayDistance, groundLayer);
+                RaycastHit2D leftHit = Physics2D.Raycast(leftRayStart, rayDirection, rayDistance, playerModel.Config.Value.groundLayer);
+                RaycastHit2D rightHit = Physics2D.Raycast(rightRayStart, rayDirection, rayDistance, playerModel.Config.Value.groundLayer);
 
                 if (leftHit.collider != null)
                 {
@@ -280,7 +228,7 @@ namespace SkateGame
                 if (wall != null)
                 {
                     Debug.Log($"检测到墙壁: {wall.name}");
-                    currentWall = wall;
+                    playerModel.CurrentWall.Value = wall;
                     playerModel.IsNearWall.Value = true;
                 }
             }
@@ -304,7 +252,7 @@ namespace SkateGame
                 if (wall != null)
                 {
                     Debug.Log($"离开墙壁: {wall.name}");
-                    currentWall = null;
+                    playerModel.CurrentWall.Value = null;
                     playerModel.IsNearWall.Value = false;
                 }
             }
@@ -367,9 +315,9 @@ namespace SkateGame
 
         private void FireBullet()
         {
-            if (bulletPrefabs.Length == 0) return;
+            if (playerModel.Config.Value.bulletPrefabs.Length == 0) return;
 
-            GameObject bulletPrefab = bulletPrefabs[playerModel.CurrentBulletIndex.Value];
+            GameObject bulletPrefab = playerModel.Config.Value.bulletPrefabs[playerModel.CurrentBulletIndex.Value];
             if (bulletPrefab == null) return;
 
             Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -386,27 +334,10 @@ namespace SkateGame
                 Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
                 if (bulletRb != null)
                 {
-                    bulletRb.linearVelocity = direction * bulletSpeed;
+                    bulletRb.linearVelocity = direction * playerModel.Config.Value.bulletSpeed;
                 }
             }
 
-        }
-
-        // 颜色管理方法
-        public void ChangePlayerColor(Color newColor)
-        {
-            if (playerSprite != null)
-            {
-                playerSprite.color = newColor;
-            }
-        }
-
-        public void ResetPlayerColor()
-        {
-            if (playerSprite != null)
-            {
-                playerSprite.color = originalColor;
-            }
         }
 
         // 获取当前瞄准计时器值（供UI使用）
@@ -439,12 +370,12 @@ namespace SkateGame
         // 重置瞄准时间上限到基础值
         public void ResetAimTimeToBase()
         {
-            playerModel.MaxAimTime.Value = _baseMaxAimTime;
+            playerModel.MaxAimTime.Value = playerModel.Config.Value.baseMaxAimTime;
             Debug.Log($"InputController: 重置瞄准时间上限到基础值: {playerModel.MaxAimTime.Value}秒");
         }
 
         // 获取基础瞄准时间上限（供UI使用）
-        public float baseMaxAimTime => _baseMaxAimTime;
+        public float baseMaxAimTime => playerModel.Config.Value.baseMaxAimTime;
 
         // 检测玩家方向并更新例子特效容器
         private void CheckPlayerDirectionChange()
@@ -456,19 +387,17 @@ namespace SkateGame
             {
                 bool shouldFaceRight = currentMoveInput > 0;
                 // 检测方向是否改变
-                if(shouldFaceRight != isFacingRight)
+                if(shouldFaceRight != playerModel.IsFacingRight.Value)
                 {
                     // 方向改变，粒子特效容器旋转180度
                     if(particleEffectContainer != null)
                     {
                         Vector3 currentRotation = particleEffectContainer.localEulerAngles;
                         particleEffectContainer.localEulerAngles = new Vector3(currentRotation.x, currentRotation.y + 180f, currentRotation.z);
-                        isFacingRight = shouldFaceRight;
+                        playerModel.IsFacingRight.Value = shouldFaceRight;
                     }
                 }
             }
-            // 更新上一帧的移动输入
-            lastMoveInput = currentMoveInput;
         }
     }
 }

@@ -5,7 +5,7 @@ using QFramework;
 
 public class TrickAState : TrickState
 {
-    public TrickAState(InputController player, Rigidbody2D rb) : base(player, rb)
+    public TrickAState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
         this.trickName = "TrickA";
     }

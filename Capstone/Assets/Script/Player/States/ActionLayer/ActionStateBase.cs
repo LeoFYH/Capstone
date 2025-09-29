@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using SkateGame;
 
 // Base class for action-layer states that may suppress movement
 public abstract class ActionStateBase : StateBase
@@ -14,6 +15,19 @@ public abstract class ActionStateBase : StateBase
     public bool IsIgnoringMovementLayer => isIgnoringMovementLayer;
     public bool IsRecovering => isRecovering;
     protected virtual void UpdateActionState(){}
+    protected virtual void EnterActionState(){}
+    protected virtual void ExitActionState(){}
+    protected ActionStateBase(PlayerController player, Rigidbody2D rb)
+    {
+        this.player = player;
+        this.rb = rb;
+    }
+    public sealed override void Enter()
+    {
+        player.animator.SetLayerWeight(0, 0);
+        player.animator.SetLayerWeight(1, 1);
+        EnterActionState();
+    }
     public sealed override void Update()
     {
         if (!isLoop)
@@ -23,6 +37,12 @@ public abstract class ActionStateBase : StateBase
             CheckRecovering();
         }
         UpdateActionState();
+    }
+    public sealed override void Exit()
+    {
+        player.animator.SetLayerWeight(0, 1);
+        player.animator.SetLayerWeight(1, 0);
+        ExitActionState();
     }
 
     private void StateTimeUpdate()

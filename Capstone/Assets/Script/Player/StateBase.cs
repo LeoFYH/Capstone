@@ -5,7 +5,7 @@ using SkateGame;
 // 状态基类
 public abstract class StateBase : ICanGetModel, IBelongToArchitecture
 {
-    protected InputController player;
+    protected PlayerController player;
     protected Rigidbody2D rb;
     protected IPlayerModel playerModel;
     protected IInputModel inputModel;

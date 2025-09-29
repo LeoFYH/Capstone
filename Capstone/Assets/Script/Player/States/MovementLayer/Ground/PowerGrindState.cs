@@ -8,7 +8,7 @@ public class PowerGrindState : GroundMovementState
     private float direction;
 
 
-    public PowerGrindState(InputController player, Rigidbody2D rb)
+    public PowerGrindState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
         this.rb = rb;
@@ -83,7 +83,7 @@ public class PowerGrindState : GroundMovementState
         {
             // 计时
             playerModel.ReverseTimer.Value += Time.deltaTime;
-            if (playerModel.ReverseTimer.Value >= player.reverseInputWindow)
+            if (playerModel.ReverseTimer.Value >= playerModel.Config.Value.reverseInputWindow)
             {
                 playerModel.IsCheckingReverseWindow.Value = false;
                 return;

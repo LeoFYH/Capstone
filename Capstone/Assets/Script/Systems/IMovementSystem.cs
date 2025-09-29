@@ -12,13 +12,13 @@ namespace SkateGame
 
     public class MovementSystem : AbstractSystem, IMovementSystem
     {
-        private InputController playerController;
+        private PlayerController playerController;
         private IPlayerModel playerModel;
         
         protected override void OnInit()
         {
             playerModel = this.GetModel<IPlayerModel>();
-            playerController = Object.FindFirstObjectByType<InputController>();
+            playerController = Object.FindFirstObjectByType<PlayerController>();
             this.RegisterEvent<MoveInputEvent>(OnMoveInput);
         }
         

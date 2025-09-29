@@ -8,10 +8,8 @@ public class GrindState : ActionStateBase
     private float normalG;
     private bool isJumping;
   
-    public GrindState(InputController player, Rigidbody2D rb)
+    public GrindState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
-        this.player = player;
-        this.rb = rb;
         speed = playerModel.Speed.Value;
         direction = playerModel.GrindDirection.Value;
         normalG = playerModel.NormalG.Value;
@@ -23,7 +21,7 @@ public class GrindState : ActionStateBase
 
     public override string GetStateName() => "Grind";
 
-    public override void Enter()
+    protected override void EnterActionState()
     {
         player.animator.SetBool("isNoseGrinding", true);
         // Debug.Log("E Grind");
@@ -133,7 +131,7 @@ public class GrindState : ActionStateBase
         }
     }
 
-    public override void Exit()
+    protected override void ExitActionState()
     {
         player.animator.SetBool("isNoseGrinding", false);
         rb.gravityScale = normalG;

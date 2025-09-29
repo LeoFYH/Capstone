@@ -16,6 +16,11 @@ namespace SkateGame
         BindableProperty<bool> IsNearTrack { get; }
         BindableProperty<bool> IsNearWall { get; }
         BindableProperty<float> StateTimer { get; } // 当前状态持续时间
+        
+        /// <summary>
+        /// Wall相关
+        /// </summary>
+        BindableProperty<Wall> CurrentWall { get; }
 
         /// <summary>
         /// air相关
@@ -78,6 +83,7 @@ namespace SkateGame
         BindableProperty<float> AimTimer { get; }
         BindableProperty<int> CurrentBulletIndex { get; }
         BindableProperty<bool> HasPerformedTrickInAir { get; }
+        BindableProperty<bool> IsFacingRight { get; }
     }
 
     public class PlayerModel : AbstractModel, IPlayerModel
@@ -90,6 +96,9 @@ namespace SkateGame
         public BindableProperty<bool> IsNearTrack { get; } = new BindableProperty<bool>(false);
         public BindableProperty<bool> IsNearWall { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> StateTimer { get; } = new BindableProperty<float>(0f);
+
+        // Wall相关
+        public BindableProperty<Wall> CurrentWall { get; } = new BindableProperty<Wall>(null);
         
         // air相关
         public BindableProperty<bool> CanDoubleJump { get; } = new BindableProperty<bool>(true);
@@ -139,6 +148,7 @@ namespace SkateGame
         public BindableProperty<float> AimTimer { get; } = new BindableProperty<float>(0f);
         public BindableProperty<int> CurrentBulletIndex { get; } = new BindableProperty<int>(0);
         public BindableProperty<bool> HasPerformedTrickInAir { get; } = new BindableProperty<bool>(false);
+        public BindableProperty<bool> IsFacingRight { get; } = new BindableProperty<bool>(true);
         protected override void OnInit()
         {
             // 初始化逻辑

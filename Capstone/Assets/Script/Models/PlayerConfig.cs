@@ -33,6 +33,8 @@ namespace SkateGame
 
         [Header("Power Grind相关")]
         public float powerGrindDeceleration = 1f;
+        public float reverseInputWindow = 2.0f;
+        public float grindJumpIgnoreTime = 0.2f;
 
         [Header("Trick相关")]
         public float trickADuration = 1.5f;
@@ -41,6 +43,11 @@ namespace SkateGame
         public int trickBScore = 20;
 
         [Header("瞄准设置")]
-        public float maxAimTime = 3f;
+        public float baseMaxAimTime = 3f;
+        public GameObject[] bulletPrefabs;   // 可切换的子弹类型
+        public float bulletSpeed = 15f;
+        
+        [Header("Ground Detection")]
+        public LayerMask groundLayer; 
     }
 }
