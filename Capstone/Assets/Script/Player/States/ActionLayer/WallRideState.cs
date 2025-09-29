@@ -33,10 +33,6 @@ public class WallRideState : ActionStateBase
         {
             player.WallRideEffect.PlayFeedbacks();
         }
-        else
-        {
-            Debug.LogWarning("WallRideEffect为null，无法播放效果");
-        }
     }
 
     protected override void UpdateActionState()
@@ -52,16 +48,11 @@ public class WallRideState : ActionStateBase
     protected override void ExitActionState()
     {
         rb.gravityScale = normalGravity;
-        // Debug.Log("退出WallRide状态");
         
         if (player.WallRideEffect != null)
         {
             player.WallRideEffect.StopFeedbacks();
 
-        }
-        else
-        {
-            Debug.LogWarning("WallRideEffect为null，无法停止效果");
         }
     }
 }

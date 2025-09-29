@@ -12,37 +12,15 @@ public class GrabbingState : ActionStateBase
 
     protected override void EnterActionState()
     {
-        Debug.Log("进入Grabbing状态");
-        //can be damage
-
-
         //MMF
         if (player.GrabEffect != null)
         {
             player.GrabEffect.PlayFeedbacks();
         }
-        else
-        {
-            Debug.LogWarning("GrabEffect为null，无法播放效果");
-        }
     }
 
     protected override void UpdateActionState()
     {
-        // Debug.Log("Keep Grabbing");
-
-        //if (inputModel.Grind.Value == false)
-        //{
-        //    player.stateMachine.SwitchState(StateLayer.Action, "None");
-        //    player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
-        //}
-        //else if (player.isEHeld == true && player.DetectNearbyPole() != null)
-        //{
-        //    player.currentTrack = player.DetectNearbyPole();
-        //    player.stateMachine.SwitchState("Grind");
-
-        //}
-
 
         //WallRide状态下的逻辑
         //add combo point
@@ -55,13 +33,11 @@ public class GrabbingState : ActionStateBase
             {
                 //在空中，切换到Air状态以继续空中控制
                 player.stateMachine.SwitchState(StateLayer.Movement, "Air");
-                Debug.Log("退出Grab状态，切换到Air状态");
             }
             else
             {
                 //已落地，切换到Idle状态
                 player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
-                Debug.Log("退出Grab状态，切换到Idle状态");
             }
         }
 
@@ -72,17 +48,10 @@ public class GrabbingState : ActionStateBase
 
     protected override void ExitActionState()
     {
-        // Debug.Log("退出Grabbing状态");
-        //exit can be damage
-
         //MMF
         if (player.GrabEffect != null)
         {
             player.GrabEffect.StopFeedbacks();
-        }
-        else
-        {
-            Debug.LogWarning("GrabEffect为null，无法播放效果");
         }
     }
 }

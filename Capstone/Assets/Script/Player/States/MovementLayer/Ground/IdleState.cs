@@ -17,19 +17,11 @@ public class IdleState : GroundMovementState
         player.animator.SetBool("isOllie", false);
         player.animator.SetBool("isGrounded", true);
         player.animator.SetBool("isPlayingLand", false);
-        // Debug.Log("进入Idle状态");
-        ///
-        /// 
-        /// 
-        ///                 //MMF
+        //MMF
         if (player.IdleEffect != null)
         {
             player.IdleEffect.PlayFeedbacks();
         }
-        else
-        {
-            Debug.LogWarning("idleEffect为null，无法播放效果");
-        } 
     }
 
     protected override void UpdateGroundMovement()
@@ -46,14 +38,9 @@ public class IdleState : GroundMovementState
 
     public override void Exit()
     {
-        // Debug.Log("退出Idle状态");
         if (player.IdleEffect != null)
         {
             player.IdleEffect.StopFeedbacks();
         }
-        else
-        {
-            Debug.LogWarning("idleEffect为null，无法停止效果");
-        } 
     }
 } 

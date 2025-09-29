@@ -22,7 +22,6 @@ public class GrindState : ActionStateBase
     protected override void EnterActionState()
     {
         player.animator.SetBool("isNoseGrinding", true);
-        // Debug.Log("E Grind");
 
         // 检查currentTrack是否为null
         if (playerModel.CurrentTrack.Value == null)
@@ -50,16 +49,9 @@ public class GrindState : ActionStateBase
         rb.linearVelocity = new Vector2(direction.x * speed, 0);
         SnapPlayerToTrack();
         
-        // 开始滑轨计分
-        //ScoreManager.Instance.StartGrindScoring();
-
         if (player.GrindEffect != null)
         {
             player.GrindEffect.PlayFeedbacks();
-        }
-        else
-        {
-            Debug.LogWarning("GrindEffect为null，无法播放效果");
         }
     }
 
@@ -68,7 +60,6 @@ public class GrindState : ActionStateBase
         // 首先检查E键是否按住，如果没有按住立即退出
         if (!inputModel.Grind.Value)
         {
-            Debug.Log("GrindState: E键未按住，切换到Jump状态");
             player.stateMachine.SwitchState(StateLayer.Action, "None");
             player.stateMachine.SwitchState(StateLayer.Movement, "Jump");
             return;
@@ -77,7 +68,6 @@ public class GrindState : ActionStateBase
         // 然后检查currentTrack是否为null
         if (playerModel.CurrentTrack.Value == null)
         {
-            Debug.Log("GrindState: currentTrack为null，切换到Jump状态");
             player.stateMachine.SwitchState(StateLayer.Action, "None");
             player.stateMachine.SwitchState(StateLayer.Movement, "Jump");
             return;
@@ -120,30 +110,17 @@ public class GrindState : ActionStateBase
             playerPos.y = trackPos.y+0.2f; 
             player.transform.position = playerPos;
         }
-        else
-        {
-            Debug.LogWarning("SnapPlayerToTrack: currentTrack为null，无法吸附到滑轨");
-        }
     }
 
     protected override void ExitActionState()
     {
         player.animator.SetBool("isNoseGrinding", false);
         rb.gravityScale = normalG;
-        // Debug.Log("Exit Grind");
-        
-        // 结束滑轨计分
-        //ScoreManager.Instance.EndGrindScoring();
 
         if (player.GrindEffect != null)
         {
             player.GrindEffect.StopFeedbacks();
 
         }
-        else
-        {
-            Debug.LogWarning("pGrindEffect为null，无法停止效果");
-        }
     }
-
 }

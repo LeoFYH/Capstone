@@ -31,10 +31,6 @@ public class PowerGrindState : GroundMovementState
         {
             player.powerGrindEffect.PlayFeedbacks();
         }
-        else
-        {
-            Debug.LogWarning("powerGrindEffectPlayer为null，无法播放效果");
-        }
     }
 
     protected override void UpdateGroundMovement()
@@ -56,7 +52,6 @@ public class PowerGrindState : GroundMovementState
         if (!inputModel.Trick.Value || Mathf.Abs(rb.linearVelocity.x) <= 0.5f)
         {
             player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
-            Debug.Log("2222:" + player.stateMachine.GetMovementStateName());
         }
         // 检测反向输入
         CheckReverse();
@@ -69,10 +64,6 @@ public class PowerGrindState : GroundMovementState
         {
             player.powerGrindEffect.StopFeedbacks();
 
-        }
-        else
-        {
-            Debug.LogWarning("powerGrindEffectPlayer为null，无法停止效果");
         }
     }
 
@@ -95,7 +86,6 @@ public class PowerGrindState : GroundMovementState
             {
                 if (Mathf.Sign(inputModel.Move.Value.x) != Mathf.Sign(currentVelocityX))
                 {
-                    Debug.Log($"PowerGrind状态下检测到反向输入: 当前速度={currentVelocityX}, 输入={inputModel.Move.Value.x}");
                     player.SendEvent<ReverseInputEvent>();
                     playerModel.IsCheckingReverseWindow.Value = false;
                     return; // 进入反向状态后直接返回，不处理其他逻辑

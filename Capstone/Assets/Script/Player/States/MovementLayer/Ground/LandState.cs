@@ -16,6 +16,7 @@ public class LandState : GroundMovementState
 
     public override void Enter()
     {
+        playerModel.CanDoubleJump.Value = true;
     }
 
     protected override void UpdateGroundMovement()

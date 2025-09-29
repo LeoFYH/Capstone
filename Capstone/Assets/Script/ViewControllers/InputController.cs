@@ -48,7 +48,6 @@ namespace SkateGame
         public Transform particleEffectContainer; // 粒子特效容器
         protected override void InitializeController()
         {
-            // Debug.Log("玩家控制器初始化完成");
             // 获取玩家参数
             playerModel = this.GetModel<IPlayerModel>();
             inputModel = this.GetModel<IInputModel>();
@@ -89,11 +88,6 @@ namespace SkateGame
         {
             IsGrounded();
             /// Warning 待创建一个落地状态
-
-            if(playerModel.WasGrounded.Value)
-            {
-                playerModel.CanDoubleJump.Value = true;
-            }
 
             // 更新当前State
             stateMachine.UpdateCurrentState();

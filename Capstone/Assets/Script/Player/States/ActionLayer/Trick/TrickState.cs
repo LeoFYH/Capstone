@@ -53,13 +53,8 @@ public class TrickState : ActionStateBase
     {
         if (playerModel.isInPower.Value)
             {
-                Debug.Log("TrickA: 检测到能量状态，给予跳跃奖励！");
                 player.RewardJump();
                 playerModel.isInPower.Value = false; // 消耗能量状态
             }
-        else
-        {
-            Debug.Log("TrickA: 不在能量状态，无奖励");
-        }
     }
 } 

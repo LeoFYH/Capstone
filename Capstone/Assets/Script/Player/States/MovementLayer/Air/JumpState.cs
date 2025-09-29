@@ -20,11 +20,9 @@ public class JumpState : AirborneMovementState
     {
         player.animator.SetBool("isOllie", true);
         player.animator.SetBool("isGrounded", false);
-        // Debug.Log("JumpState.Enter() - 开始跳跃");
         playerModel.GrindJumpTimer.Value = playerModel.Config.Value.grindJumpIgnoreTime;
         isCharging = true;
         chargeTime = 0f;
-        // Debug.Log($"初始水平速度: {initialHorizontalVelocity}");
         
         // 立即发送跳跃执行事件
         player.SendEvent<JumpExecuteEvent>();
@@ -35,10 +33,6 @@ public class JumpState : AirborneMovementState
         {
             player.JumpEffect.PlayFeedbacks();
         }
-        else
-        {
-            Debug.LogWarning("JumpEffecttPlayer为null，无法播放效果");
-        } 
     }
 
     protected override void UpdateAirMovement()
@@ -66,16 +60,11 @@ public class JumpState : AirborneMovementState
 
     public override void Exit()
     {
-        // Debug.Log("退出Jump状态");
         // 播放MMF效果
         if (player.JumpEffect != null)
         {
             player.JumpEffect.StopFeedbacks();
         }
-        else
-        {
-            Debug.LogWarning("JumpEffecttPlayer为null，无法播放效果");
-        } 
         playerModel.GrindJumpTimer.Value = 0f;
     }
     

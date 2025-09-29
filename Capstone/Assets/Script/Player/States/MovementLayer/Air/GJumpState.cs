@@ -3,8 +3,6 @@ using SkateGame;
 
 public class GJumpState : JumpState
 {
-    public bool canDoubleJump = true;
-
     public GJumpState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
         this.player = player;
@@ -15,10 +13,8 @@ public class GJumpState : JumpState
 
     public override void Enter()
     {
-        Debug.Log("GJ");
-        
         playerModel.GrindJumpTimer.Value = playerModel.Config.Value.grindJumpIgnoreTime;
-        canDoubleJump = true;
+        playerModel.CanDoubleJump.Value = true;
 
         rb.gravityScale = 1f;
 
@@ -30,10 +26,6 @@ public class GJumpState : JumpState
         {
             player.GJumpEffect.PlayFeedbacks();
         }
-        else
-        {
-            Debug.LogWarning("JumpEffecttPlayer为null，无法播放效果");
-        } 
     }
 
     protected override void UpdateAirMovement()
@@ -58,18 +50,14 @@ public class GJumpState : JumpState
         {
             player.GJumpEffect.StopFeedbacks();
         }
-        else
-        {
-            Debug.LogWarning("JumpEffecttPlayer为null，无法播放效果");
-        } 
     }
 
     // state change
     private void StateChange()
     {       
-         if (canDoubleJump && inputModel.Jump.Value)
+         if (playerModel.CanDoubleJump.Value && inputModel.Jump.Value)
         {
-            canDoubleJump = false;
+            playerModel.CanDoubleJump.Value = false;
             player.stateMachine.SwitchState(StateLayer.Movement, "DoubleJump");
         }
     }
