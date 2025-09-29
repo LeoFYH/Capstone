@@ -11,5 +11,27 @@ public class TrickAState : TrickState
     }
 
     public override string GetStateName() => "TrickA";
+    protected override void EnterActionState()
+    {
+        player.TrickAEffect.PlayFeedbacks();
 
+        // 使用 Raycast 检测 InteractiveLayer 对象
+        DetectInteractiveObjectsWithRaycast();
+    }
+    private void DetectInteractiveObjectsWithRaycast()
+        {
+            if (player == null) return;
+            Vector2 playerPosition = player.transform.position;
+            float detectionRadius = 2f; // 检测半径
+            
+            // 方法1: 使用 Physics2D.OverlapCircle 检测圆形区域
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(playerPosition, detectionRadius, LayerMask.GetMask("InteractiveLayer"));
+            if(colliders.Length > 0)
+            {
+                this.GetModel<IPlayerModel>().isInPower.Value = true;
+                if(this.GetModel<IPlayerModel>().isInPower.Value){
+                    player.TrickABoostEffect.PlayFeedbacks();
+                }
+            }
+        }
 }

@@ -12,7 +12,6 @@ namespace SkateGame
         BindableProperty<string> CurrentState { get; }
         BindableProperty<bool> IsGrounded { get; }
         BindableProperty<bool> IsInAir { get; }
-        BindableProperty<float> AirTime { get; }
         BindableProperty<bool> IsNearTrack { get; }
         BindableProperty<bool> IsNearWall { get; }
         BindableProperty<float> StateTimer { get; } // 当前状态持续时间

@@ -36,6 +36,10 @@ public abstract class ActionStateBase : StateBase
             CheckIgnoreMovementLayer();
             CheckRecovering();
         }
+        if(isRecovering)
+        {
+            CheckSwitchAction();
+        }
         UpdateActionState();
     }
     public sealed override void Exit()
@@ -53,9 +57,11 @@ public abstract class ActionStateBase : StateBase
         }
         else
         {
-            Exit();
+            player.stateMachine.SwitchState(StateLayer.Action, "None");
         }
     }
+    
+    // 检查是否忽略运动层
     private void CheckIgnoreMovementLayer()
     {
         if(stateTimer > ignoreMovementLayerDuration.x && stateTimer < ignoreMovementLayerDuration.y)
@@ -63,11 +69,49 @@ public abstract class ActionStateBase : StateBase
             isIgnoringMovementLayer = true;
         }
     }
+
+    // 检查是否后摇
     private void CheckRecovering()
     {
         if(stateTimer > recoveryDuration.x && stateTimer < recoveryDuration.y)
         {
             isRecovering = true;
+        }
+    }
+
+    // 检查是否切换到其他状态
+    private void CheckSwitchAction()
+    {
+        // 优先Trick
+        if(inputModel.TrickStart.Value && !playerModel.IsGrounded.Value)
+        {
+            player.stateMachine.SwitchState(StateLayer.Action, "TrickA");
+        }
+        // 其次Grind
+        else if (inputModel.Grind.Value)
+        {
+            GrindInput();
+        }
+    }
+    private void GrindInput()
+    {
+        // 优先滑轨
+        if (playerModel.GrindJumpTimer.Value <= 0f && playerModel.IsNearTrack.Value)
+        {
+            player.stateMachine.SwitchState(StateLayer.Action, "Grind");
+        }
+        // 其次滑墙
+        else if (!playerModel.IsGrounded.Value)
+        {
+            if(playerModel.IsNearWall.Value)
+            {
+                player.stateMachine.SwitchState(StateLayer.Action, "WallRide");
+            }
+            // 最后Grab
+            else
+            {
+                player.stateMachine.SwitchState(StateLayer.Action, "Grab");
+            }
         }
     }
 }

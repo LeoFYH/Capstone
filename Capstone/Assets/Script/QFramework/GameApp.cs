@@ -20,7 +20,6 @@ namespace SkateGame
             this.RegisterSystem<IScoreSystem>(new ScoreSystem());
             this.RegisterSystem<IAudioSystem>(new AudioSystem());
             this.RegisterSystem<IUISystem>(new UISystem());
-            this.RegisterSystem<IMovementSystem>(new MovementSystem());
         }
     }
 }

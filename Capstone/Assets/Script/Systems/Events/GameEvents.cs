@@ -53,15 +53,6 @@ namespace SkateGame
     {
     }
     
-    // 强力轨道输入事件
-    public struct PowerGrindInputEvent
-    {
-    }
-    
-    // 反向输入事件
-    public struct ReverseInputEvent
-    {
-    }
     
     // 跳跃执行事件
     public struct JumpExecuteEvent

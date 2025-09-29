@@ -86,7 +86,7 @@ public class PowerGrindState : GroundMovementState
             {
                 if (Mathf.Sign(inputModel.Move.Value.x) != Mathf.Sign(currentVelocityX))
                 {
-                    player.SendEvent<ReverseInputEvent>();
+                    player.stateMachine.SwitchState(StateLayer.Movement, "Reverse");
                     playerModel.IsCheckingReverseWindow.Value = false;
                     return; // 进入反向状态后直接返回，不处理其他逻辑
                 }

@@ -109,17 +109,8 @@ namespace SkateGame
         // 提供给状态机使用的方法
         public void DetectInput()
         {
-            Grind();
             SwitchItem();
             Trick();
-        }
-
-        private void Grind()
-        {
-            if (inputModel.Grind.Value)
-            {
-                this.SendEvent<GrindInputEvent>();
-            }
         }
         private void SwitchItem()
         {
