@@ -65,7 +65,6 @@ namespace SkateGame
             // Movement Layer
             stateMachine.AddState("Idle", new IdleState(this, rb), StateLayer.Movement);
             stateMachine.AddState("Jump", new JumpState(this, rb), StateLayer.Movement);
-            stateMachine.AddState("GJump", new GJumpState(this, rb), StateLayer.Movement);
             stateMachine.AddState("Move", new MoveState(this, rb), StateLayer.Movement);
             stateMachine.AddState("Air", new AirState(this, rb), StateLayer.Movement);
             stateMachine.AddState("DoubleJump", new DoubleJumpState(this, rb), StateLayer.Movement);

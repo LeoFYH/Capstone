@@ -30,7 +30,7 @@ public class IdleState : GroundMovementState
 
         /* 状态切换 */
         // 移动 
-        if (rb.linearVelocity.x != 0)
+        if (Mathf.Abs(rb.linearVelocity.x) > 0.01f)
         {
             player.stateMachine.SwitchState(StateLayer.Movement, "Move");
         }
