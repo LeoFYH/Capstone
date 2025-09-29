@@ -41,17 +41,6 @@ public class E
             StateBase oldState = currentState;
             currentState.Exit();
             EnterState(stateName, oldState);
-            
-            // 退出当前状态
-            if (currentState != null)
-            {
-                currentState.Exit();
-            }
-            
-            // 切换到新状态
-            currentState = states[stateName];
-            currentState.Enter();
-            
             // 触发状态切换事件
             OnStateChanged?.Invoke(oldState, currentState);
         }
