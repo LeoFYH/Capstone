@@ -14,8 +14,8 @@ public class WallRideState : ActionStateBase
     protected override void EnterActionState()
     {
 
-        normalGravity = rb.gravityScale;
-        rb.gravityScale = onWallGravity;
+        // normalGravity = rb.gravityScale;
+        // rb.gravityScale = onWallGravity;
 
         if (player.WallRideEffect != null)
         {
