@@ -12,7 +12,7 @@ public class PowerGrindState : GroundMovementState
     {
         this.player = player;
         this.rb = rb;
-        deceleration = playerModel.PowerGrindDeceleration.Value;
+        deceleration = playerModel.Config.Value.powerGrindDeceleration;
         direction = playerModel.PowerGrindDirection.Value;
     }
 
@@ -20,6 +20,8 @@ public class PowerGrindState : GroundMovementState
 
     public override void Enter()
     {
+
+        Debug.Log("PowerGrindState Enter deceleration: " + deceleration);
         // 开始检查反向输入窗口
         StartCheckReverseWindow();
         // 设置方向

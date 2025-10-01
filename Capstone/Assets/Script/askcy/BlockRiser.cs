@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BlockRiser : MonoBehaviour
 {
-  private float riseSpeed;
+private float riseSpeed;
     private float riseHeight;
     private float launchForce;
     private float launchRadius;
@@ -10,7 +10,10 @@ public class BlockRiser : MonoBehaviour
     
     private Vector3 startPosition;
     private bool hasLaunched = false;
+    private bool isRising = true;
     private float currentHeight = 0f;
+    private Collider2D blockCollider;
+    private Rigidbody2D blockRb;
     
     public void Initialize(float speed, float height, float force, float radius, float life)
     {
@@ -21,6 +24,14 @@ public class BlockRiser : MonoBehaviour
         lifetime = life;
         
         startPosition = transform.position;
+        blockCollider = GetComponent<Collider2D>();
+        blockRb = GetComponent<Rigidbody2D>();
+        
+        // 确保碰撞器在升起过程中是禁用的
+        if (blockCollider != null)
+        {
+            blockCollider.enabled = false;
+        }
         
         // 设置生命周期
         Destroy(gameObject, lifetime);
@@ -28,39 +39,39 @@ public class BlockRiser : MonoBehaviour
     
     void Update()
     {
-        if (currentHeight < riseHeight)
+        if (isRising && currentHeight < riseHeight)
         {
             // 继续升起
             currentHeight += riseSpeed * Time.deltaTime;
             transform.position = startPosition + Vector3.up * currentHeight;
             
             // 检查是否到达目标高度
-            if (currentHeight >= riseHeight && !hasLaunched)
+            if (currentHeight >= riseHeight)
             {
-                LaunchObjectsAbove();
-                hasLaunched = true;
+                // 升起完成，启用碰撞器
+                OnRiseComplete();
             }
         }
     }
     
-    void LaunchObjectsAbove()
+    void OnRiseComplete()
     {
-        // 检测上方的物体并顶飞
-        Collider2D[] objectsAbove = Physics2D.OverlapCircleAll(transform.position, launchRadius);
+        isRising = false;
         
-        foreach (Collider2D obj in objectsAbove)
+        // 启用碰撞器，现在方块有刚体碰撞了
+        if (blockCollider != null)
         {
-            if (obj.gameObject != gameObject && obj.gameObject.tag == "Player")
-            {
-                Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
-                if (rb != null)
-                {
-                    // 计算顶飞方向（向上）
-                    Vector2 launchDirection = Vector2.up;
-                    rb.AddForce(launchDirection * launchForce, ForceMode2D.Impulse);
-                }
-            }
+            blockCollider.enabled = true;
         }
+        
+        // 停止刚体运动，让方块稳定下来
+        if (blockRb != null)
+        {
+            blockRb.linearVelocity = Vector2.zero;
+            blockRb.angularVelocity = 0f;
+        }
+        
+        // 注意：这里不再发射物体，因为已经在生成时发射了
     }
     
     void OnDrawGizmosSelected()

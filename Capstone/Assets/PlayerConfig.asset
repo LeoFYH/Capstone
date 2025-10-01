@@ -12,25 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eeb7f34cfe9f4a489a12b688e15ab4d, type: 3}
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
-  maxJumpForce: 6
+  maxJumpForce: 8
   minJumpForce: 0
-  doubleJumpForce: 8
+  doubleJumpForce: 6
   maxChargeTime: 2
-  maxMoveSpeed: 5
+  maxMoveSpeed: 10
   maxAirHorizontalSpeed: 10
   airControlForce: 5
-  airAccel: 20
-  airDecel: 2
+  airAccel: 0.5
+  airDecel: 0.5
   groundAccel: 20
-  groundDecel: 2
-  turnDecel: 40
+  groundDecel: 0.05
+  turnDecel: 1
   airControlForceConfig: 10
   maxAirHorizontalSpeedConfig: 8
   normalG: 1
-  acceleration: 15
+  acceleration: 10
   moveDeceleration: 20
   maxSpeed: 5
-  powerGrindDeceleration: 1
+  powerGrindDeceleration: 10
   reverseInputWindow: 2
   grindJumpIgnoreTime: 0.2
   trickADuration: 1.5
