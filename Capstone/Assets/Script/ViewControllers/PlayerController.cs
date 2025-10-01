@@ -242,7 +242,7 @@ namespace SkateGame
         private void HandleAimAndShoot()
         {
             // 按住R键进入瞄准
-            if (Input.GetMouseButtonDown(0))
+            if (inputModel.ShootStart.Value)
             {
                 playerModel.IsAiming.Value = true;
                 playerModel.AimTimer.Value = 0f; // 重置计时器
@@ -252,7 +252,7 @@ namespace SkateGame
             }
 
             // 松开R键发射子弹
-            if (Input.GetMouseButtonUp(0))
+            if (inputModel.ShootEnd.Value)
             {
                 if(playerModel.IsAiming.Value)
                 {
@@ -273,16 +273,14 @@ namespace SkateGame
                     return;
                 }
 
-                // 获取鼠标方向
-                Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector2 direction = (mouseWorldPos - (Vector2)transform.position).normalized;
+				Vector2 direction = inputModel.AimDirection.Value;
 
                 // 更新瞄准线
-                if (aimLine != null)
-                {
-                    aimLine.SetPosition(0, transform.position);
-                    aimLine.SetPosition(1, (Vector2)transform.position + direction * aimLineLength);
-                }
+				if (aimLine != null)
+				{
+					aimLine.SetPosition(0, transform.position);
+					aimLine.SetPosition(1, (Vector2)transform.position + direction * aimLineLength);
+				}
             }
         }
 
@@ -291,18 +289,18 @@ namespace SkateGame
             playerModel.IsAiming.Value = false;
             playerModel.AimTimer.Value = 0f;
             Time.timeScale = 1f;
+            Time.fixedDeltaTime = 0.02f * Time.timeScale;
             if (aimLine != null) aimLine.enabled = false;
         }
 
-        private void FireBullet()
+		private void FireBullet()
         {
             if (playerModel.Config.Value.bulletPrefabs.Length == 0) return;
 
             GameObject bulletPrefab = playerModel.Config.Value.bulletPrefabs[playerModel.CurrentBulletIndex.Value];
             if (bulletPrefab == null) return;
 
-            Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 direction = (mouseWorldPos - (Vector2)transform.position).normalized;
+			Vector2 direction = inputModel.AimDirection.Value.normalized;
 
             GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
             var ice = bullet.GetComponent<IceBullet>();

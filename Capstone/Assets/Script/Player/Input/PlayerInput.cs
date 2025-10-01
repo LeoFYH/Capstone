@@ -13,6 +13,9 @@ namespace SkateGame
         InputAction _grindAction;
         InputAction _switchItemAction;
         InputAction _trickAction;
+        InputAction _shootStartAction;
+        InputAction _shootEndAction;
+        InputAction _aimDirectionAction;
         public IArchitecture GetArchitecture() => GameApp.Interface;
         
         void Awake()
@@ -23,6 +26,9 @@ namespace SkateGame
             _grindAction = _inputs.Player.Grind;
             _switchItemAction = _inputs.Player.SwitchItem;
             _trickAction = _inputs.Player.Trick;
+            _shootStartAction = _inputs.Player.Shoot;
+            _shootEndAction = _inputs.Player.Shoot;
+            _aimDirectionAction = _inputs.Player.AimDirection;
         }
 
         private void OnEnable() => _inputs.Enable();
@@ -39,6 +45,9 @@ namespace SkateGame
                 SwitchItem = _switchItemAction.WasPressedThisFrame(),
                 Trick = _trickAction.IsPressed(),
                 TrickStart= _trickAction.WasPressedThisFrame(),
+                ShootStart = _shootStartAction.WasPressedThisFrame(),
+                ShootEnd = _shootEndAction.WasReleasedThisFrame(),
+                AimDirection = _aimDirectionAction.ReadValue<Vector2>(),
             };
         }
 
@@ -51,7 +60,30 @@ namespace SkateGame
             inputModel.SwitchItem.Value = Gather().SwitchItem;
             inputModel.Trick.Value = Gather().Trick;
             inputModel.TrickStart.Value = Gather().TrickStart;
+            inputModel.ShootStart.Value = Gather().ShootStart;
+            inputModel.ShootEnd.Value = Gather().ShootEnd;
+			inputModel.AimDirection.Value = GetAimDirection();
         }
+
+		private Vector2 GetAimDirection()
+		{
+            Debug.Log(_inputs.Player.AimDirection.activeControl.device);
+            if (_inputs.Player.AimDirection.activeControl == null) return Vector2.right;
+			else if (_inputs.Player.AimDirection.activeControl.device is Gamepad)
+			{
+                return Gather().AimDirection;
+			}
+            else if (_inputs.Player.AimDirection.activeControl.device is Mouse)
+            {
+				Vector2 mousePos = (Vector2)Camera.main.ScreenToWorldPoint(Gather().AimDirection);
+                return (mousePos - (Vector2)transform.position).normalized;
+			}
+            else if (_inputs.Player.AimDirection.activeControl.device is Keyboard)
+            {
+                return Gather().AimDirection;
+            }
+            else return Vector2.right;
+		}
 
         public struct FrameInput
         {
@@ -61,6 +93,9 @@ namespace SkateGame
             public bool SwitchItem;
             public bool Trick;
             public bool TrickStart;
+            public bool ShootStart;
+            public bool ShootEnd;
+            public Vector2 AimDirection;
         }
 
     }

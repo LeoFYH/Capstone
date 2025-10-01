@@ -30,15 +30,7 @@ public class DoubleJumpState : AirborneMovementState
     }
 
     protected override void UpdateAirMovement()
-    {
-        // 空中左右微调
-        float moveInput = Input.GetAxisRaw("Horizontal");
-        
-        // 检测落地，落地后切回Idle
-        if (playerModel.IsGrounded.Value && rb.linearVelocity.y <= 0.01f)
-        {
-            player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
-        }
+    {   
     }
 
     public override void Exit()

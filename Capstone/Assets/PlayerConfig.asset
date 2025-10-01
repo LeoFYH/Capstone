@@ -20,9 +20,9 @@ MonoBehaviour:
   maxAirHorizontalSpeed: 10
   airControlForce: 5
   airAccel: 20
-  airDecel: 10
+  airDecel: 2
   groundAccel: 20
-  groundDecel: 10
+  groundDecel: 2
   turnDecel: 40
   airControlForceConfig: 10
   maxAirHorizontalSpeedConfig: 8
