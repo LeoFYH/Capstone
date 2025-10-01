@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Fire
   - Ice
+  - Vine
+  - PlayerHitBox
   layers:
   - Default
   - TransparentFX
