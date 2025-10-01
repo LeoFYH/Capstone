@@ -17,4 +17,9 @@ public class Lifetime : MonoBehaviour
             Invoke("DestroyObject", lifetime);
         }
     }
+
+    void DestroyObject()
+    {
+        Destroy(gameObject);
+    }
 }

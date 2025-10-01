@@ -31,6 +31,7 @@ public class TrickAState : TrickState
                 this.GetModel<IPlayerModel>().isInPower.Value = true;
                 if(this.GetModel<IPlayerModel>().isInPower.Value){
                     player.TrickABoostEffect.PlayFeedbacks();
+                    player.RewardJump();
                 }
             }
         }
