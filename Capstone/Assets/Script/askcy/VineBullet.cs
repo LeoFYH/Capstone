@@ -69,13 +69,18 @@ public class VineBullet : MonoBehaviour
         if (IsGroundLayer(other))
         {
             // 判断撞击的是地面还是墙壁
-            if (IsWall(other))
+            bool isWall = IsWall(other);
+
+            
+            if (isWall)
             {
+                Debug.Log("创建横向方块");
                 // 撞击墙壁 - 横向冒出方块
                 CreateHorizontalBlock();
             }
             else
             {
+                Debug.Log("创建垂直方块");
                 // 撞击地面 - 升起方块
                 CreateVerticalBlock();
             }
@@ -85,6 +90,8 @@ public class VineBullet : MonoBehaviour
         Destroy(gameObject);
     }
     
+
+
     bool IsGroundLayer(Collider2D collider)
     {
         // 检查是否是Ground层（包括地面和墙壁）
@@ -93,24 +100,24 @@ public class VineBullet : MonoBehaviour
     
     bool IsWall(Collider2D collider)
     {
-        // 检查碰撞点的法向量来判断是墙壁还是地面
+        // 方法4: 通过碰撞点的法向量判断（适用于Tilemap）
         Vector2 hitPoint = collider.ClosestPoint(transform.position);
         Vector2 hitNormal = ((Vector2)transform.position - hitPoint).normalized;
+        
+
         
         // 如果法向量主要水平（X轴分量大于Y轴分量），认为是墙壁
         if (Mathf.Abs(hitNormal.x) > Mathf.Abs(hitNormal.y))
         {
+
             return true;
         }
-        
-        // 也可以检查是否有Wall组件作为额外判断
-        Wall wall = collider.gameObject.GetComponent<Wall>();
-        if (wall != null)
+
+        else
         {
-            return true;
+            return false;
         }
         
-        return false;
     }
     
  void CreateVerticalBlock()
@@ -141,7 +148,7 @@ public class VineBullet : MonoBehaviour
         blockRb.AddForce(Vector2.up * launchForce, ForceMode2D.Impulse);
     }
     
-    // 添加方块升起行为
+    // 添加方块升起行为（垂直方向）
     BlockRiser riser = block.AddComponent<BlockRiser>();
     riser.Initialize(blockRiseSpeed, blockRiseHeight + additionalRiseHeight, launchForce, launchRadius, blockLifetime);
 }
@@ -154,14 +161,14 @@ void CreateHorizontalBlock()
     Vector3 blockDirection = new Vector3(-direction.x, 0, 0).normalized;
     
     // 在子弹位置往墙里面创建方块（更靠里）
-    Vector3 blockPosition = transform.position + new Vector3(blockDirection.x * horizontalOffset, 0, 0);
+    Vector3 blockPosition = transform.position + blockDirection * horizontalOffset;
     GameObject block = Instantiate(blockPrefab, blockPosition, Quaternion.identity);
     
     // 设置方块大小
     block.transform.localScale = Vector3.one * blockSize;
     
     // 旋转方块90度（横向）
-    block.transform.rotation = Quaternion.Euler(0, 0, 90f);
+    block.transform.rotation = Quaternion.Euler(0, 0, 90);
     
     // 禁用碰撞器（升起过程中没有碰撞）
     Collider2D blockCollider = block.GetComponent<Collider2D>();
@@ -171,22 +178,22 @@ void CreateHorizontalBlock()
     }
     
     // 立即顶飞周围的物体（在生成的那一刻）
-    LaunchObjectsAround(blockPosition);
+    LaunchObjectsAround(blockPosition, blockDirection);
     
-    // 给方块一个向上的初始力
+    // 给方块一个横向的初始力（而不是向上）
     Rigidbody2D blockRb = block.GetComponent<Rigidbody2D>();
     if (blockRb != null)
     {
-        blockRb.AddForce(Vector2.up * launchForce, ForceMode2D.Impulse);
+        blockRb.AddForce((Vector2)blockDirection * launchForce, ForceMode2D.Impulse);
     }
     
-    // 使用和垂直方块一样的升起行为
+    // 使用横向移动行为
     BlockRiser riser = block.AddComponent<BlockRiser>();
     riser.Initialize(blockRiseSpeed, blockRiseHeight + additionalRiseHeight, launchForce, launchRadius, blockLifetime);
 }
 
 // 新增方法：立即顶飞周围的物体
-void LaunchObjectsAround(Vector3 position)
+void LaunchObjectsAround(Vector3 position, Vector3 blockDirection = default)
 {
     // 检测周围的物体并顶飞
     Collider2D[] objectsAround = Physics2D.OverlapCircleAll(position, launchRadius);
@@ -201,10 +208,16 @@ void LaunchObjectsAround(Vector3 position)
                 // 计算顶飞方向（从方块位置指向物体）
                 Vector2 launchDirection = ((Vector2)obj.transform.position - (Vector2)position).normalized;
                 
-                // 如果是垂直方块，主要向上顶飞
-                if (Vector3.Dot(launchDirection, Vector2.up) > 0)
+                // 如果是垂直方块（默认），主要向上顶飞
+                if (blockDirection == default && Vector3.Dot(launchDirection, Vector2.up) > 0)
                 {
                     launchDirection = Vector2.up;
+                }
+                // 如果是横向方块，保持原来的方向或者使用方块方向
+                else if (blockDirection != default)
+                {
+                    // 保持径向顶飞，或者使用方块移动方向
+                    // launchDirection = (Vector2)blockDirection; // 如果想统一横向顶飞
                 }
                 
                 // 完全重设速度，确保物体被正确顶飞

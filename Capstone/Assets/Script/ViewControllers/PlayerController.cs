@@ -217,7 +217,7 @@ namespace SkateGame
 
         void OnTriggerExit2D(Collider2D other)
         {
-            Debug.Log($"OnTriggerExit2D: {other.name}");
+           
 
             if (other.isTrigger)
             {

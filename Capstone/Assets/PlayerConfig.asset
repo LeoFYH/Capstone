@@ -21,8 +21,8 @@ MonoBehaviour:
   airControlForce: 5
   airAccel: 0.5
   airDecel: 0.5
-  groundAccel: 20
-  groundDecel: 0.05
+  groundAccel: 1.5
+  groundDecel: 0.5
   turnDecel: 1
   airControlForceConfig: 10
   maxAirHorizontalSpeedConfig: 8
@@ -30,7 +30,7 @@ MonoBehaviour:
   acceleration: 10
   moveDeceleration: 20
   maxSpeed: 5
-  powerGrindDeceleration: 10
+  powerGrindDeceleration: 15
   reverseInputWindow: 2
   grindJumpIgnoreTime: 0.2
   trickADuration: 1.5
