@@ -2,11 +2,12 @@ using UnityEngine;
 
 public class BlockRiser : MonoBehaviour
 {
-private float riseSpeed;
+    private float riseSpeed;
     private float riseHeight;
     private float launchForce;
     private float launchRadius;
     private float lifetime;
+    private Vector3 moveDirection;
     
     private Vector3 startPosition;
     private bool hasLaunched = false;
@@ -15,13 +16,14 @@ private float riseSpeed;
     private Collider2D blockCollider;
     private Rigidbody2D blockRb;
     
-    public void Initialize(float speed, float height, float force, float radius, float life)
+    public void Initialize(float speed, float height, float force, float radius, float life, Vector3 direction = default)
     {
         riseSpeed = speed;
         riseHeight = height;
         launchForce = force;
         launchRadius = radius;
         lifetime = life;
+        moveDirection = direction == default ? Vector3.up : direction.normalized; // 默认向上，否则使用指定方向
         
         startPosition = transform.position;
         blockCollider = GetComponent<Collider2D>();
@@ -41,9 +43,9 @@ private float riseSpeed;
     {
         if (isRising && currentHeight < riseHeight)
         {
-            // 继续升起
+            // 继续升起，使用指定的移动方向
             currentHeight += riseSpeed * Time.deltaTime;
-            transform.position = startPosition + Vector3.up * currentHeight;
+            transform.position = startPosition + moveDirection * currentHeight;
             
             // 检查是否到达目标高度
             if (currentHeight >= riseHeight)
