@@ -30,7 +30,7 @@ MonoBehaviour:
   acceleration: 10
   moveDeceleration: 20
   maxSpeed: 5
-  powerGrindDeceleration: 15
+  powerGrindDeceleration: 25
   reverseInputWindow: 2
   grindJumpIgnoreTime: 0.2
   trickADuration: 1.5
