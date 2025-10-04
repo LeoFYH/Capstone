@@ -1,20 +1,32 @@
 using SkateGame;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ParallexManager : MonoBehaviour
 {
-    Rigidbody2D rb;
-    Rigidbody2D playerRb;
+    Transform cameraTrans;
+
+    [SerializeField] List<Transform> parallaxTransforms = new();
+    List<Vector2> parallaxStartPos = new();
+    [SerializeField] List<float> parallaxPowers = new();
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        playerRb = FindFirstObjectByType<PlayerController>().GetComponent<Rigidbody2D>();
+        cameraTrans = Camera.main.transform;
+
+        Debug.LogWarning(parallaxTransforms.Count);
+
+        for (int i = 0; i < parallaxTransforms.Count; i++)
+        {
+            parallaxStartPos.Add(parallaxTransforms[i].position);
+        }
     }
 
     void FixedUpdate()
     {
-        Vector2 linearVelocity = playerRb.linearVelocity;
-        rb.linearVelocity = new Vector2(linearVelocity.x / 1.20f, linearVelocity.y / 1.20f);
+        for (int i = 0; i < parallaxTransforms.Count; i++)
+        {
+            parallaxTransforms[i].position = new Vector3(parallaxStartPos[i].x + cameraTrans.position.x * parallaxPowers[i], parallaxStartPos[i].y);
+        }
     }
 }
