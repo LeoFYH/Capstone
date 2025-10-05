@@ -14,7 +14,6 @@ namespace SkateGame
         BindableProperty<bool> IsInAir { get; }
         BindableProperty<bool> IsNearTrack { get; }
         BindableProperty<bool> IsNearWall { get; }
-        BindableProperty<float> StateTimer { get; } // 当前状态持续时间
         
         /// <summary>
         /// Wall相关
@@ -59,17 +58,19 @@ namespace SkateGame
         /// <summary>
         /// Trick相关
         /// </summary>
-        BindableProperty<bool> isInPower { get; }
+        BindableProperty<bool> IsInPower { get; }
 
         ///———————从inputcontroller迁移———————
         /// <summary>
         /// 跳跃设置
         /// </summary>
-        BindableProperty<float> maxChargeTime { get; }
+        BindableProperty<float> MaxChargeTime { get; }
         
         /// <summary>
-        /// 移动设置
+        /// Action Layer 基础参数
         /// </summary>
+        BindableProperty<bool> IsIgnoringMovementLayer { get; }
+        BindableProperty<bool> IsRecovering { get; }
         
         // 非输入的运行时/调参（来自 InputController，但不包含 isEHeld/isWHeld 等原始输入）
         BindableProperty<Track> CurrentTrack { get; }
@@ -94,7 +95,6 @@ namespace SkateGame
         public BindableProperty<float> AirTime { get; } = new BindableProperty<float>(0f);
         public BindableProperty<bool> IsNearTrack { get; } = new BindableProperty<bool>(false);
         public BindableProperty<bool> IsNearWall { get; } = new BindableProperty<bool>(false);
-        public BindableProperty<float> StateTimer { get; } = new BindableProperty<float>(0f);
 
         // Wall相关
         public BindableProperty<Wall> CurrentWall { get; } = new BindableProperty<Wall>(null);
@@ -126,15 +126,15 @@ namespace SkateGame
 
         // Trick相关
         
-        public BindableProperty<bool> isInPower { get; } = new BindableProperty<bool>(false);
+        public BindableProperty<bool> IsInPower { get; } = new BindableProperty<bool>(false);
 
         // 跳跃设置
-        public BindableProperty<float> maxChargeTime { get; } = new BindableProperty<float>(2f);
+        public BindableProperty<float> MaxChargeTime { get; } = new BindableProperty<float>(2f);
 
-        // 移动设置
-        public BindableProperty<float> groundAccel { get; } = new BindableProperty<float>(20f);
-        public BindableProperty<float> groundDecel { get; } = new BindableProperty<float>(10f);
-        public BindableProperty<float> turnDecel { get; } = new BindableProperty<float>(40f);
+        // Action Layer 基础参数
+        public BindableProperty<bool> IsIgnoringMovementLayer { get; } = new BindableProperty<bool>(false);
+        public BindableProperty<bool> IsRecovering { get; } = new BindableProperty<bool>(false);
+    
 
         // 非输入的运行时/调参（来自 InputController，但不包含 isEHeld/isWHeld 等原始输入）
         public BindableProperty<Track> CurrentTrack { get; } = new BindableProperty<Track>(null);

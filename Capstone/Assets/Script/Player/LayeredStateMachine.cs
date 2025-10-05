@@ -1,17 +1,26 @@
 using System.Collections.Generic;
+using QFramework;
+using SkateGame;
 
 public enum StateLayer
 {
     Movement,
     Action
 }
-
-public class LayeredStateMachine
+public class LayeredStateMachine : ICanGetModel, IBelongToArchitecture
 {
+    private readonly IPlayerModel playerModel;
     private readonly E mMovement = new E();
     private readonly E mAction = new E();
+    /// <summary>
+    /// 判断状态属于哪一层
+    /// </summary>
     private readonly Dictionary<string, StateLayer> mStateToLayer = new Dictionary<string, StateLayer>();
-
+    public IArchitecture GetArchitecture() => SkateGame.GameApp.Interface;
+    public LayeredStateMachine()
+    {
+        playerModel = this.GetModel<IPlayerModel>();
+    }
     public void AddState(string stateName, StateBase state, StateLayer layer)
     {
         if (!mStateToLayer.ContainsKey(stateName))
@@ -50,8 +59,7 @@ public class LayeredStateMachine
         // Update action first
         mAction.UpdateCurrentState();
         // 如果action状态不需忽略运动层，则更新运动层
-        var action = mAction.GetCurrentState() as ActionStateBase;
-        if (action == null || !action.IsIgnoringMovementLayer)
+        if (!playerModel.IsIgnoringMovementLayer.Value)
         {
             mMovement.UpdateCurrentState();
         }

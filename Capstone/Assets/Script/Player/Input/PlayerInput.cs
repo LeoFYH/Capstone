@@ -67,7 +67,6 @@ namespace SkateGame
 
 		private Vector2 GetAimDirection()
 		{
-            Debug.Log(_inputs.Player.AimDirection.activeControl.device);
             if (_inputs.Player.AimDirection.activeControl == null) return Vector2.right;
 			else if (_inputs.Player.AimDirection.activeControl.device is Gamepad)
 			{

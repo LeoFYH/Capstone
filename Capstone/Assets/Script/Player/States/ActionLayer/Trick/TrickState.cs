@@ -14,7 +14,6 @@ public class TrickState : ActionStateBase
 
     public TrickState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
-        isLoop = false;
     }
 
     public override string GetStateName() => "Trick";
@@ -26,7 +25,6 @@ public class TrickState : ActionStateBase
 
     private void PerformTrick()
     {
-        // player.SendEvent<TrickPerformedEvent>(new TrickPerformedEvent { TrickName = trickName });
         
         PerformTrick(player);
         
@@ -36,11 +34,6 @@ public class TrickState : ActionStateBase
 
     protected override void UpdateActionState()
     {
-        stateTimer += Time.deltaTime;
-        if (stateTimer > stateTotalDuration)
-        {
-            player.stateMachine.SwitchState(StateLayer.Action, "None");
-        }
     }
 
     private void PerformTrick(PlayerController player)
@@ -51,10 +44,10 @@ public class TrickState : ActionStateBase
     }
     private void CheckIfInPower(PlayerController player)
     {
-        if (playerModel.isInPower.Value)
+        if (playerModel.IsInPower.Value)
             {
                 player.RewardJump();
-                playerModel.isInPower.Value = false; // 消耗能量状态
+                playerModel.IsInPower.Value = false; // 消耗能量状态
             }
     }
 } 

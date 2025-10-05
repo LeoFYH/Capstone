@@ -7,6 +7,10 @@ public class TrickAState : TrickState
 {
     public TrickAState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
+        isLoop = playerModel.Config.Value.isLoopTrickA;
+        stateTotalDuration = playerModel.Config.Value.durationTrickA;
+        ignoreMovementLayerDuration = playerModel.Config.Value.ignoreMovementLayerDurationTrickA;
+        recoveryDuration = playerModel.Config.Value.recoveryDurationTrickA;
         this.trickName = "TrickA";
     }
 
@@ -28,8 +32,8 @@ public class TrickAState : TrickState
             Collider2D[] colliders = Physics2D.OverlapCircleAll(playerPosition, detectionRadius, LayerMask.GetMask("InteractiveLayer"));
             if(colliders.Length > 0)
             {
-                this.GetModel<IPlayerModel>().isInPower.Value = true;
-                if(this.GetModel<IPlayerModel>().isInPower.Value){
+                this.GetModel<IPlayerModel>().IsInPower.Value = true;
+                if(this.GetModel<IPlayerModel>().IsInPower.Value){
                     player.TrickABoostEffect.PlayFeedbacks();
                     player.RewardJump();
                 }

@@ -6,14 +6,10 @@ using SkateGame;
 public abstract class ActionStateBase : StateBase
 {
     protected float stateTimer;
-    protected float stateTotalDuration = 0;
+    protected float stateTotalDuration = -1f;
     protected bool isLoop = true;
-    protected bool isIgnoringMovementLayer = true;
-    protected bool isRecovering = false;
-    protected Vector2 ignoreMovementLayerDuration; // 第一个参数是开始忽略的时间，第二个参数是结束忽略的时间
-    protected Vector2 recoveryDuration; // 第一个参数是开始后摇的时间，第二个参数是结束后摇的时间
-    public bool IsIgnoringMovementLayer => isIgnoringMovementLayer;
-    public bool IsRecovering => isRecovering;
+    protected Vector2 ignoreMovementLayerDuration = new Vector2(-1f, -1f); // 第一个参数是开始忽略的时间，第二个参数是结束忽略的时间
+    protected Vector2 recoveryDuration = new Vector2(-1f, -1f); // 第一个参数是开始后摇的时间，第二个参数是结束后摇的时间
     protected virtual void UpdateActionState(){}
     protected virtual void EnterActionState(){}
     protected virtual void ExitActionState(){}
@@ -24,6 +20,8 @@ public abstract class ActionStateBase : StateBase
     }
     public sealed override void Enter()
     {
+        CheckIgnoreMovementLayer();
+        CheckRecovering();
         player.animator.SetLayerWeight(0, 0);
         player.animator.SetLayerWeight(1, 1);
         EnterActionState();
@@ -36,7 +34,7 @@ public abstract class ActionStateBase : StateBase
             CheckIgnoreMovementLayer();
             CheckRecovering();
         }
-        if(isRecovering)
+        if(playerModel.IsRecovering.Value)
         {
             CheckSwitchAction();
         }
@@ -66,16 +64,22 @@ public abstract class ActionStateBase : StateBase
     {
         if(stateTimer > ignoreMovementLayerDuration.x && stateTimer < ignoreMovementLayerDuration.y)
         {
-            isIgnoringMovementLayer = true;
+            playerModel.IsIgnoringMovementLayer.Value = true;
         }
+        else playerModel.IsIgnoringMovementLayer.Value = false;
     }
 
     // 检查是否后摇
     private void CheckRecovering()
     {
-        if(stateTimer > recoveryDuration.x && stateTimer < recoveryDuration.y)
+        if(isLoop) playerModel.IsRecovering.Value = true;
+        else
         {
-            isRecovering = true;
+            if(stateTimer > recoveryDuration.x && stateTimer < recoveryDuration.y)
+            {
+                playerModel.IsRecovering.Value = true;
+            }
+            else playerModel.IsRecovering.Value = false;
         }
     }
 

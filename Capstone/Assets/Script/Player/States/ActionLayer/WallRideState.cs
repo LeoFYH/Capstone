@@ -7,6 +7,7 @@ public class WallRideState : ActionStateBase
     private float onWallGravity = 0.1f;
     public WallRideState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
+        isLoop = playerModel.Config.Value.isLoopWallRide;
     }
 
     public override string GetStateName() => "WallRide";

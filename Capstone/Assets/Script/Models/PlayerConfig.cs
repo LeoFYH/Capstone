@@ -5,11 +5,31 @@ namespace SkateGame
     [CreateAssetMenu(fileName = "PlayerConfig", menuName = "SkateGame/Player Config")]
     public class PlayerConfig : ScriptableObject
     {
+        [Header("========== Action Layer基础参数 ==========")]
+        [Header("No Action State")]
+        public bool isLoopNoAction = true;
+
+        [Header("Grind State")]
+        public bool isLoopGrind = true;
+
+        [Header("Wall Ride State")]
+        public bool isLoopWallRide = true;
+
+        [Header("Grabbing State")]
+        public bool isLoopGrab = true;
+
+        [Header("Trick A State")]
+        public bool isLoopTrickA = false;
+        public float durationTrickA = 0.5f;
+        public Vector2 ignoreMovementLayerDurationTrickA = new Vector2(0f, 0f);
+        public Vector2 recoveryDurationTrickA = new Vector2(0f, 0.5f);
+
         [Header("跳跃设置")]
         public float maxJumpForce = 6f;
         public float minJumpForce = 0f;
         public float doubleJumpForce = 8f;
         public float maxChargeTime = 2f;
+        public float jumpDuration = 0.5f;
 
         [Header("移动设置")]
         public float maxMoveSpeed = 5f;
@@ -43,6 +63,9 @@ namespace SkateGame
         public int trickAScore = 20;
         public float trickBDuration = 1.5f;
         public int trickBScore = 20;
+        
+        [Header("Land相关")]
+        public float landDuration = 0.5f;
 
         [Header("瞄准设置")]
         public float baseMaxAimTime = 3f;
