@@ -45,6 +45,7 @@ public abstract class ActionStateBase : StateBase
         player.animator.SetLayerWeight(0, 1);
         player.animator.SetLayerWeight(1, 0);
         ExitActionState();
+        player.stateMachine.SwitchState(StateLayer.Movement, "Air");
     }
 
     private void StateTimeUpdate()
