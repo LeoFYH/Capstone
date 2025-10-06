@@ -19,7 +19,7 @@ public class GrindState : ActionStateBase
 
     protected override void EnterActionState()
     {
-        player.animator.SetBool("isNoseGrinding", true);
+        player.animator.Play("oPlayer@NoseGrind", 1);
 
         // 检查currentTrack是否为null
         if (playerModel.CurrentTrack.Value == null)
@@ -112,7 +112,6 @@ public class GrindState : ActionStateBase
 
     protected override void ExitActionState()
     {
-        player.animator.SetBool("isNoseGrinding", false);
         rb.gravityScale = normalG;
 
         if (player.GrindEffect != null)

@@ -12,11 +12,9 @@ public class IdleState : GroundMovementState
 
     public override string GetStateName() => "Idle";
 
-    public override void Enter()
+    protected override void EnterGroundMovement()
     {
-        player.animator.SetBool("isOllie", false);
-        player.animator.SetBool("isGrounded", true);
-        player.animator.SetBool("isPlayingLand", false);
+        player.animator.Play("oPlayer@Idle", 0);
         //MMF
         if (player.IdleEffect != null)
         {
@@ -36,7 +34,7 @@ public class IdleState : GroundMovementState
         }
     }
 
-    public override void Exit()
+    protected override void ExitGroundMovement()
     {
         if (player.IdleEffect != null)
         {

@@ -19,8 +19,7 @@ public class JumpState : AirborneMovementState
 
     public override void Enter()
     {
-        player.animator.SetBool("isOllie", true);
-        player.animator.SetBool("isGrounded", false);
+        player.animator.Play("oPlayer@Ollie", 0);
         playerModel.GrindJumpTimer.Value = playerModel.Config.Value.grindJumpIgnoreTime;
         isCharging = true;
         chargeTime = 0f;

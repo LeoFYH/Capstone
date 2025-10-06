@@ -22,9 +22,4 @@ public class PlayerAnimationManager : MonoBehaviour
         }
 
     }
-
-    public void OnLandingAnimationFinished()
-    {
-        animator.Play("oPlayer@Push");
-    }
 }

@@ -22,8 +22,9 @@ public class MoveState : GroundMovementState
 
     public override string GetStateName() => "Move";
 
-    public override void Enter()
+    protected override void EnterGroundMovement()
     {
+        player.animator.Play("oPlayer@Push", 0);
         if (player.moveEffect != null)
         {
             player.moveEffect.PlayFeedbacks();
@@ -45,7 +46,7 @@ public class MoveState : GroundMovementState
         }
     }
 
-    public override void Exit()
+    protected override void ExitGroundMovement()
     {
         if (player.moveEffect != null)
         {

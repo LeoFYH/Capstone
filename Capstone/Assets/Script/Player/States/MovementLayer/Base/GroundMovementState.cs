@@ -4,8 +4,10 @@ public abstract class GroundMovementState : StateBase
 {
     protected bool WasGrounded => this.GetModel<IPlayerModel>().WasGrounded.Value;
     protected bool IsGrounded => this.GetModel<IPlayerModel>().IsGrounded.Value;
-    protected virtual void UpdateGroundMovement(){}
-    
+    protected virtual void UpdateGroundMovement() { }
+    protected virtual void EnterGroundMovement() { }
+    protected virtual void ExitGroundMovement() { }
+
     public sealed override void Update()
     {
         /* 移动由OnMoveInput事件处理 */
@@ -14,6 +16,20 @@ public abstract class GroundMovementState : StateBase
         switchAirborneMovement();
         UpdateGroundMovement();
     }
+
+    public sealed override void Enter()
+    {
+        player.animator.SetLayerWeight(0, 1);
+        player.animator.SetLayerWeight(1, 0);
+
+        EnterGroundMovement();
+    }
+
+    public sealed override void Exit()
+    {
+        ExitGroundMovement();
+    }
+
     private void switchAirborneMovement()
     {
         if (inputModel.JumpStart.Value)
@@ -26,8 +42,8 @@ public abstract class GroundMovementState : StateBase
         }
     }
     private void CheckFall()
-    {   
-        if(WasGrounded && !IsGrounded)
+    {
+        if (WasGrounded && !IsGrounded)
         {
             player.stateMachine.SwitchState(StateLayer.Movement, "Air");
         }
