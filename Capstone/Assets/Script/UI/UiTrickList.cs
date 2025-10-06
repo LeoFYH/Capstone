@@ -7,15 +7,12 @@ namespace SkateGame
 {
     public class UiTrickList : ViewerControllerBase
     {
-        private Text tricksText;     
-        private Text gradeText;
+        public Text tricksText;     
+        public Text gradeText;
         private ITrickListModel trickModel;
 
         protected override void InitializeController()
         {
-            // 获取UI组件
-            tricksText = GetComponentInChildren<Text>();
-            gradeText = GetComponentInChildren<Text>();
             
             // 获取模型
             trickModel = this.GetModel<ITrickListModel>();

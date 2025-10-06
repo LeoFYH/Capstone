@@ -3,8 +3,10 @@ using System.Collections;
 using SkateGame;
 using QFramework;
 
-public class TrickAState : TrickState
+public class TrickAState : TrickState, ICanGetSystem, IBelongToArchitecture
 {
+    public IArchitecture GetArchitecture() => GameApp.Interface;
+    
     public TrickAState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
         isLoop = playerModel.Config.Value.isLoopTrickA;
@@ -12,6 +14,7 @@ public class TrickAState : TrickState
         ignoreMovementLayerDuration = playerModel.Config.Value.ignoreMovementLayerDurationTrickA;
         recoveryDuration = playerModel.Config.Value.recoveryDurationTrickA;
         this.trickName = "TrickA";
+        this.scoreValue = 10; 
     }
 
     public override string GetStateName() => "TrickA";
@@ -19,8 +22,19 @@ public class TrickAState : TrickState
     {
         player.TrickAEffect.PlayFeedbacks();
 
-        // 使用 Raycast 检测 InteractiveLayer 对象
         DetectInteractiveObjectsWithRaycast();
+        
+        var trickSystem = this.GetSystem<ITrickSystem>();
+        if (trickSystem != null)
+        {
+            trickSystem.AddTrick(this);
+            foreach(var trick in trickSystem.TrickList.Value)
+            {
+                Debug.Log("current trick: " + trick.TrickName);
+            }
+            Debug.Log("current grade: " + trickSystem.Grade.Value);
+        }
+        
     }
     private void DetectInteractiveObjectsWithRaycast()
         {

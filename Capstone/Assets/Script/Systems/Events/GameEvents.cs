@@ -67,42 +67,5 @@ namespace SkateGame
         public float HorizontalInput;
     }
     
-    // UI显示相关事件
-    public enum ScoreDisplayType
-    {
-        TotalScore,
-        ComboScore,
-        TrickScore
-    }
-    
-    // 分数显示事件
-    public struct ScoreDisplayEvent
-    {
-        public ScoreDisplayType ScoreType;
-        public int Value;
-        public Text TextComponent;
-    }
-    
-    // 技巧显示事件
-   
-    // 连击显示事件
-    public struct ComboDisplayEvent
-    {
-        public int ComboCount;
-        public Text TextComponent;
-    }
-    
-    // UI清理事件
-    public struct UIClearEvent
-    {
-        public UIClearType ClearType;
-    }
-    
-    public enum UIClearType
-    {
-        All,
-        TrickList,
-        Score,
-        Notification
-    }
+
 }
