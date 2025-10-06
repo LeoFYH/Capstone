@@ -2,13 +2,6 @@ using UnityEngine;
 
 public class Track : MonoBehaviour
 {
-    LogicalRail rail;
-
-    void Start()
-    {
-        rail = GetComponentInChildren<LogicalRail>();
-    }
-
     public Vector3 GetTrackPosition()
     {
         return transform.position;
@@ -17,11 +10,5 @@ public class Track : MonoBehaviour
     public Vector3 GetTrackDirection()
     {
         return transform.right;
-    }
-
-    public TrackDirComputeTool GetDirTool()
-    {
-        return new TrackDirComputeTool(rail);
-
     }
 }
