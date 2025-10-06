@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Timeline;
 
 [ExecuteInEditMode]
 public class LogicalRail : MonoBehaviour
@@ -161,33 +162,86 @@ public class TrackDirComputeTool
     ///  - 最近点在轨道上的世界坐标
     ///  - 该点处的切线方向（已归一化）
     /// </summary>
-    public (Vector3 nearest, Vector3 tangent) GetNearestPointAndTangent(Vector3 worldPos)
+    public (Vector3 nearest, Vector3 tangent) GetNearestPointAndTangent(
+        Vector3 worldPos,
+        int dirSign = 1,
+        Vector3? lastPos = null,
+        float excludeRadius = 0.02f,
+        Vector3? hintTangent = null,
+        float coneDeg = 45f)
     {
-        Vector3 local = worldPos;       
-        float minDist = float.MaxValue;
-        Vector3 bestPoint = Vector3.zero;
-        Vector3 bestTan = Vector3.right;
+        if (rail == null || rail.nodes == null || rail.nodes.Count < 2)
+            return (worldPos, Vector3.right);
 
-        // 在曲线上采样搜索最近点
+        float minDist = float.MaxValue;
+        Vector3 bestPoint = worldPos;
+        Vector3 bestTan   = Vector3.right;
+
         int segCount = rail.loop ? rail.nodes.Count : rail.nodes.Count - 1;
-        for (int s = 0; s < segCount; s++)
+        float excludeSqr = excludeRadius * excludeRadius;
+
+        // 参考方向 refDir：优先用外部传入的切线；无则退化为玩家位移；最后兜底为 Vector3.right
+        Vector3 refDir = Vector3.right;
+        if (hintTangent.HasValue && hintTangent.Value.sqrMagnitude > 1e-8f)
         {
-            for (int k = 0; k < rail.samplesPerSegment; k++)
+            refDir = hintTangent.Value.normalized;
+            //Debug.Log("refDir是正的"+(refDir.x>0));
+
+         }
+        else if (lastPos.HasValue && (worldPos - lastPos.Value).sqrMagnitude > 1e-8f)
+            refDir = (worldPos - lastPos.Value).normalized;
+
+        // dirSign 控制正/反向
+        //refDir = dirSign >= 0 ? refDir : -refDir;
+
+        // 夹角阈值（锥形）
+        float cosHalfAngle = Mathf.Cos(Mathf.Clamp(coneDeg, 0f, 89f) * Mathf.Deg2Rad);
+
+        // 遍历顺序由 dirSign 决定（仅影响访问顺序，不影响选择结果）
+        System.Func<int, int> segIndex  = (idx) => (dirSign >= 0) ? idx : (segCount - 1 - idx);
+        System.Func<int, int> sampIndex = (idx) => (dirSign >= 0) ? idx : (rail.samplesPerSegment - 1 - idx);
+
+        for (int si = 0; si < segCount; si++)
+        {
+            int s = segIndex(si);
+            for (int ki = 0; ki < rail.samplesPerSegment; ki++)
             {
-                Vector3 p = rail.GetPointOnSegment(s, k);   // 轨道上的点（世界坐标）
-                Debug.Log("计算了点" + p);
-                float d = (p - local).sqrMagnitude;
-                if (d < minDist)
+                int k = sampIndex(ki);
+
+                // 采样点与距离
+                Vector3 p = rail.GetPointOnSegment(s, k);
+                float toCurr = (p - worldPos).sqrMagnitude;
+                if (toCurr < excludeSqr) continue; // 排除过近点，防止抖动
+
+                // 用邻域估计该采样点的曲线切线 candTan
+                int kPrev = Mathf.Clamp(k - 1, 0, rail.samplesPerSegment - 1);
+                int kNext = Mathf.Clamp(k + 1, 0, rail.samplesPerSegment - 1);
+                Vector3 candTan = (rail.GetPointOnSegment(s, kNext) - rail.GetPointOnSegment(s, kPrev)).normalized;
+                if (candTan.sqrMagnitude < 1e-8f) candTan = refDir; // 退化兜底
+
+                // 方向过滤：只保留“与 refDir 夹角 ≤ coneDeg”的候选
+                float dp = Vector3.Dot(candTan, refDir);
+                //if (dp < cosHalfAngle) continue;
+
+                // 在允许集合中更新最近点
+                if (toCurr < minDist)
                 {
-                    minDist = d;
+                    minDist = toCurr;
                     bestPoint = p;
-                    // 切线用前后相邻两个点求差近似
-                    Vector3 pNext = rail.GetPointOnSegment(s, Mathf.Min(k + 1, rail.samplesPerSegment - 1));
-                    bestTan = (pNext - p).normalized;
+
+                    // 切线方向跟随 dirSign
+                    int k2 = Mathf.Clamp(k + (dirSign >= 0 ? 1 : -1), 0, rail.samplesPerSegment - 1);
+                    Vector3 p2 = rail.GetPointOnSegment(s, k2);
+                    //if(Mathf.Sign(bestTan.x)!= Mathf.Sign((p2 - p).normalized.x))
+                        //Debug.LogError("最佳点改变了正负");
+                    bestTan = (p2 - p).normalized;
+
+                    if (bestTan.sqrMagnitude < 1e-8f) bestTan = candTan; // 再兜底
+                    
                 }
             }
         }
-
-        return (bestPoint, bestTan);  // 返回最近点换回世界坐标
+        //Debug.Log("Direction的x是正的2"+ (bestTan.x>0));
+        return (bestPoint, bestTan);
     }
 }
