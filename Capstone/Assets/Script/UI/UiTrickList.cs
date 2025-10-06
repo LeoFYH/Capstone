@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Text;
+using System.Collections;
 using QFramework;
 
 namespace SkateGame
@@ -13,32 +14,23 @@ namespace SkateGame
 
         protected override void InitializeController()
         {
-            
-            // 获取模型
             trickModel = this.GetModel<ITrickListModel>();
             
-            // 监听模型变化
             if (trickModel != null)
             {
-                trickModel.TrickList.Register(OnTrickListChanged);
-                trickModel.Grade.Register(OnGradeChanged);
+                RefreshUI();
+                DisplayGrade();
             }
+
         }
 
         protected override void OnRealTimeUpdate()
         {
-           
+           RefreshUI();
+           DisplayGrade();
+        
         }
 
-        private void OnTrickListChanged(System.Collections.Generic.List<TrickState> tricks)
-        {
-            RefreshUI();
-        }
-
-        private void OnGradeChanged(char grade)
-        {
-            DisplayGrade();
-        }
 
         public void RefreshUI()
         {

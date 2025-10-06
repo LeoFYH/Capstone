@@ -98,7 +98,22 @@ namespace SkateGame
             
             // 检测玩家方向变化并更新粒子特效
             CheckPlayerDirectionChange();
+            
+            //过几秒自动清空tricklist和grade
+            if (this.GetSystem<ITrickSystem>().TrickList.Value.Count > 0)
+            {
+                StartCoroutine(ClearTricksAfterDelay(5f));
+            }
         }
+
+        //过几秒自动清空tricklist和grade
+        private IEnumerator ClearTricksAfterDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            this.GetSystem<ITrickSystem>().RemoveAllTricks();
+            this.GetModel<ITrickListModel>().Grade.Value = 'D';
+       }
+        
 
         // 提供给状态机使用的方法
         public void DetectInput()
