@@ -1,7 +1,5 @@
 using SkateGame;
 using QFramework;
-using UnityEngine;
-
 public abstract class GroundMovementState : StateBase
 {
     protected bool WasGrounded => this.GetModel<IPlayerModel>().WasGrounded.Value;
@@ -10,6 +8,9 @@ public abstract class GroundMovementState : StateBase
     
     public sealed override void Update()
     {
+        /* 移动由OnMoveInput事件处理 */
+        float moveInput = inputModel.Move.Value.x;
+        player.SendEvent<MoveInputEvent>(new MoveInputEvent { HorizontalInput = moveInput });
         switchAirborneMovement();
         UpdateGroundMovement();
     }

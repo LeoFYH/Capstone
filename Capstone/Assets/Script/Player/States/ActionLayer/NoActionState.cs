@@ -8,7 +8,6 @@ public class NoActionState : ActionStateBase
     {
         this.player = player;
         this.rb = rb;
-        isIgnoringMovementLayer = false;
-        isRecovering = true;
+        isLoop = playerModel.Config.Value.isLoopNoAction;
     }
 }

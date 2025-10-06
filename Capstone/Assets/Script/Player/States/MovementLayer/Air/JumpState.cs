@@ -6,6 +6,7 @@ public class JumpState : AirborneMovementState
 {
     private float chargeTime;
     private bool isCharging;
+    private float jumpTimer;
     public JumpState(PlayerController player, Rigidbody2D rb)
     {
         this.player = player;
@@ -23,7 +24,7 @@ public class JumpState : AirborneMovementState
         playerModel.GrindJumpTimer.Value = playerModel.Config.Value.grindJumpIgnoreTime;
         isCharging = true;
         chargeTime = 0f;
-        
+        jumpTimer = 0f;
         // 立即发送跳跃执行事件
         player.SendEvent<JumpExecuteEvent>();
 
@@ -38,24 +39,15 @@ public class JumpState : AirborneMovementState
     protected override void UpdateAirMovement()
     {
         UpdateGrindJumpTimer();
-        
+        UpdateJumpTimer();
         // 蓄力跳逻辑（现在只是计时，移动由移动系统处理）
         if (isCharging)
         {
             chargeTime += Time.deltaTime;
-            if (chargeTime > playerModel.maxChargeTime.Value)
-                chargeTime = playerModel.maxChargeTime.Value;
+            if (chargeTime > playerModel.MaxChargeTime.Value)
+                chargeTime = playerModel.MaxChargeTime.Value;
         }
         
-        if (playerModel.StateTimer.Value > 0f)
-        {
-            playerModel.StateTimer.Value -= Time.deltaTime;
-        }
-        else
-        {
-            player.stateMachine.SwitchState(StateLayer.Movement, "Air");
-        }
-        playerModel.GrindJumpTimer.Value -= Time.deltaTime;
     }
 
     public override void Exit()
@@ -74,6 +66,18 @@ public class JumpState : AirborneMovementState
         if (playerModel.GrindJumpTimer.Value > 0f)
         {
             playerModel.GrindJumpTimer.Value -= Time.deltaTime;
+        }
+    }
+    
+    private void UpdateJumpTimer()
+    {   
+        if (jumpTimer < playerModel.Config.Value.jumpDuration)
+        {
+            jumpTimer += Time.deltaTime;
+        }
+        else
+        {
+            player.stateMachine.SwitchState(StateLayer.Movement, "Air");
         }
     }
 } 

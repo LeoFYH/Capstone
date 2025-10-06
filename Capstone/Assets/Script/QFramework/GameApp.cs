@@ -10,10 +10,12 @@ namespace SkateGame
             this.RegisterModel<IPlayerModel>(new PlayerModel());
             this.RegisterModel<IInputModel>(new InputModel());
             this.RegisterModel<IGameModel>(new GameModel());
+            this.RegisterModel<ITrickListModel>(new TrickListModel());
             
             // 注册业务系统（PlayerAssetSystem 最先初始化，确保配置优先加载）
             this.RegisterSystem<IPlayerAssetSystem>(new PlayerAssetSystem());
             this.RegisterSystem<IPlayerSystem>(new PlayerSystem());
+            this.RegisterSystem<ITrickSystem>(new TrickSystem());
         }
     }
 }

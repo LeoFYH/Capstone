@@ -20,14 +20,6 @@ public class AirState : AirborneMovementState
     protected override void UpdateAirMovement()
     {
         StateChange();
-        // 检测落地
-        if (playerModel.IsGrounded.Value)
-        {
-            // 处理瞄准时间奖励（如果执行了trick）
-            player.HandleLandingAimTimeBonus();
-            
-            player.stateMachine.SwitchState(StateLayer.Movement, "Idle");
-        }
     }
 
     public override void Exit()

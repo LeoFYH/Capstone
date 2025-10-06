@@ -29,10 +29,4 @@ public abstract class StateBase : ICanGetModel, IBelongToArchitecture
 
     public IArchitecture GetArchitecture() => SkateGame.GameApp.Interface;
     
-    // 发送事件的辅助方法（通过InputController）
-    protected void SendEvent<T>(T evt) where T : struct
-    {
-        // 这里需要通过InputController来发送事件
-        // 暂时留空，在具体状态中实现
-    }
 } 

@@ -12,10 +12,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eeb7f34cfe9f4a489a12b688e15ab4d, type: 3}
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
+  isLoopNoAction: 1
+  durationNoAction: -1
+  ignoreMovementLayerDurationNoAction: {x: -1, y: -1}
+  recoveryDurationNoAction: {x: -1, y: -1}
+  isLoopGrind: 1
+  durationGrind: -1
+  ignoreMovementLayerDurationGrind: {x: -1, y: -1}
+  recoveryDurationGrind: {x: -1, y: -1}
+  isLoopWallRide: 1
+  durationWallRide: -1
+  ignoreMovementLayerDurationWallRide: {x: -1, y: -1}
+  recoveryDurationWallRide: {x: -1, y: -1}
+  isLoopGrab: 1
+  durationGrab: -1
+  ignoreMovementLayerDurationGrab: {x: -1, y: -1}
+  recoveryDurationGrab: {x: -1, y: -1}
+  isLoopTrickA: 0
+  durationTrickA: 0.5
+  ignoreMovementLayerDurationTrickA: {x: 0, y: 0}
+  recoveryDurationTrickA: {x: 0, y: 0.5}
   maxJumpForce: 8
   minJumpForce: 0
   doubleJumpForce: 6
   maxChargeTime: 2
+  jumpDuration: 0.5
   maxMoveSpeed: 10
   maxAirHorizontalSpeed: 10
   airControlForce: 5
@@ -37,6 +58,7 @@ MonoBehaviour:
   trickAScore: 20
   trickBDuration: 1.5
   trickBScore: 20
+  landDuration: 0.5
   baseMaxAimTime: 3
   bulletPrefabs:
   - {fileID: 9141978474503307967, guid: f82702240d0fd6445947da81cd3c4534, type: 3}

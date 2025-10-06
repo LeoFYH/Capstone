@@ -6,6 +6,7 @@ public class GrabbingState : ActionStateBase
 
     public GrabbingState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
+        isLoop = playerModel.Config.Value.isLoopGrab;
     }
 
     public override string GetStateName() => "Grab";
@@ -23,7 +24,6 @@ public class GrabbingState : ActionStateBase
     {
 
         //WallRide状态下的逻辑
-        //add combo point
         if (inputModel.Grind.Value == false)
         {
             player.stateMachine.SwitchState(StateLayer.Action, "None");
