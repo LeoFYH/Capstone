@@ -75,6 +75,7 @@ namespace SkateGame
         // 非输入的运行时/调参（来自 InputController，但不包含 isEHeld/isWHeld 等原始输入）
         BindableProperty<Track> CurrentTrack { get; }
         BindableProperty<float> GrindJumpTimer { get; } // 用来防止跳跃后被吸附到原先滑轨
+        BindableProperty<float> WallRideCooldownTimer { get; } // 用来控制两次滑墙之间的冷却时间
         BindableProperty<bool> WasGrounded { get; }
         BindableProperty<bool> IsCheckingReverseWindow { get; }
         BindableProperty<float> ReverseTimer { get; }
@@ -139,6 +140,7 @@ namespace SkateGame
         // 非输入的运行时/调参（来自 InputController，但不包含 isEHeld/isWHeld 等原始输入）
         public BindableProperty<Track> CurrentTrack { get; } = new BindableProperty<Track>(null);
         public BindableProperty<float> GrindJumpTimer { get; } = new BindableProperty<float>(0f);
+        public BindableProperty<float> WallRideCooldownTimer { get; } = new BindableProperty<float>(0f);
         public BindableProperty<bool> WasGrounded { get; } = new BindableProperty<bool>(true);
         public BindableProperty<bool> IsCheckingReverseWindow { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> ReverseTimer { get; } = new BindableProperty<float>(0f);

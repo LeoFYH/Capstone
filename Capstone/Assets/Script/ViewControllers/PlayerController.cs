@@ -93,6 +93,9 @@ namespace SkateGame
 
             HandleAimAndShoot();
             
+            // 更新冷却计时器
+            UpdateCooldownTimers();
+            
             // 更新当前State
             stateMachine.UpdateCurrentState();
             
@@ -114,6 +117,19 @@ namespace SkateGame
             this.GetModel<ITrickListModel>().Grade.Value = 'D';
        }
         
+        // 更新各种冷却计时器
+        private void UpdateCooldownTimers()
+        {
+            // 更新滑墙冷却计时器
+            if (playerModel.WallRideCooldownTimer.Value > 0f)
+            {
+                playerModel.WallRideCooldownTimer.Value -= Time.deltaTime;
+                if (playerModel.WallRideCooldownTimer.Value < 0f)
+                {
+                    playerModel.WallRideCooldownTimer.Value = 0f;
+                }
+            }
+        }
 
         // 提供给状态机使用的方法
         public void DetectInput()

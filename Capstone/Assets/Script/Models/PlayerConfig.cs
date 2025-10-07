@@ -14,6 +14,7 @@ namespace SkateGame
 
         [Header("Wall Ride State")]
         public bool isLoopWallRide = true;
+        public float wallRideCooldown = 1.5f;
 
         [Header("Grabbing State")]
         public bool isLoopGrab = true;
