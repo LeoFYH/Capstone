@@ -42,6 +42,7 @@ public class camera_switcher : MonoBehaviour
         {
             mainCamera = Camera.main;
             if (mainCamera == null)
+            {
                 Debug.LogWarning("启用了投影模式切换但未找到主相机!");
             }
         }
