@@ -11,6 +11,8 @@ public class camera_switcher : MonoBehaviour
     [Header("切换设置")]
     [SerializeField] private bool switchBackOnExit = true; // 离开时是否切换回原始摄像机
     [SerializeField] private float waitTime = 0f; // 等待时间（秒），0表示立即切换
+    [SerializeField] private bool changeProjectionMode = false; // 是否切换主相机的投影模式
+    [SerializeField] private Camera mainCamera; // 主相机引用
     
     [Header("触发器设置")]
     [SerializeField] private string playerTag = "Player"; // 玩家标签
@@ -33,6 +35,15 @@ public class camera_switcher : MonoBehaviour
         else
         {
             Debug.LogWarning("Camera Switcher需要附加Collider组件!");
+        }
+        
+        // 如果需要切换投影模式但没有设置主相机，自动查找
+        if (changeProjectionMode && mainCamera == null)
+        {
+            mainCamera = Camera.main;
+            if (mainCamera == null)
+                Debug.LogWarning("启用了投影模式切换但未找到主相机!");
+            }
         }
     }
     
@@ -166,6 +177,14 @@ public class camera_switcher : MonoBehaviour
                 originalCamera.Priority = 1;
             }
             
+            // 如果启用了投影模式切换，将主相机切换到透视模式
+            if (changeProjectionMode && mainCamera != null)
+            {
+                mainCamera.orthographic = false;
+                if (showDebugInfo)
+                    Debug.Log("主相机切换到透视模式 (Perspective)");
+            }
+            
             hasSwitched = true;
             
             if (showDebugInfo)
@@ -191,6 +210,14 @@ public class camera_switcher : MonoBehaviour
             if (targetCamera != null)
             {
                 targetCamera.Priority = 1;
+            }
+            
+            // 如果启用了投影模式切换，将主相机切换回正交模式
+            if (changeProjectionMode && mainCamera != null)
+            {
+                mainCamera.orthographic = true;
+                if (showDebugInfo)
+                    Debug.Log("主相机切换回正交模式 (Orthographic)");
             }
             
             hasSwitched = false;
