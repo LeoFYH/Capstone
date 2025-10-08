@@ -15,8 +15,6 @@ public abstract class AirborneMovementState : StateBase
     }
     private void switchGroundMovement()
     {
-        Debug.Log("WasGrounded: " + playerModel.WasGrounded.Value);
-        Debug.Log("IsGrounded: " + playerModel.IsGrounded.Value);
         if (!playerModel.WasGrounded.Value && playerModel.IsGrounded.Value)
         {
             player.stateMachine.SwitchState(StateLayer.Movement, "Land");

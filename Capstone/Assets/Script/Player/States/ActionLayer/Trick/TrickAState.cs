@@ -5,7 +5,6 @@ using QFramework;
 
 public class TrickAState : TrickState, ICanGetSystem, IBelongToArchitecture
 {
-    public IArchitecture GetArchitecture() => GameApp.Interface;
     
     public TrickAState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {

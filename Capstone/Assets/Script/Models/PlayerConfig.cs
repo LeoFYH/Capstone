@@ -8,16 +8,19 @@ namespace SkateGame
         [Header("========== Action Layer基础参数 ==========")]
         [Header("No Action State")]
         public bool isLoopNoAction = true;
+        public Vector2 ignoreMovementLayerDurationNoAction = new Vector2(-1f, -1f);
 
         [Header("Grind State")]
         public bool isLoopGrind = true;
+        public Vector2 ignoreMovementLayerDurationGrind = new Vector2(1f, 1f);
 
         [Header("Wall Ride State")]
         public bool isLoopWallRide = true;
+        public Vector2 ignoreMovementLayerDurationWallRide = new Vector2(-1f, -1f);
 
         [Header("Grabbing State")]
         public bool isLoopGrab = true;
-
+        public Vector2 ignoreMovementLayerDurationGrab = new Vector2(-1f, -1f);
         [Header("Trick A State")]
         public bool isLoopTrickA = false;
         public float durationTrickA = 0.5f;
@@ -47,6 +50,9 @@ namespace SkateGame
 
         [Header("Grind相关")]
         public float normalG = 1f;
+        [Header("Wall Ride相关")]
+        public float wallRideCooldown = 1.5f;
+        public float wallrideDuration = 0.6f;
 
         [Header("Move相关")]
         public float acceleration = 15f;

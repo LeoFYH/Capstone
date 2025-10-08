@@ -1,16 +1,16 @@
 using UnityEngine;
 using SkateGame;
+using QFramework;
 
 public class WallRideState : ActionStateBase
 {
     private float normalGravity;
     private float onWallGravity = 0.1f;
-    private float jumpCooldownTimer = 0f;  // 跳跃冷却计时器
-    private float jumpCooldownDuration = 1.5f;  // 跳跃冷却时间1.5秒
     
     public WallRideState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
         isLoop = playerModel.Config.Value.isLoopWallRide;
+        ignoreMovementLayerDuration = playerModel.Config.Value.ignoreMovementLayerDurationWallRide;
     }
 
     public override string GetStateName() => "WallRide";
@@ -30,24 +30,11 @@ public class WallRideState : ActionStateBase
 
     protected override void UpdateActionState()
     {
-        // 更新跳跃冷却计时器
-        if (jumpCooldownTimer > 0f)
-        {
-            jumpCooldownTimer -= Time.deltaTime;
-        }
-
-        // 检查是否可以跳跃（冷却时间结束且松开Grind键）
+        rb.gravityScale = Mathf.Lerp(onWallGravity, normalGravity, stateTimer / playerModel.Config.Value.wallrideDuration);
         if (playerModel.CurrentWall.Value == null || !inputModel.Grind.Value)
         {   
-            // 如果冷却时间还没结束，不允许跳跃
-            if (jumpCooldownTimer > 0f)
-            {
-                return;
-            }
-            
-            // 重置冷却计时器
-            jumpCooldownTimer = jumpCooldownDuration;
-            
+            rb.gravityScale = normalGravity;
+            stateTimer = 0f;
             player.stateMachine.SwitchState(StateLayer.Action, "None");
             player.stateMachine.SwitchState(StateLayer.Movement, "Jump");
         }
@@ -56,6 +43,7 @@ public class WallRideState : ActionStateBase
     protected override void ExitActionState()
     {   
         rb.gravityScale = normalGravity;
+        playerModel.WallRideCooldownTimer.Value = playerModel.Config.Value.wallRideCooldown;
         if (player.WallRideEffect != null)
         {
             player.WallRideEffect.StopFeedbacks();

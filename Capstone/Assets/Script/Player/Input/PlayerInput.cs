@@ -68,15 +68,30 @@ namespace SkateGame
 		private Vector2 GetAimDirection()
 		{
             if (_inputs.Player.AimDirection.activeControl == null) return Vector2.right;
-			else if (_inputs.Player.AimDirection.activeControl.device is Gamepad)
-			{
-                return Gather().AimDirection;
-			}
+            else if (_inputs.Player.AimDirection.activeControl.device is Gamepad)
+            {
+                    return Gather().AimDirection;
+            }
             else if (_inputs.Player.AimDirection.activeControl.device is Mouse)
             {
-				Vector2 mousePos = (Vector2)Camera.main.ScreenToWorldPoint(Gather().AimDirection);
-                return (mousePos - (Vector2)transform.position).normalized;
-			}
+            // 获取鼠标屏幕位置
+            Vector3 mouseScreenPos = Gather().AimDirection;
+            
+            // 根据相机投影模式设置正确的z值
+            if (Camera.main.orthographic)
+            {
+                // 正交模式下，z值不重要，可以使用0
+                mouseScreenPos.z = 0;
+            }
+            else
+            {
+                // 透视模式下，需要设置z值为玩家在屏幕空间的深度
+                mouseScreenPos.z = Camera.main.WorldToScreenPoint(transform.position).z;
+            }
+            
+            Vector2 worldMousePos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
+                return (worldMousePos - (Vector2)transform.position).normalized;
+            }
             else if (_inputs.Player.AimDirection.activeControl.device is Keyboard)
             {
                 return Gather().AimDirection;
