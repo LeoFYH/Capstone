@@ -61,9 +61,9 @@ public class IceBullet : MonoBehaviour
         if (trackPrefab == null) return;
 
        
-        Vector2 trackPos = new Vector2(transform.position.x, launchHeight);
-
-        Instantiate(trackPrefab, trackPos, Quaternion.identity);
+        Vector2 trackPos = transform.position;
+        //Debug.LogError(rb.linearVelocity.normalized);
+        Instantiate(trackPrefab, trackPos, Quaternion.Euler(0,0, Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg));
 
     }
 

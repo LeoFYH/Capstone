@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
 
@@ -156,9 +157,12 @@ public class TrackDirComputeTool
     public Vector3 origin;                 // 轨道起点（世界坐标）
     private readonly LogicalRail rail;     // 引用你的曲线对象
 
-    public TrackDirComputeTool(LogicalRail rail)
+    private float zAngle;
+
+    public TrackDirComputeTool(LogicalRail rail, float z)
     {
         this.rail = rail;
+        zAngle = z;
         if (rail.nodes != null && rail.nodes.Count > 0 && rail.nodes[0] != null)
             this.origin = rail.nodes[0].transform.position;
         else
@@ -185,6 +189,8 @@ public class TrackDirComputeTool
         Vector3 bestPoint = worldPos;
         Vector3 bestTan   = Vector3.right;
 
+        dirSign = Mathf.Abs(zAngle % 180) > 90 ? dirSign * -1 : dirSign;
+
         int segCount = rail.loop ? rail.nodes.Count : rail.nodes.Count - 1;
         float excludeSqr = excludeRadius * excludeRadius;
 
@@ -206,8 +212,8 @@ public class TrackDirComputeTool
         float cosHalfAngle = Mathf.Cos(Mathf.Clamp(coneDeg, 0f, 89f) * Mathf.Deg2Rad);
 
         // 遍历顺序由 dirSign 决定（仅影响访问顺序，不影响选择结果）
-        System.Func<int, int> segIndex  = (idx) => (dirSign >= 0) ? idx : (segCount - 1 - idx);
-        System.Func<int, int> sampIndex = (idx) => (dirSign >= 0) ? idx : (rail.samplesPerSegment - 1 - idx);
+        System.Func<int, int> segIndex  = (idx) => ((dirSign >= 0) == (Mathf.Abs(zAngle % 180) < 90)) ? idx : (segCount - 1 - idx);
+        System.Func<int, int> sampIndex = (idx) => ((dirSign >= 0) == (Mathf.Abs(zAngle % 180) < 90)) ? idx : (rail.samplesPerSegment - 1 - idx);
 
         for (int si = 0; si < segCount; si++)
         {

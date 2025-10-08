@@ -21,7 +21,7 @@ public class Track : MonoBehaviour
 
     public TrackDirComputeTool GetDirTool()
     {
-        return new TrackDirComputeTool(rail);
+        return new TrackDirComputeTool(rail, transform.rotation.eulerAngles.z);
 
     }
 }
