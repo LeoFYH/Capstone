@@ -187,7 +187,7 @@ public class TrackDirComputeTool
 
         float minDist = float.MaxValue;
         Vector3 bestPoint = worldPos;
-        Vector3 bestTan = Vector3.right;
+        Vector3 bestTan   = Vector3.right;
 
         dirSign = Mathf.Abs(zAngle % 180) > 90 ? dirSign * -1 : dirSign;
 
@@ -201,7 +201,7 @@ public class TrackDirComputeTool
             refDir = hintTangent.Value.normalized;
             //Debug.Log("refDir是正的"+(refDir.x>0));
 
-        }
+         }
         else if (lastPos.HasValue && (worldPos - lastPos.Value).sqrMagnitude > 1e-8f)
             refDir = (worldPos - lastPos.Value).normalized;
 
@@ -212,8 +212,8 @@ public class TrackDirComputeTool
         float cosHalfAngle = Mathf.Cos(Mathf.Clamp(coneDeg, 0f, 89f) * Mathf.Deg2Rad);
         //Debug.LogError(zAngle);
         // 遍历顺序由 dirSign 决定（仅影响访问顺序，不影响选择结果）
-        System.Func<int, int> segIndex = (idx) => ((dirSign * CalTool(zAngle)) >= 0) ? idx : (segCount - 1 - idx);
-        System.Func<int, int> sampIndex = (idx) => ((dirSign * CalTool(zAngle)) >= 0) ? idx : (rail.samplesPerSegment - 1 - idx);
+        System.Func<int, int> segIndex  = (idx) => ((dirSign * -Mathf.Sign((90-zAngle)*(zAngle-270)))>=0) ? idx : (segCount - 1 - idx);
+        System.Func<int, int> sampIndex = (idx) => ((dirSign * -Mathf.Sign((90-zAngle)*(zAngle-270)))>=0) ? idx : (rail.samplesPerSegment - 1 - idx);
 
         for (int si = 0; si < segCount; si++)
         {
@@ -244,30 +244,18 @@ public class TrackDirComputeTool
                     bestPoint = p;
 
                     // 切线方向跟随 dirSign
-                    int k2 = Mathf.Clamp(k + ((dirSign * CalTool(zAngle)) >= 0 ? 1 : -1), 0, rail.samplesPerSegment - 1);
+                    int k2 = Mathf.Clamp(k + ((dirSign * -Mathf.Sign((90-zAngle)*(zAngle-270)))>=0? 1 : -1), 0, rail.samplesPerSegment - 1);
                     Vector3 p2 = rail.GetPointOnSegment(s, k2);
                     //if(Mathf.Sign(bestTan.x)!= Mathf.Sign((p2 - p).normalized.x))
-                    //Debug.LogError("最佳点改变了正负");
+                        //Debug.LogError("最佳点改变了正负");
                     bestTan = (p2 - p).normalized;
 
                     if (bestTan.sqrMagnitude < 1e-8f) bestTan = candTan; // 再兜底
-
+                    
                 }
             }
         }
         //Debug.Log("Direction的x是正的2"+ (bestTan.x>0));
         return (bestPoint, bestTan);
-        
-        float CalTool(float angleInDeg)
-        {
-            angleInDeg = angleInDeg % 360;
-            if (angleInDeg < 180)
-            {
-                return 1;
-
-            }
-            return -1;
-
-         }
     }
 }
