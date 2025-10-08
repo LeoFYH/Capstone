@@ -1,5 +1,6 @@
 using UnityEngine;
 using SkateGame;
+using QFramework;
 
 public class WallRideState : ActionStateBase
 {
@@ -16,6 +17,8 @@ public class WallRideState : ActionStateBase
 
     protected override void EnterActionState()
     {
+        player.animator.Play("oPlayer@WallRide", 1);
+
         normalGravity = rb.gravityScale;
         rb.gravityScale = onWallGravity;
 
@@ -27,9 +30,11 @@ public class WallRideState : ActionStateBase
 
     protected override void UpdateActionState()
     {
+        rb.gravityScale = Mathf.Lerp(onWallGravity, normalGravity, stateTimer / playerModel.Config.Value.wallrideDuration);
         if (playerModel.CurrentWall.Value == null || !inputModel.Grind.Value)
         {   
-
+            rb.gravityScale = normalGravity;
+            stateTimer = 0f;
             player.stateMachine.SwitchState(StateLayer.Action, "None");
             player.stateMachine.SwitchState(StateLayer.Movement, "Jump");
         }

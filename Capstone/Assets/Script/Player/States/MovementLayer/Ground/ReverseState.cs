@@ -12,7 +12,7 @@ public class ReverseState : GroundMovementState
 
     public override string GetStateName() => "Reverse";
 
-    public override void Enter()
+    protected override void EnterGroundMovement()
     {
         Vector2 velocity = rb.linearVelocity;
         rb.linearVelocity = new Vector2(-velocity.x, velocity.y);
@@ -31,7 +31,7 @@ public class ReverseState : GroundMovementState
 
     }
 
-    public override void Exit()
+    protected override void ExitGroundMovement()
     {
 
     }

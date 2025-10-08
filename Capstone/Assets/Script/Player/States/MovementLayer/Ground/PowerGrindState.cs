@@ -18,7 +18,7 @@ public class PowerGrindState : GroundMovementState
 
     public override string GetStateName() => "PowerGrind";
 
-    public override void Enter()
+    protected override void EnterGroundMovement()
     {
 
         Debug.Log("PowerGrindState Enter deceleration: " + deceleration);
@@ -59,7 +59,7 @@ public class PowerGrindState : GroundMovementState
         CheckReverse();
     }
 
-    public override void Exit()
+    protected override void ExitGroundMovement()
     {   
         // 停止MMF效果
         if (player.powerGrindEffect != null)

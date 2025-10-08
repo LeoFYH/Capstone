@@ -14,8 +14,14 @@ public class LandState : GroundMovementState
 
     public override string GetStateName() => "Land";
 
-    public override void Enter()
+    protected override void EnterGroundMovement()
     {
+        if (playerModel.CanDoubleJump.Value)
+        {
+            player.animator.Play("oPlayer@OllieLand", 0);
+        }
+        else player.animator.Play("oPlayer@KickFlipLand", 0);
+
         playerModel.CanDoubleJump.Value = true;
         landTimer = 0f;
     }
@@ -25,7 +31,7 @@ public class LandState : GroundMovementState
         UpdateLandTimer();
     }
 
-    public override void Exit()
+    protected override void ExitGroundMovement()
     {
     }
 
