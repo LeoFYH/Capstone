@@ -107,8 +107,16 @@ public class LogicalRail : MonoBehaviour
 
     // —— 可视化（编辑器模式下始终绘制） ————————————————
 
+
+    public void CleanupNodes()
+    {
+        if (nodes == null) return;
+        nodes.RemoveAll(n => n == null);   // Missing 也会被移除
+    }
+
     void OnDrawGizmos()
     {
+        CleanupNodes();
         if (nodes == null || nodes.Count < 2) return;
 
         Gizmos.color = Color.white;
