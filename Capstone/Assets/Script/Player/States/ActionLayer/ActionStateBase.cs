@@ -34,6 +34,11 @@ public abstract class ActionStateBase : StateBase
             CheckIgnoreMovementLayer();
             CheckRecovering();
         }
+        else
+        {
+            playerModel.IsIgnoringMovementLayer.Value = false;
+            playerModel.IsRecovering.Value = true;
+        }
         if(playerModel.IsRecovering.Value)
         {
             CheckSwitchAction();
