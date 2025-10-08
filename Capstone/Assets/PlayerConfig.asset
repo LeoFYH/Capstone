@@ -13,21 +13,13 @@ MonoBehaviour:
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
   isLoopNoAction: 1
-  durationNoAction: -1
   ignoreMovementLayerDurationNoAction: {x: -1, y: -1}
-  recoveryDurationNoAction: {x: -1, y: -1}
   isLoopGrind: 1
-  durationGrind: -1
-  ignoreMovementLayerDurationGrind: {x: -1, y: -1}
-  recoveryDurationGrind: {x: -1, y: -1}
+  ignoreMovementLayerDurationGrind: {x: 1, y: 1}
   isLoopWallRide: 1
-  durationWallRide: -1
   ignoreMovementLayerDurationWallRide: {x: -1, y: -1}
-  recoveryDurationWallRide: {x: -1, y: -1}
   isLoopGrab: 1
-  durationGrab: -1
   ignoreMovementLayerDurationGrab: {x: -1, y: -1}
-  recoveryDurationGrab: {x: -1, y: -1}
   isLoopTrickA: 0
   durationTrickA: 0.5
   ignoreMovementLayerDurationTrickA: {x: 0, y: 0}
@@ -48,6 +40,7 @@ MonoBehaviour:
   airControlForceConfig: 10
   maxAirHorizontalSpeedConfig: 8
   normalG: 1
+  wallRideCooldown: 1.5
   acceleration: 10
   moveDeceleration: 20
   maxSpeed: 5

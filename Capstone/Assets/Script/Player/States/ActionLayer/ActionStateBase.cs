@@ -28,17 +28,10 @@ public abstract class ActionStateBase : StateBase
     }
     public sealed override void Update()
     {
-        if (!isLoop)
-        {
-            StateTimeUpdate();
-            CheckIgnoreMovementLayer();
-            CheckRecovering();
-        }
-        else
-        {
-            playerModel.IsIgnoringMovementLayer.Value = false;
-            playerModel.IsRecovering.Value = true;
-        }
+        StateTimeUpdate();
+        CheckIgnoreMovementLayer();
+        CheckRecovering();
+
         if(playerModel.IsRecovering.Value)
         {
             CheckSwitchAction();
@@ -58,20 +51,23 @@ public abstract class ActionStateBase : StateBase
         {
             stateTimer += Time.deltaTime;
         }
-        else
-        {
-            player.stateMachine.SwitchState(StateLayer.Action, "None");
-        }
     }
     
     // 检查是否忽略运动层
     private void CheckIgnoreMovementLayer()
     {
-        if(stateTimer > ignoreMovementLayerDuration.x && stateTimer < ignoreMovementLayerDuration.y)
+        if(isLoop)
         {
-            playerModel.IsIgnoringMovementLayer.Value = true;
+            playerModel.IsIgnoringMovementLayer.Value = ignoreMovementLayerDuration.x == -1f ? false : true;
         }
-        else playerModel.IsIgnoringMovementLayer.Value = false;
+        else
+        {      
+            if(stateTimer > ignoreMovementLayerDuration.x && stateTimer < ignoreMovementLayerDuration.y)
+            {
+                playerModel.IsIgnoringMovementLayer.Value = true;
+            }
+            else playerModel.IsIgnoringMovementLayer.Value = false;
+        }
     }
 
     // 检查是否后摇
@@ -99,9 +95,9 @@ public abstract class ActionStateBase : StateBase
         // 其次Grind
         else if (inputModel.Grind.Value)
         {
-            Debug.Log("GrindInput");
             GrindInput();
         }
+        else if(playerModel.IsRecovering.Value) player.stateMachine.SwitchState(StateLayer.Action, "None");
     }
     private void GrindInput()
     {

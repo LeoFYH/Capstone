@@ -9,5 +9,6 @@ public class NoActionState : ActionStateBase
         this.player = player;
         this.rb = rb;
         isLoop = playerModel.Config.Value.isLoopNoAction;
+        ignoreMovementLayerDuration = playerModel.Config.Value.ignoreMovementLayerDurationNoAction;
     }
 }

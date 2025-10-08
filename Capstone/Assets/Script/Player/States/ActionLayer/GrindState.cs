@@ -13,6 +13,7 @@ public class GrindState : ActionStateBase
         direction = playerModel.GrindDirection.Value;
         normalG = playerModel.NormalG.Value;
         isLoop = playerModel.Config.Value.isLoopGrind;
+        ignoreMovementLayerDuration = playerModel.Config.Value.ignoreMovementLayerDurationGrind;
     }
 
     public override string GetStateName() => "Grind";

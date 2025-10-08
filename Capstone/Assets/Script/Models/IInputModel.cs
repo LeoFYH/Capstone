@@ -7,7 +7,7 @@ namespace SkateGame
 	{
 		BindableProperty<Vector2> Move { get; }
 		BindableProperty<bool> JumpStart { get; }
-		BindableProperty<bool> Grind { get; } 
+		BindableProperty<bool> Grind { get; }
 		BindableProperty<bool> SwitchItem { get; }
 		BindableProperty<bool> Trick { get; }
 		BindableProperty<bool> TrickStart { get; }
