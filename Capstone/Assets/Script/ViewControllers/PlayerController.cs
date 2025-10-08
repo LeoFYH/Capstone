@@ -42,8 +42,8 @@ namespace SkateGame
         public MMF_Player DoubleJumpEffect;
         public MMF_Player GrabEffect;
         public MMF_Player IdleEffect;
-        public MMF_Player powerGrindEffectPlayer; 
-        
+        public MMF_Player powerGrindEffectPlayer;
+
         [Header("粒子特效容器")]
         public Transform particleEffectContainer; // 粒子特效容器
         protected override void InitializeController()
@@ -52,7 +52,7 @@ namespace SkateGame
             playerModel = this.GetModel<IPlayerModel>();
             inputModel = this.GetModel<IInputModel>();
             this.GetSystem<IPlayerAssetSystem>().SetPlayerConfig(playerConfig);
-            
+
             // 获取组件
             rb = GetComponent<Rigidbody2D>();
 
@@ -61,7 +61,7 @@ namespace SkateGame
 
             // 初始化分层状态机
             stateMachine = new LayeredStateMachine();
-            
+
             // Movement Layer
             stateMachine.AddState("Idle", new IdleState(this, rb), StateLayer.Movement);
             stateMachine.AddState("Jump", new JumpState(this, rb), StateLayer.Movement);
@@ -92,16 +92,16 @@ namespace SkateGame
             IsGrounded();
 
             HandleAimAndShoot();
-            
+
             // 更新冷却计时器
             UpdateCooldownTimers();
-            
+
             // 更新当前State
             stateMachine.UpdateCurrentState();
-            
+
             // 检测玩家方向变化并更新粒子特效
             CheckPlayerDirectionChange();
-            
+
             //过几秒自动清空tricklist和grade
             if (this.GetSystem<ITrickSystem>().TrickList.Value.Count > 0)
             {
@@ -115,8 +115,8 @@ namespace SkateGame
             yield return new WaitForSeconds(delay);
             this.GetSystem<ITrickSystem>().RemoveAllTricks();
             this.GetModel<ITrickListModel>().Grade.Value = 'D';
-       }
-        
+        }
+
         // 更新各种冷却计时器
         private void UpdateCooldownTimers()
         {
@@ -142,7 +142,7 @@ namespace SkateGame
         {
             if (inputModel.SwitchItem.Value)
             {
-                playerModel.CurrentBulletIndex.Value = 
+                playerModel.CurrentBulletIndex.Value =
                 (playerModel.CurrentBulletIndex.Value + 1) % playerModel.Config.Value.bulletPrefabs.Length;
                 Debug.Log("当前子弹类型: " + playerModel.CurrentBulletIndex.Value);
             }
@@ -223,7 +223,7 @@ namespace SkateGame
 
             if (other.isTrigger)
             {
-                Track track = other.GetComponent<Track>();
+                Track track = SafeGetComponent<Track>(other.gameObject);
                 if (track != null)
                 {
                     Debug.Log($"检测到滑轨: {track.name}");
@@ -243,11 +243,11 @@ namespace SkateGame
 
         void OnTriggerExit2D(Collider2D other)
         {
-           
+
 
             if (other.isTrigger)
             {
-                Track track = other.GetComponent<Track>();
+                Track track = SafeGetComponent<Track>(other.gameObject);
                 if (track != null && track == playerModel.CurrentTrack.Value)
                 {
                     Debug.Log($"离开滑轨: {track.name}");
@@ -280,7 +280,7 @@ namespace SkateGame
             // 松开R键发射子弹
             if (inputModel.ShootEnd.Value)
             {
-                if(playerModel.IsAiming.Value)
+                if (playerModel.IsAiming.Value)
                 {
                     FireBullet();
                 }
@@ -299,14 +299,14 @@ namespace SkateGame
                     return;
                 }
 
-				Vector2 direction = inputModel.AimDirection.Value;
+                Vector2 direction = inputModel.AimDirection.Value;
 
                 // 更新瞄准线
-				if (aimLine != null)
-				{
-					aimLine.SetPosition(0, transform.position);
-					aimLine.SetPosition(1, (Vector2)transform.position + direction * aimLineLength);
-				}
+                if (aimLine != null)
+                {
+                    aimLine.SetPosition(0, transform.position);
+                    aimLine.SetPosition(1, (Vector2)transform.position + direction * aimLineLength);
+                }
             }
         }
 
@@ -319,14 +319,14 @@ namespace SkateGame
             if (aimLine != null) aimLine.enabled = false;
         }
 
-		private void FireBullet()
+        private void FireBullet()
         {
             if (playerModel.Config.Value.bulletPrefabs.Length == 0) return;
 
             GameObject bulletPrefab = playerModel.Config.Value.bulletPrefabs[playerModel.CurrentBulletIndex.Value];
             if (bulletPrefab == null) return;
 
-			Vector2 direction = inputModel.AimDirection.Value.normalized;
+            Vector2 direction = inputModel.AimDirection.Value.normalized;
 
             GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
             var ice = bullet.GetComponent<IceBullet>();
@@ -386,16 +386,16 @@ namespace SkateGame
         private void CheckPlayerDirectionChange()
         {
             float currentMoveInput = inputModel.Move.Value.x;
-            
+
             // 检测是否有移动输入
-            if(Mathf.Abs(currentMoveInput) > 0.01f)
+            if (Mathf.Abs(currentMoveInput) > 0.01f)
             {
                 bool shouldFaceRight = currentMoveInput > 0;
                 // 检测方向是否改变
-                if(shouldFaceRight != playerModel.IsFacingRight.Value)
+                if (shouldFaceRight != playerModel.IsFacingRight.Value)
                 {
                     // 方向改变，粒子特效容器旋转180度
-                    if(particleEffectContainer != null)
+                    if (particleEffectContainer != null)
                     {
                         Vector3 currentRotation = particleEffectContainer.localEulerAngles;
                         particleEffectContainer.localEulerAngles = new Vector3(currentRotation.x, currentRotation.y + 180f, currentRotation.z);
@@ -403,6 +403,25 @@ namespace SkateGame
                     }
                 }
             }
+        }
+
+        public T SafeGetComponent<T>(GameObject obj) where T : MonoBehaviour
+        {
+            T get1 = obj.GetComponent<T>();
+            CodeReferencer get2 = obj.GetComponent<CodeReferencer>();
+
+            if (get1 != null)
+            {
+                return get1;
+
+            }
+            else if (get2 != null && (get2.reference is T))
+            {
+                return (get2.reference as T);
+
+             }
+
+            return null;
         }
     }
 }
