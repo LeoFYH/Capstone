@@ -20,6 +20,7 @@ public abstract class ActionStateBase : StateBase
     }
     public sealed override void Enter()
     {
+        stateTimer = 0f;
         CheckIgnoreMovementLayer();
         CheckRecovering();
         player.animator.SetLayerWeight(0, 0);
@@ -47,10 +48,7 @@ public abstract class ActionStateBase : StateBase
 
     private void StateTimeUpdate()
     {
-        if(stateTimer <= stateTotalDuration)
-        {
-            stateTimer += Time.deltaTime;
-        }
+        stateTimer += Time.deltaTime;
     }
     
     // 检查是否忽略运动层

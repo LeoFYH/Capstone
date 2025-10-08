@@ -129,7 +129,6 @@ namespace SkateGame
                     playerModel.WallRideCooldownTimer.Value = 0f;
                 }
             }
-            Debug.Log("WallRideCooldownTimer: " + playerModel.WallRideCooldownTimer.Value);
         }
 
         // 提供给状态机使用的方法

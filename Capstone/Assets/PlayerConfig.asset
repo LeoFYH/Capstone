@@ -41,6 +41,7 @@ MonoBehaviour:
   maxAirHorizontalSpeedConfig: 8
   normalG: 1
   wallRideCooldown: 1.5
+  wallrideDuration: 0.6
   acceleration: 10
   moveDeceleration: 20
   maxSpeed: 5

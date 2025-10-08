@@ -52,6 +52,7 @@ namespace SkateGame
         public float normalG = 1f;
         [Header("Wall Ride相关")]
         public float wallRideCooldown = 1.5f;
+        public float wallrideDuration = 1f;
 
         [Header("Move相关")]
         public float acceleration = 15f;
