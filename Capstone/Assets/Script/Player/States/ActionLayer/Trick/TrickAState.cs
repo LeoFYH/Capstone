@@ -27,11 +27,8 @@ public class TrickAState : TrickState, ICanGetSystem, IBelongToArchitecture
         if (trickSystem != null)
         {
             trickSystem.AddTrick(this);
-            foreach(var trick in trickSystem.TrickList.Value)
-            {
-                Debug.Log("current trick: " + trick.TrickName);
-            }
-            Debug.Log("current grade: " + trickSystem.Grade.Value);
+            trickSystem.printTrickList();
+           
         }
         
     }

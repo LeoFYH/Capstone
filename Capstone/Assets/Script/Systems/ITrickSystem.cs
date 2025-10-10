@@ -14,9 +14,10 @@ namespace SkateGame
         char DetectGrade(int sumScore);
         BindableProperty<List<TrickState>> TrickList { get; }
         BindableProperty<char> Grade { get; }
+        void printTrickList();
     }
 
-    public class TrickSystem : AbstractSystem, ITrickSystem, ICanSendCommand
+    public class TrickSystem : AbstractSystem, ITrickSystem, ICanSendCommand, ICanSendEvent
     {
         private ITrickListModel trickListModel;
         
@@ -38,13 +39,21 @@ namespace SkateGame
             {
                 trickListModel.TrickList.Value.Add(trick);
                 
+                // 发送 TrickList 变化事件
+                this.SendEvent(new TrickListChangedEvent
+                {
+                    LatestTrick = trick
+                });
+                
+                Debug.Log($"TrickSystem: 添加技巧 {trick.TrickName}，发送事件");
             }
         }
+        
 
         public void RemoveAllTricks()
         {
             trickListModel.TrickList.Value.Clear();
-           
+            
         }
 
         public string GetTrickName(TrickState trick)
@@ -82,6 +91,13 @@ namespace SkateGame
             }
         }
         
+        public void printTrickList()
+        {
+            foreach (TrickState trick in trickListModel.TrickList.Value)
+            {
+                Debug.Log("System print trick list: " + trick.TrickName);
+            }
+        }
         #endregion
 
         #region Private Methods

@@ -59,4 +59,10 @@ namespace SkateGame
     {
         public float HorizontalInput;
     }
+    
+    // Trick列表变化事件
+    public struct TrickListChangedEvent
+    {
+        public TrickState LatestTrick;
+    }
 }
