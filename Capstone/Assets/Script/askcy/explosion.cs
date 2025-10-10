@@ -21,7 +21,8 @@ public class explosion : MonoBehaviour
             if (rb != null)
             {
                 Vector2 dir = (other.transform.position - transform.position).normalized;
-                rb.AddForce(dir * explosionForce, ForceMode2D.Impulse);
+                // 直接设置速度，而不是叠加力
+                rb.velocity = dir * explosionForce;
             }
         }
     }
