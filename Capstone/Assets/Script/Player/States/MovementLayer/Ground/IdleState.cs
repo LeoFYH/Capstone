@@ -14,7 +14,7 @@ public class IdleState : GroundMovementState
 
     protected override void EnterGroundMovement()
     {
-        player.animator.Play("oPlayer@Idle", 0);
+        // player.animator.Play("oPlayer@Idle", 0);
         //MMF
         if (player.IdleEffect != null)
         {

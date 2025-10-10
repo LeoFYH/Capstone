@@ -19,7 +19,7 @@ public class JumpState : AirborneMovementState
 
     public override void Enter()
     {
-        player.animator.Play("oPlayer@Ollie", 0);
+        // player.animator.Play("oPlayer@Ollie", 0);
         playerModel.GrindJumpTimer.Value = playerModel.Config.Value.grindJumpIgnoreTime;
         isCharging = true;
         chargeTime = 0f;
@@ -70,7 +70,7 @@ public class JumpState : AirborneMovementState
     
     private void UpdateJumpTimer()
     {   
-        if (jumpTimer < playerModel.Config.Value.jumpDuration)
+        if (jumpTimer < playerModel.JumpDuration.Value)
         {
             jumpTimer += Time.deltaTime;
         }

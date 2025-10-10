@@ -22,7 +22,7 @@ public class explosion : MonoBehaviour
             {
                 Vector2 dir = (other.transform.position - transform.position).normalized;
                 // 直接设置速度，而不是叠加力
-                rb.velocity = dir * explosionForce;
+                rb.linearVelocity = dir * explosionForce;
             }
         }
     }

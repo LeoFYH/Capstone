@@ -20,8 +20,6 @@ public class PowerGrindState : GroundMovementState
 
     protected override void EnterGroundMovement()
     {
-
-        Debug.Log("PowerGrindState Enter deceleration: " + deceleration);
         // 开始检查反向输入窗口
         StartCheckReverseWindow();
         // 设置方向

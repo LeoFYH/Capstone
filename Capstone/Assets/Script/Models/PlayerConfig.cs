@@ -32,7 +32,6 @@ namespace SkateGame
         public float minJumpForce = 0f;
         public float doubleJumpForce = 8f;
         public float maxChargeTime = 2f;
-        public float jumpDuration = 0.5f;
 
         [Header("移动设置")]
         public float maxMoveSpeed = 5f;
@@ -69,9 +68,6 @@ namespace SkateGame
         public int trickAScore = 20;
         public float trickBDuration = 1.5f;
         public int trickBScore = 20;
-        
-        [Header("Land相关")]
-        public float landDuration = 0.5f;
 
         [Header("瞄准设置")]
         public float baseMaxAimTime = 3f;

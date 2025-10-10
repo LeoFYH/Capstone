@@ -15,7 +15,7 @@ public class DoubleJumpState : AirborneMovementState
 
     public override void Enter()
     {
-        player.animator.Play("oPlayer@KickFlip", 0);
+        // player.animator.Play("oPlayer@KickFlip", 0);
         playerModel.CanDoubleJump.Value = false;
         // 直接跳起来
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, playerModel.Config.Value.maxJumpForce);
@@ -54,7 +54,7 @@ public class DoubleJumpState : AirborneMovementState
     }
     private void UpdateJumpTimer()
     {   
-        if (jumpTimer < playerModel.Config.Value.jumpDuration)
+        if (jumpTimer < playerModel.DoubleJumpDuration.Value)
         {
             jumpTimer += Time.deltaTime;
         }

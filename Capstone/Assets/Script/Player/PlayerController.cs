@@ -78,6 +78,11 @@ namespace SkateGame
             stateMachine.AddState("Grab", new GrabbingState(this, rb), StateLayer.Action);
             stateMachine.AddState("WallRide", new WallRideState(this, rb), StateLayer.Action);
 
+            playerModel.JumpDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@Ollie");
+            playerModel.DoubleJumpDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@KickFlip");
+            playerModel.LandDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@OllieLand");
+            playerModel.DoubleJumpLandDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@KickFlipLand");
+
             // 初始各层状态
             stateMachine.SwitchState(StateLayer.Movement, "Idle");
             stateMachine.SwitchState(StateLayer.Action, "None");

@@ -16,12 +16,6 @@ public class LandState : GroundMovementState
 
     protected override void EnterGroundMovement()
     {
-        if (playerModel.CanDoubleJump.Value)
-        {
-            player.animator.Play("oPlayer@OllieLand", 0);
-        }
-        else player.animator.Play("oPlayer@KickFlipLand", 0);
-
         playerModel.CanDoubleJump.Value = true;
         landTimer = 0f;
     }
@@ -37,7 +31,8 @@ public class LandState : GroundMovementState
 
     private void UpdateLandTimer()
     {
-        if(landTimer < playerModel.Config.Value.landDuration)
+        if(playerModel.CanDoubleJump.Value && landTimer < playerModel.LandDuration.Value ||
+            !playerModel.CanDoubleJump.Value && landTimer < playerModel.DoubleJumpLandDuration.Value)
         {
             landTimer += Time.deltaTime;
         }

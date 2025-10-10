@@ -24,7 +24,7 @@ public class MoveState : GroundMovementState
 
     protected override void EnterGroundMovement()
     {
-        player.animator.Play("oPlayer@Push", 0);
+        // player.animator.Play("oPlayer@Push", 0);
         if (player.moveEffect != null)
         {
             player.moveEffect.PlayFeedbacks();

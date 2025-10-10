@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
   isLoopNoAction: 1
+  ignoreMovementLayerDurationNoAction: {x: -1, y: -1}
   isLoopGrind: 1
+  ignoreMovementLayerDurationGrind: {x: 1, y: 1}
   isLoopWallRide: 1
+  ignoreMovementLayerDurationWallRide: {x: -1, y: -1}
   isLoopGrab: 1
+  ignoreMovementLayerDurationGrab: {x: -1, y: -1}
   isLoopTrickA: 0
   durationTrickA: 0.5
   ignoreMovementLayerDurationTrickA: {x: 0, y: 0}
@@ -24,7 +28,7 @@ MonoBehaviour:
   minJumpForce: 0
   doubleJumpForce: 6
   maxChargeTime: 2
-  jumpDuration: 0.3
+  jumpDuration: 0.8
   maxMoveSpeed: 10
   maxAirHorizontalSpeed: 10
   airControlForce: 5
@@ -36,6 +40,8 @@ MonoBehaviour:
   airControlForceConfig: 10
   maxAirHorizontalSpeedConfig: 8
   normalG: 1
+  wallRideCooldown: 1.5
+  wallrideDuration: 0.6
   acceleration: 10
   moveDeceleration: 20
   maxSpeed: 5

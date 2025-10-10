@@ -40,6 +40,14 @@ namespace SkateGame
         BindableProperty<bool> IsCharging { get; }
         BindableProperty<bool> HasJumped { get; }
         BindableProperty<float> InitialHorizontalVelocity { get; }
+        BindableProperty<float> JumpDuration { get; }
+        BindableProperty<float> DoubleJumpDuration { get; }
+
+        /// <summary>
+        /// land相关
+        /// </summary>
+        BindableProperty<float> LandDuration { get; }
+        BindableProperty<float> DoubleJumpLandDuration { get; }
 
         /// <summary>
         /// move相关
@@ -115,7 +123,13 @@ namespace SkateGame
         public BindableProperty<bool> IsCharging { get; } = new BindableProperty<bool>(false);
         public BindableProperty<bool> HasJumped { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> InitialHorizontalVelocity { get; } = new BindableProperty<float>(0f);
+        public BindableProperty<float> JumpDuration { get; } = new BindableProperty<float>(0f);
+        public BindableProperty<float> DoubleJumpDuration { get; } = new BindableProperty<float>(0f);
         
+        // land相关
+        public BindableProperty<float> LandDuration { get; } = new BindableProperty<float>(0f);
+        public BindableProperty<float> DoubleJumpLandDuration { get; } = new BindableProperty<float>(0f);
+
         // move相关
         public BindableProperty<float> CurrentVelocityX { get; } = new BindableProperty<float>(0f);
         public BindableProperty<float> Acceleration { get; } = new BindableProperty<float>(15f);

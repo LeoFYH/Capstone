@@ -7,9 +7,10 @@ namespace SkateGame
         Land = 1,
         Move = 2,
         Air = 3,
-        DoubleJump = 4,
-        PowerGrind = 5,
-        Reverse = 6,
+        Jump = 4,
+        DoubleJump = 5,
+        PowerGrind = 6,
+        Reverse = 7,
     }
 
     public enum ActionStates
