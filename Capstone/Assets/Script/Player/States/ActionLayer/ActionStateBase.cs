@@ -50,6 +50,10 @@ public abstract class ActionStateBase : StateBase
     private void StateTimeUpdate()
     {
         stateTimer += Time.deltaTime;
+        if(!isLoop && stateTimer > stateTotalDuration)
+        {
+            player.stateMachine.SwitchState(StateLayer.Action, "None");
+        }
     }
     
     // 检查是否忽略运动层
@@ -96,7 +100,6 @@ public abstract class ActionStateBase : StateBase
         {
             GrindInput();
         }
-        else if(playerModel.IsRecovering.Value) player.stateMachine.SwitchState(StateLayer.Action, "None");
     }
     private void GrindInput()
     {

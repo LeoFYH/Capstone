@@ -7,11 +7,12 @@ public enum StateLayer
     Movement,
     Action
 }
-public class LayeredStateMachine : ICanGetModel, IBelongToArchitecture
+public class LayeredStateMachine : ICanGetModel, ICanSendEvent, IBelongToArchitecture
 {
     private readonly IPlayerModel playerModel;
     private readonly E mMovement = new E();
     private readonly E mAction = new E();
+    
     /// <summary>
     /// 判断状态属于哪一层
     /// </summary>
@@ -47,10 +48,14 @@ public class LayeredStateMachine : ICanGetModel, IBelongToArchitecture
         if (layer == StateLayer.Movement)
         {
             mMovement.SwitchState(stateName);
+            this.SendEvent<StateChangedEvent>(new StateChangedEvent { Layer = StateLayer.Movement, 
+                FromState = mMovement.GetCurrentStateName(), ToState = stateName });
         }
         else
         {
             mAction.SwitchState(stateName);
+            this.SendEvent<StateChangedEvent>(new StateChangedEvent { Layer = StateLayer.Action, 
+                FromState = mAction.GetCurrentStateName(), ToState = stateName });
         }
     }
 

@@ -155,7 +155,7 @@ namespace SkateGame
         }
 
         #region Collision
-        public bool IsGrounded()
+        private bool IsGrounded()
         {
             // 使用多个射线检测来提高准确性
             Vector2 rayStart = transform.position;

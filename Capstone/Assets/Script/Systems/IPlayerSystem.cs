@@ -23,6 +23,7 @@ namespace SkateGame
             // 监听输入事件
             this.RegisterEvent<MoveInputEvent>(OnMoveInput);
             this.RegisterEvent<JumpExecuteEvent>(OnJumpInput);
+            this.RegisterEvent<StateChangedEvent>(OnStateChanged);
         }
 
         // 输入事件处理
@@ -35,6 +36,11 @@ namespace SkateGame
          private void OnJumpInput(JumpExecuteEvent evt)
         {
             ApplyJumpMovement();
+        }
+        private void OnStateChanged(StateChangedEvent evt)
+        {
+            ApplyStateChanged(evt);
+            UpdateAnimatorOnStateChanged(evt);
         }
         #endregion
 
@@ -82,7 +88,50 @@ namespace SkateGame
             float jumpForce = playerModel.Config.Value.maxJumpForce;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
-        #endregion
+
+        public void ApplyStateChanged(StateChangedEvent evt)
+        {
+            if (evt.Layer == StateLayer.Movement)
+            {
+                playerModel.CurrentMovementState.Value = ToMovementEnum(evt.ToState);
+            }
+            else
+            {
+                playerModel.CurrentActionState.Value = ToActionEnum(evt.ToState);
+            }
+        }
+
+        // Update animator on state changed
+        private void UpdateAnimatorOnStateChanged(StateChangedEvent evt)
+        {
+            var anim = playerController.animator;
+            if (evt.Layer == StateLayer.Movement)
+            {
+                anim.SetInteger("MovementState", (int)playerModel.CurrentMovementState.Value);
+            }
+            else
+            {
+                anim.SetInteger("ActionState", (int)playerModel.CurrentActionState.Value);
+            }
+        }
         
+        private MovementStates ToMovementEnum(string stateName)
+        {
+            if (System.Enum.TryParse<MovementStates>(stateName, out var result))
+            {
+                return result;
+            }
+                return MovementStates.Idle;
+        }
+
+        private ActionStates ToActionEnum(string stateName)
+        {
+            if (System.Enum.TryParse<ActionStates>(stateName, out var result))
+            {
+                return result;
+            }
+            return ActionStates.None;
+        }
+        #endregion
     }
 }

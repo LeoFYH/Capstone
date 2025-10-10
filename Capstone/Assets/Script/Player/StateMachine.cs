@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 // 状态机类
 public class E
 {
@@ -12,8 +11,6 @@ public class E
     // 状态字典，用于存储所有状态
     private Dictionary<string, StateBase> states = new Dictionary<string, StateBase>();
     
-    // 状态切换事件
-    public event Action<StateBase, StateBase> OnStateChanged; // 参数：旧状态，新状态
     
     // 构造函数
     public E()
@@ -41,8 +38,6 @@ public class E
             StateBase oldState = currentState;
             currentState.Exit();
             EnterState(stateName, oldState);
-            // 触发状态切换事件
-            OnStateChanged?.Invoke(oldState, currentState);
         }
     }
     
@@ -89,15 +84,14 @@ public class E
         states.Clear();
         currentState = null;
     }
+
+
     // 进入新状态
     public void EnterState(string stateName,StateBase oldState = null)
     {
         currentState = states[stateName];
         currentState.Enter();
-
-        // 触发状态切换事件
-        OnStateChanged?.Invoke(oldState, currentState);
-        Debug.Log("SwitchState to " + stateName);
+        Debug.Log("EnterState: " + stateName);
     }
     public StateBase TryGetState(string stateName)
     {

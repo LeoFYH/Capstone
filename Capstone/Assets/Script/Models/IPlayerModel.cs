@@ -1,6 +1,5 @@
 using QFramework;
 using UnityEngine;
-
 namespace SkateGame
 {
     public interface IPlayerModel : IModel
@@ -9,7 +8,8 @@ namespace SkateGame
         BindableProperty<PlayerConfig> Config { get; }
 
         // Player Parameters
-        BindableProperty<string> CurrentState { get; }
+        BindableProperty<MovementStates> CurrentMovementState { get; }
+        BindableProperty<ActionStates> CurrentActionState { get; }
         BindableProperty<bool> IsGrounded { get; }
         BindableProperty<bool> IsInAir { get; }
         BindableProperty<bool> IsNearTrack { get; }
@@ -90,7 +90,8 @@ namespace SkateGame
     public class PlayerModel : AbstractModel, IPlayerModel
     {
         public BindableProperty<PlayerConfig> Config { get; } = new BindableProperty<PlayerConfig>(null);
-        public BindableProperty<string> CurrentState { get; } = new BindableProperty<string>("Idle");
+        public BindableProperty<MovementStates> CurrentMovementState { get; } = new BindableProperty<MovementStates>(MovementStates.Idle);
+        public BindableProperty<ActionStates> CurrentActionState { get; } = new BindableProperty<ActionStates>(ActionStates.None);
         public BindableProperty<bool> IsGrounded { get; } = new BindableProperty<bool>(true);
         public BindableProperty<bool> IsInAir { get; } = new BindableProperty<bool>(false);
         public BindableProperty<float> AirTime { get; } = new BindableProperty<float>(0f);

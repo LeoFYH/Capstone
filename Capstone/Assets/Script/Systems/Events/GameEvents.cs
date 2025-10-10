@@ -9,13 +9,10 @@ namespace SkateGame
     {
     }
     
-    
-    
-    
-    
     // 状态切换事件
     public struct StateChangedEvent
     {
+        public StateLayer Layer;
         public string FromState;
         public string ToState;
     }
@@ -26,10 +23,6 @@ namespace SkateGame
         public int NewScore;
     }
     
-    // 跳跃输入事件
-    public struct JumpInputEvent
-    {
-    }
     
     // 轨道输入事件
     public struct GrindInputEvent
@@ -66,6 +59,4 @@ namespace SkateGame
     {
         public float HorizontalInput;
     }
-    
-
 }
