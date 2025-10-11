@@ -15,7 +15,7 @@ namespace SkateGame
         protected override void OnInit()
         {
             // 获取玩家控制器
-            playerController = Object.FindFirstObjectByType<PlayerController>();
+            UpdatePlayerController();
             
             // 获取玩家参数
             playerModel = this.GetModel<IPlayerModel>();
@@ -24,6 +24,28 @@ namespace SkateGame
             this.RegisterEvent<MoveInputEvent>(OnMoveInput);
             this.RegisterEvent<JumpExecuteEvent>(OnJumpInput);
             this.RegisterEvent<StateChangedEvent>(OnStateChanged);
+            
+            // 每次场景更新自动获取PlayerController
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        
+        private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+        {
+            // 场景加载后重新查找 PlayerController
+            UpdatePlayerController();
+        }
+        
+        private void UpdatePlayerController()
+        {
+            playerController = Object.FindFirstObjectByType<PlayerController>();
+            if (playerController != null)
+            {
+                Debug.Log("PlayerSystem: 找到 PlayerController");
+            }
+            else
+            {
+                Debug.LogWarning("PlayerSystem: 场景中没有找到 PlayerController");
+            }
         }
 
         // 输入事件处理
@@ -47,7 +69,11 @@ namespace SkateGame
         #region Method
         public void ApplyHorizontalMovement(float horizontalInput, bool isGrounded)
         {
+            // 空值检查，防止场景切换时访问已销毁的对象
+            if (playerController == null) return;
+            
             Rigidbody2D rb = playerController.GetRigidbody();
+            if (rb == null) return;
 
             float currentSpeed = rb.linearVelocity.x;
             float targetSpeed = horizontalInput * (isGrounded ? playerModel.Config.Value.maxMoveSpeed : playerModel.Config.Value.maxAirHorizontalSpeed);
@@ -84,7 +110,12 @@ namespace SkateGame
 
         public void ApplyJumpMovement()
         {
-            var rb = playerController.GetRigidbody();   
+            // 空值检查，防止场景切换时访问已销毁的对象
+            if (playerController == null) return;
+            
+            var rb = playerController.GetRigidbody();
+            if (rb == null) return;
+            
             float jumpForce = playerModel.Config.Value.maxJumpForce;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }

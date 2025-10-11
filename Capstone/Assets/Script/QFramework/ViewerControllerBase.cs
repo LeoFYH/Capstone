@@ -23,7 +23,7 @@ namespace SkateGame
         
         protected virtual void Update()
         {
-            if (!isActive) return;
+            if (!isActive || this == null || !gameObject) return;
 
             // 执行实时检测
             OnRealTimeUpdate();
@@ -94,7 +94,28 @@ namespace SkateGame
         /// </summary>
         protected virtual void OnDestroy()
         {
+            // 场景切换时停止更新
+            isActive = false;
             // 子类可以重写此方法进行清理
+        }
+        
+        /// <summary>
+        /// 禁用时停止更新
+        /// </summary>
+        protected virtual void OnDisable()
+        {
+            isActive = false;
+        }
+        
+        /// <summary>
+        /// 启用时恢复更新
+        /// </summary>
+        protected virtual void OnEnable()
+        {
+            if (this != null && gameObject != null)
+            {
+                isActive = true;
+            }
         }
     }
 }
