@@ -31,8 +31,12 @@ MonoBehaviour:
     instantiationMode: 1
   - dependency: {fileID: 2100000, guid: 1e46af4d5dc448d4e96d1e3b0be4d4f5, type: 2}
     instantiationMode: 1
+  - dependency: {fileID: 9100000, guid: e023a2f6697b5794d9692a0fc39f7285, type: 2}
+    instantiationMode: 0
   - dependency: {fileID: 11400000, guid: b5cbb05eab090864cb59d2c09ff51b4e, type: 2}
     instantiationMode: 1
+  - dependency: {fileID: 7400000, guid: 7a07aa8a779484f4a93457aacb466f76, type: 2}
+    instantiationMode: 0
   - dependency: {fileID: 8926484042661614526, guid: ab927341599b8a24894abf9b694158f9, type: 3}
     instantiationMode: 1
   - dependency: {fileID: 7400000, guid: 51fb60c66904742308f2eeda4b65302f, type: 2}
@@ -51,11 +55,13 @@ MonoBehaviour:
     instantiationMode: 1
   - dependency: {fileID: 2800000, guid: 098dab4e5d23e7742b16deb0ec3e443b, type: 3}
     instantiationMode: 1
-  - dependency: {fileID: 2800000, guid: 5b2744c38b2d90940b1127f6d37bf35c, type: 3}
-    instantiationMode: 1
+  - dependency: {fileID: 2800000, guid: 8b4a2006c1591ef41a79f32b7fe30340, type: 3}
+    instantiationMode: 0
   - dependency: {fileID: 539600032204481510, guid: ddb7fb29f9654474cb9d0f6ca1bfd6ef, type: 3}
     instantiationMode: 1
   - dependency: {fileID: 11400000, guid: 328a3b30c33b4044ea2fd6a43130bf1b, type: 2}
+    instantiationMode: 1
+  - dependency: {fileID: 2800000, guid: 5b2744c38b2d90940b1127f6d37bf35c, type: 3}
     instantiationMode: 1
   - dependency: {fileID: 7146688517163803356, guid: 4e564305779436844a5e928b7bb74b4f, type: 3}
     instantiationMode: 1
@@ -123,6 +129,8 @@ MonoBehaviour:
     instantiationMode: 1
   - dependency: {fileID: 2800000, guid: 8aafaa78fe944854997fef757ff4ba72, type: 3}
     instantiationMode: 1
+  - dependency: {fileID: 7400000, guid: 182bcd307338db349bb5254099f75ccb, type: 2}
+    instantiationMode: 0
   - dependency: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
     instantiationMode: 1
   - dependency: {fileID: 2100000, guid: 71fbdd39b7e97554990f02b9c4191968, type: 2}
