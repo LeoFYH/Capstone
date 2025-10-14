@@ -5,6 +5,7 @@ using QFramework;
 public class LandState : GroundMovementState
 {
     private float landTimer;
+    private bool isDoubleJumpLand;
 
     public LandState(PlayerController player, Rigidbody2D rb)
     {
@@ -16,6 +17,7 @@ public class LandState : GroundMovementState
 
     protected override void EnterGroundMovement()
     {
+        isDoubleJumpLand = playerModel.CanDoubleJump.Value;
         playerModel.CanDoubleJump.Value = true;
         landTimer = 0f;
     }
@@ -31,8 +33,8 @@ public class LandState : GroundMovementState
 
     private void UpdateLandTimer()
     {
-        if(playerModel.CanDoubleJump.Value && landTimer < playerModel.LandDuration.Value ||
-            !playerModel.CanDoubleJump.Value && landTimer < playerModel.DoubleJumpLandDuration.Value)
+        if(isDoubleJumpLand && landTimer < playerModel.LandDuration.Value ||
+            !isDoubleJumpLand && landTimer < playerModel.DoubleJumpLandDuration.Value)
         {
             landTimer += Time.deltaTime;
         }
