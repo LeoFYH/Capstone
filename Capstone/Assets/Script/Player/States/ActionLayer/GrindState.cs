@@ -25,7 +25,6 @@ public class GrindState : ActionStateBase
 
     protected override void EnterActionState()
     {
-        player.animator.Play("oPlayer@NoseGrind", 1);
 
         // 检查currentTrack是否为null
         if (playerModel.CurrentTrack.Value == null)
@@ -105,21 +104,6 @@ public class GrindState : ActionStateBase
             player.transform.position = pos;
 
             rb.linearVelocity = direction*playerModel.Config.Value.maxMoveSpeed;
-        }
-
-        if (inputModel.JumpStart.Value)
-        {
-            rb.gravityScale = 1f;
-            rb.linearVelocity = new Vector2(direction.x * playerModel.Config.Value.maxMoveSpeed, 10f);
-
-            if (inputModel.Grind.Value)
-            {
-                player.StartCoroutine(player.SwitchToStateDelayed("Grab"));
-            }
-            else
-            {
-                player.StartCoroutine(player.SwitchToStateDelayed("GJump"));
-            }
         }
     }
 

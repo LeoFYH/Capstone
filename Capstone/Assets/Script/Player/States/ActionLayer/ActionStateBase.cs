@@ -23,8 +23,11 @@ public abstract class ActionStateBase : StateBase
         stateTimer = 0f;
         CheckIgnoreMovementLayer();
         CheckRecovering();
-        player.animator.SetLayerWeight(0, 0);
-        player.animator.SetLayerWeight(1, 1);
+        if(GetStateName() != "None")
+        {
+            player.animator.SetLayerWeight(0, 0);
+            player.animator.SetLayerWeight(1, 1);
+        }
         EnterActionState();
     }
     public sealed override void Update()
