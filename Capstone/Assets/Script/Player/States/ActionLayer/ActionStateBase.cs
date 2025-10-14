@@ -28,6 +28,10 @@ public abstract class ActionStateBase : StateBase
             player.animator.SetLayerWeight(0, 0);
             player.animator.SetLayerWeight(1, 1);
         }
+        else
+        {
+            player.animator.SetLayerWeight(0, 1);
+            player.animator.SetLayerWeight(1, 0);}
         EnterActionState();
     }
     public sealed override void Update()
@@ -44,10 +48,7 @@ public abstract class ActionStateBase : StateBase
     }
     public sealed override void Exit()
     {
-        player.animator.SetLayerWeight(0, 1);
-        player.animator.SetLayerWeight(1, 0);
         ExitActionState();
-        player.stateMachine.SwitchState(StateLayer.Movement, "Air");
     }
 
     private void StateTimeUpdate()

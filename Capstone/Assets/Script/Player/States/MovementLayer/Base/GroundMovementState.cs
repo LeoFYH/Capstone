@@ -19,9 +19,6 @@ public abstract class GroundMovementState : StateBase
 
     public sealed override void Enter()
     {
-        player.animator.SetLayerWeight(0, 1);
-        player.animator.SetLayerWeight(1, 0);
-
         EnterGroundMovement();
     }
 
