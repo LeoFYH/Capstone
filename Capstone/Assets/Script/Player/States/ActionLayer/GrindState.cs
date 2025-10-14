@@ -25,7 +25,7 @@ public class GrindState : ActionStateBase
 
     protected override void EnterActionState()
     {
-
+        playerModel.CanDoubleJump.Value = true;
         // 检查currentTrack是否为null
         if (playerModel.CurrentTrack.Value == null)
         {
