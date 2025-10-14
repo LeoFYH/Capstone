@@ -100,6 +100,11 @@ public abstract class ActionStateBase : StateBase
         {
             GrindInput();
         }
+        // 循环且无输入时None
+        else if (isLoop)
+        {
+            player.stateMachine.SwitchState(StateLayer.Action, "None");
+        }
     }
     private void GrindInput()
     {
