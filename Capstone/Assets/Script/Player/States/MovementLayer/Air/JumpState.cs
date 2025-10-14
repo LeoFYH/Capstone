@@ -37,6 +37,7 @@ public class JumpState : AirborneMovementState
 
     protected override void UpdateAirMovement()
     {
+        StateChange();
         UpdateGrindJumpTimer();
         UpdateJumpTimer();
         // 蓄力跳逻辑（现在只是计时，移动由移动系统处理）
@@ -77,6 +78,15 @@ public class JumpState : AirborneMovementState
         else
         {
             player.stateMachine.SwitchState(StateLayer.Movement, "Air");
+        }
+    }
+    // state change
+    private void StateChange()
+    {
+        if (playerModel.CanDoubleJump.Value && inputModel.JumpStart.Value)
+        {
+            playerModel.CanDoubleJump.Value = false;
+            player.stateMachine.SwitchState(StateLayer.Movement, "DoubleJump");
         }
     }
 } 
