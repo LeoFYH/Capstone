@@ -23,6 +23,7 @@ namespace SkateGame
             // 监听输入事件
             this.RegisterEvent<MoveInputEvent>(OnMoveInput);
             this.RegisterEvent<JumpExecuteEvent>(OnJumpInput);
+            this.RegisterEvent<PushInputEvent>(OnPushInput);
             this.RegisterEvent<StateChangedEvent>(OnStateChanged);
             
             // 每次场景更新自动获取PlayerController
@@ -63,6 +64,10 @@ namespace SkateGame
         {
             ApplyStateChanged(evt);
             UpdateAnimatorOnStateChanged(evt);
+        }
+        private void OnPushInput(PushInputEvent evt)
+        {
+            ApplyPushMovement();
         }
         #endregion
 
@@ -132,6 +137,21 @@ namespace SkateGame
             }
         }
 
+        public void ApplyPushMovement()
+        {
+            Rigidbody2D rb = playerController.GetRigidbody();
+            if (rb == null) return;
+            float currentSpeed = rb.linearVelocity.x;
+            float targetSpeed = playerModel.Config.Value.maxMoveSpeed * (playerModel.IsFacingRight.Value ? 1 : -1);
+            
+            float newSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, 
+                    playerModel.Config.Value.pushAccel * Time.fixedDeltaTime);
+            rb.linearVelocity = new Vector2(newSpeed, rb.linearVelocity.y);
+        }
+
+        #endregion
+
+        #region Helper
         // Update animator on state changed
         private void UpdateAnimatorOnStateChanged(StateChangedEvent evt)
         {

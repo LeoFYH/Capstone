@@ -20,6 +20,7 @@ namespace SkateGame
         Grab = 2,
         WallRide = 3,
         TrickA = 4,
+        Push = 5,
     }
 }
 

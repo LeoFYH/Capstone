@@ -20,6 +20,10 @@ MonoBehaviour:
   ignoreMovementLayerDurationWallRide: {x: -1, y: -1}
   isLoopGrab: 1
   ignoreMovementLayerDurationGrab: {x: -1, y: -1}
+  isLoopPush: 0
+  durationPush: 0.6
+  ignoreMovementLayerDurationPush: {x: 0, y: 0}
+  recoveryDurationPush: {x: 0, y: 0.6}
   isLoopTrickA: 0
   durationTrickA: 0.5
   ignoreMovementLayerDurationTrickA: {x: 0, y: 0}
@@ -30,12 +34,12 @@ MonoBehaviour:
   maxChargeTime: 2
   maxMoveSpeed: 10
   maxAirHorizontalSpeed: 10
-  airControlForce: 5
   airAccel: 0.5
   airDecel: 0.5
-  groundAccel: 1.5
+  groundAccel: 0.5
   groundDecel: 0.5
   turnDecel: 1
+  pushAccel: 3
   airControlForceConfig: 10
   maxAirHorizontalSpeedConfig: 8
   normalG: 1
@@ -44,10 +48,6 @@ MonoBehaviour:
   powerGrindDeceleration: 25
   reverseInputWindow: 2
   grindJumpIgnoreTime: 0.2
-  trickADuration: 1.5
-  trickAScore: 20
-  trickBDuration: 1.5
-  trickBScore: 20
   baseMaxAimTime: 3
   bulletPrefabs:
   - {fileID: 9141978474503307967, guid: f82702240d0fd6445947da81cd3c4534, type: 3}

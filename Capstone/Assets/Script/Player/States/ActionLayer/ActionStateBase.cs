@@ -94,16 +94,25 @@ public abstract class ActionStateBase : StateBase
     // 检查是否切换到其他状态
     private void CheckSwitchAction()
     {
+        /*
+        state再增多的话顺序可能需要调整
+        */
         // 优先Trick
         if(inputModel.TrickStart.Value && !playerModel.IsGrounded.Value)
         {
             player.stateMachine.SwitchState(StateLayer.Action, "TrickA");
         }
+        else if (inputModel.Push.Value && playerModel.IsGrounded.Value)
+        {
+            player.stateMachine.SwitchState(StateLayer.Action, "Push");
+        }
+        
         // 其次Grind
         else if (inputModel.Grind.Value)
         {
             GrindInput();
         }
+
         // 循环且无输入时None
         else if (isLoop)
         {
