@@ -101,6 +101,9 @@ namespace SkateGame
             // 更新冷却计时器
             UpdateCooldownTimers();
 
+            // 检测玩家是否掉落过低
+            CheckFallOutOfBounds();
+
             // 更新当前State
             stateMachine.UpdateCurrentState();
 
@@ -133,6 +136,18 @@ namespace SkateGame
                 {
                     playerModel.WallRideCooldownTimer.Value = 0f;
                 }
+            }
+        }
+
+        // 检测玩家是否掉落过低
+        private void CheckFallOutOfBounds()
+        {
+            if (transform.position.y < -20f)
+            {
+                
+                var respawnSystem = this.GetSystem<IRespawnSystem>();
+                respawnSystem.RespawnPlayer();
+                
             }
         }
 

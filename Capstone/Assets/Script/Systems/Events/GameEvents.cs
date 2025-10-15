@@ -1,4 +1,5 @@
 using QFramework;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
@@ -64,5 +65,11 @@ namespace SkateGame
     public struct TrickListChangedEvent
     {
         public TrickState LatestTrick;
+    }
+    
+    // 通过重生检查点事件
+    public struct PassRespawnPointEvent
+    {
+        public Vector2 CheckpointPosition;
     }
 }
