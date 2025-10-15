@@ -95,10 +95,10 @@ namespace SkateGame
             // 检测输入并发送事件
             DetectInput();
 
+            HandleAimAndShoot();
+            
             // 更新着地状态
             IsGrounded();
-
-            HandleAimAndShoot();
 
             // 更新冷却计时器
             UpdateCooldownTimers();
@@ -117,6 +117,9 @@ namespace SkateGame
             {
                 StartCoroutine(ClearTricksAfterDelay(5f));
             }
+        }
+        private void FixedUpdate()
+        {
         }
 
         //过几秒自动清空tricklist和grade

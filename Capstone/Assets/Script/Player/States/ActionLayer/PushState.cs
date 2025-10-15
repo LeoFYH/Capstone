@@ -4,7 +4,6 @@ using QFramework;
 
 public class PushState : ActionStateBase
 {
-
     public PushState(PlayerController player, Rigidbody2D rb) : base(player, rb)
     {
         isLoop = playerModel.Config.Value.isLoopPush;

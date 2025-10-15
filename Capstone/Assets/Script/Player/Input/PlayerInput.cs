@@ -1,13 +1,16 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.InputSystem.Controls;
 using QFramework;
+using System.Linq;
 
 namespace SkateGame
 {
-    public class PlayerInput : MonoBehaviour, ICanGetModel, IBelongToArchitecture
+    public class PlayerInputs : MonoBehaviour, ICanGetModel, IBelongToArchitecture
     {
-        private IInputModel inputModel;
-        InputSystem_Actions _inputs;
+        public PlayerInput _playerInput;
+        InputDevice _currentDevice;
         InputAction _moveAction;
         InputAction _jumpAction;
         InputAction _grindAction;
@@ -21,21 +24,29 @@ namespace SkateGame
         
         void Awake()
         {
-            _inputs = new InputSystem_Actions();
-            _moveAction = _inputs.Player.Move;
-            _jumpAction = _inputs.Player.Jump;
-            _grindAction = _inputs.Player.Grind;
-            _switchItemAction = _inputs.Player.SwitchItem;
-            _trickAction = _inputs.Player.Trick;
-            _pushAction = _inputs.Player.Push;
-            _shootStartAction = _inputs.Player.Shoot;
-            _shootEndAction = _inputs.Player.Shoot;
-            _aimDirectionAction = _inputs.Player.AimDirection;
+            var _actions = GetComponent<PlayerInput>().actions;
+            _moveAction = _actions.FindAction("Player/Move");
+            _jumpAction = _actions.FindAction("Player/Jump");
+            _grindAction = _actions.FindAction("Player/Grind");
+            _switchItemAction = _actions.FindAction("Player/SwitchItem");
+            _trickAction = _actions.FindAction("Player/Trick");
+            _pushAction = _actions.FindAction("Player/Push");
+            _shootStartAction = _actions.FindAction("Player/Shoot");
+            _shootEndAction = _actions.FindAction("Player/Shoot");
+            _aimDirectionAction = _actions.FindAction("Player/AimDirection");
+            
         }
 
-        private void OnEnable() => _inputs.Enable();
+    
+		private void OnEnable()
+		{
+			InputSystem.onEvent += OnInputEvent;
+		}
 
-        private void OnDisable() => _inputs.Disable(); 
+		private void OnDisable()
+		{
+			InputSystem.onEvent -= OnInputEvent;
+		} 
 
         public FrameInput Gather()
         {
@@ -56,52 +67,63 @@ namespace SkateGame
 
         void Update()
         {
+            FrameInput frameInput = Gather();
             var inputModel = this.GetModel<IInputModel>();
-            inputModel.Move.Value = Gather().Move;
-            inputModel.JumpStart.Value = Gather().JumpStart;
-            inputModel.Grind.Value = Gather().Grind;
-            inputModel.SwitchItem.Value = Gather().SwitchItem;
-            inputModel.Trick.Value = Gather().Trick;
-            inputModel.TrickStart.Value = Gather().TrickStart;
-            inputModel.Push.Value = Gather().Push;
-            inputModel.ShootStart.Value = Gather().ShootStart;
-            inputModel.ShootEnd.Value = Gather().ShootEnd;
+            inputModel.Move.Value = frameInput.Move;
+            inputModel.JumpStart.Value = frameInput.JumpStart;
+            inputModel.Grind.Value = frameInput.Grind;
+            inputModel.SwitchItem.Value = frameInput.SwitchItem;
+            inputModel.Trick.Value = frameInput.Trick;
+            inputModel.TrickStart.Value = frameInput.TrickStart;
+            inputModel.Push.Value = frameInput.Push;
+            inputModel.ShootStart.Value = frameInput.ShootStart;
+            inputModel.ShootEnd.Value = frameInput.ShootEnd;
 			inputModel.AimDirection.Value = GetAimDirection();
         }
 
 		private Vector2 GetAimDirection()
 		{
-            if (_inputs.Player.AimDirection.activeControl == null) return Vector2.right;
-            else if (_inputs.Player.AimDirection.activeControl.device is Gamepad)
+            if (_currentDevice is Gamepad)
             {
-                    return Gather().AimDirection;
+                return Gather().AimDirection;
             }
-            else if (_inputs.Player.AimDirection.activeControl.device is Mouse)
+            else if (_currentDevice is Mouse)
             {
-            // 获取鼠标屏幕位置
-            Vector3 mouseScreenPos = Gather().AimDirection;
-            
-            // 根据相机投影模式设置正确的z值
-            if (Camera.main.orthographic)
-            {
-                // 正交模式下，z值不重要，可以使用0
-                mouseScreenPos.z = 0;
+                // 获取鼠标屏幕位置
+                Vector3 mouseScreenPos = Gather().AimDirection;
+                
+                // 根据相机投影模式设置正确的z值
+                if (Camera.main.orthographic)
+                {
+                    // 正交模式下，z值不重要，可以使用0
+                    mouseScreenPos.z = 0;
+                }
+                else
+                {
+                    // 透视模式下，需要设置z值为玩家在屏幕空间的深度
+                    mouseScreenPos.z = Camera.main.WorldToScreenPoint(transform.position).z;
+                }
+                
+                Vector2 worldMousePos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
+                    return (worldMousePos - (Vector2)transform.position).normalized;
             }
-            else
-            {
-                // 透视模式下，需要设置z值为玩家在屏幕空间的深度
-                mouseScreenPos.z = Camera.main.WorldToScreenPoint(transform.position).z;
-            }
-            
-            Vector2 worldMousePos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
-                return (worldMousePos - (Vector2)transform.position).normalized;
-            }
-            else if (_inputs.Player.AimDirection.activeControl.device is Keyboard)
+            else if (_currentDevice is Keyboard)
             {
                 return Gather().AimDirection;
             }
             else return Vector2.right;
 		}
+
+        private void OnInputEvent(InputEventPtr eventPtr, InputDevice device)
+        {
+            if (device == null) return;
+            
+            // switch device
+            if (_currentDevice != device)
+            {
+                _currentDevice = device;
+            }
+        }
 
         public struct FrameInput
         {
