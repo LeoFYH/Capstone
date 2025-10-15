@@ -46,7 +46,13 @@ public class fireBullet : MonoBehaviour
         // 检查撞击Ice - 大爆炸
         if (other.gameObject.tag == "Ice")
         {
-            iceExplode(other.gameObject);
+            if(other.gameObject.layer == LayerMask.NameToLayer("Ground"))
+            {
+                iceExplodeWithoutDestroy(other.gameObject);
+                Debug.Log("iceExplodeWithoutDestroy");
+            }else{
+                iceExplode(other.gameObject);
+            }
             return;
         }
         
@@ -85,6 +91,13 @@ public class fireBullet : MonoBehaviour
         Instantiate(BIGexplosionPrefab, transform.position, Quaternion.identity);
         Destroy(this.gameObject);
         Destroy(other.gameObject);
+    }
+
+
+    private void iceExplodeWithoutDestroy(GameObject other)
+    {
+        Instantiate(BIGexplosionPrefab, transform.position, Quaternion.identity);
+         Destroy(this.gameObject);
     }
 
     void CreateAirCurrent()

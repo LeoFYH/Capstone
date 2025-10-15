@@ -327,6 +327,8 @@ namespace SkateGame
         {
             if (playerModel.Config.Value.bulletPrefabs.Length == 0) return;
 
+            if(playerModel.CurrentBulletCount.Value <= 0) return;
+
             GameObject bulletPrefab = playerModel.Config.Value.bulletPrefabs[playerModel.CurrentBulletIndex.Value];
             if (bulletPrefab == null) return;
 
@@ -346,6 +348,7 @@ namespace SkateGame
                     bulletRb.linearVelocity = direction * playerModel.Config.Value.bulletSpeed;
                 }
             }
+            playerModel.CurrentBulletCount.Value--;
 
         }
 

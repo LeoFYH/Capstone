@@ -23,8 +23,15 @@ public abstract class ActionStateBase : StateBase
         stateTimer = 0f;
         CheckIgnoreMovementLayer();
         CheckRecovering();
-        player.animator.SetLayerWeight(0, 0);
-        player.animator.SetLayerWeight(1, 1);
+        if(GetStateName() != "None")
+        {
+            player.animator.SetLayerWeight(0, 0);
+            player.animator.SetLayerWeight(1, 1);
+        }
+        else
+        {
+            player.animator.SetLayerWeight(0, 1);
+            player.animator.SetLayerWeight(1, 0);}
         EnterActionState();
     }
     public sealed override void Update()
@@ -41,10 +48,7 @@ public abstract class ActionStateBase : StateBase
     }
     public sealed override void Exit()
     {
-        player.animator.SetLayerWeight(0, 1);
-        player.animator.SetLayerWeight(1, 0);
         ExitActionState();
-        player.stateMachine.SwitchState(StateLayer.Movement, "Air");
     }
 
     private void StateTimeUpdate()
@@ -99,6 +103,11 @@ public abstract class ActionStateBase : StateBase
         else if (inputModel.Grind.Value)
         {
             GrindInput();
+        }
+        // 循环且无输入时None
+        else if (isLoop)
+        {
+            player.stateMachine.SwitchState(StateLayer.Action, "None");
         }
     }
     private void GrindInput()

@@ -63,11 +63,7 @@ public class LayeredStateMachine : ICanGetModel, ICanSendEvent, IBelongToArchite
     {
         // Update action first
         mAction.UpdateCurrentState();
-        // 如果action状态不需忽略运动层，则更新运动层
-        if (!playerModel.IsIgnoringMovementLayer.Value)
-        {
-            mMovement.UpdateCurrentState();
-        }
+        mMovement.UpdateCurrentState();
     }
 
     public string GetMovementStateName()

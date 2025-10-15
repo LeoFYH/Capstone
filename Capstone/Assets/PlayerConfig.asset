@@ -28,7 +28,6 @@ MonoBehaviour:
   minJumpForce: 0
   doubleJumpForce: 6
   maxChargeTime: 2
-  jumpDuration: 0.8
   maxMoveSpeed: 10
   maxAirHorizontalSpeed: 10
   airControlForce: 5
@@ -42,9 +41,6 @@ MonoBehaviour:
   normalG: 1
   wallRideCooldown: 1.5
   wallrideDuration: 0.6
-  acceleration: 10
-  moveDeceleration: 20
-  maxSpeed: 5
   powerGrindDeceleration: 25
   reverseInputWindow: 2
   grindJumpIgnoreTime: 0.2
@@ -52,13 +48,13 @@ MonoBehaviour:
   trickAScore: 20
   trickBDuration: 1.5
   trickBScore: 20
-  landDuration: 0.133
   baseMaxAimTime: 3
   bulletPrefabs:
   - {fileID: 9141978474503307967, guid: f82702240d0fd6445947da81cd3c4534, type: 3}
   - {fileID: 7146688517163803356, guid: 4e564305779436844a5e928b7bb74b4f, type: 3}
   - {fileID: 9141978474503307967, guid: d3b347cd22ab0934d8acd88568dfeecb, type: 3}
   bulletSpeed: 15
+  bulletMaxCount: 2
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
