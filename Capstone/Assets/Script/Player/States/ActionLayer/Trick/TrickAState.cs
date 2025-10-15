@@ -19,12 +19,7 @@ public class TrickAState : TrickState, ICanGetSystem, IBelongToArchitecture
     public override string GetStateName() => "TrickA";
     protected override void EnterActionState()
     {
-        // 调用重生系统
-        var respawnSystem = this.GetSystem<IRespawnSystem>();
-        if (respawnSystem != null)
-        {
-            respawnSystem.RespawnPlayer();
-        }
+       
         
         player.TrickAEffect.PlayFeedbacks();
 
