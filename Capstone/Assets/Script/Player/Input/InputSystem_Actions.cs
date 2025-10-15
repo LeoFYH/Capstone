@@ -89,6 +89,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Push"",
+                    ""type"": ""Button"",
+                    ""id"": ""bd7aa23f-9157-4b60-9595-eb0fae348e41"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -276,6 +285,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""AimDirection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f4cf186c-06ff-4ea5-a0e7-e6a3adf780a1"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Push"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -870,6 +890,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Trick = m_Player.FindAction("Trick", throwIfNotFound: true);
         m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
         m_Player_AimDirection = m_Player.FindAction("AimDirection", throwIfNotFound: true);
+        m_Player_Push = m_Player.FindAction("Push", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -956,6 +977,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Trick;
     private readonly InputAction m_Player_Shoot;
     private readonly InputAction m_Player_AimDirection;
+    private readonly InputAction m_Player_Push;
     public struct PlayerActions
     {
         private @InputSystem_Actions m_Wrapper;
@@ -967,6 +989,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         public InputAction @Trick => m_Wrapper.m_Player_Trick;
         public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
         public InputAction @AimDirection => m_Wrapper.m_Player_AimDirection;
+        public InputAction @Push => m_Wrapper.m_Player_Push;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -997,6 +1020,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @AimDirection.started += instance.OnAimDirection;
             @AimDirection.performed += instance.OnAimDirection;
             @AimDirection.canceled += instance.OnAimDirection;
+            @Push.started += instance.OnPush;
+            @Push.performed += instance.OnPush;
+            @Push.canceled += instance.OnPush;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1022,6 +1048,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @AimDirection.started -= instance.OnAimDirection;
             @AimDirection.performed -= instance.OnAimDirection;
             @AimDirection.canceled -= instance.OnAimDirection;
+            @Push.started -= instance.OnPush;
+            @Push.performed -= instance.OnPush;
+            @Push.canceled -= instance.OnPush;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1211,6 +1240,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         void OnTrick(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
         void OnAimDirection(InputAction.CallbackContext context);
+        void OnPush(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

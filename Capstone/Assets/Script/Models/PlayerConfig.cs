@@ -21,6 +21,14 @@ namespace SkateGame
         [Header("Grabbing State")]
         public bool isLoopGrab = true;
         public Vector2 ignoreMovementLayerDurationGrab = new Vector2(-1f, -1f);
+
+        [Header("Push State")]
+        public bool isLoopPush = false;
+        public float durationPush = 0.3f;
+        public Vector2 ignoreMovementLayerDurationPush = new Vector2(0f, 0f);
+        public Vector2 recoveryDurationPush = new Vector2(0f, 0.3f);
+
+
         [Header("Trick A State")]
         public bool isLoopTrickA = false;
         public float durationTrickA = 0.5f;
@@ -36,12 +44,12 @@ namespace SkateGame
         [Header("移动设置")]
         public float maxMoveSpeed = 5f;
         public float maxAirHorizontalSpeed = 10f;
-        public float airControlForce = 5f;
         public float airAccel = 20f;
         public float airDecel = 10f;
         public float groundAccel = 20f;
         public float groundDecel = 10f;
         public float turnDecel = 40f;
+        public float pushAccel = 20f;
 
         [Header("Air相关")]
         public float airControlForceConfig = 10f;

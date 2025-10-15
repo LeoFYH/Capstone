@@ -11,6 +11,7 @@ namespace SkateGame
 		BindableProperty<bool> SwitchItem { get; }
 		BindableProperty<bool> Trick { get; }
 		BindableProperty<bool> TrickStart { get; }
+		BindableProperty<bool> Push { get; }
 		BindableProperty<bool> ShootStart { get; }
 		BindableProperty<bool> ShootEnd { get; }
 		BindableProperty<Vector2> AimDirection { get; }
@@ -24,6 +25,7 @@ namespace SkateGame
 		public BindableProperty<bool> SwitchItem { get; } = new BindableProperty<bool>(false);
 		public BindableProperty<bool> Trick { get; } = new BindableProperty<bool>(false);
 		public BindableProperty<bool> TrickStart { get; } = new BindableProperty<bool>(false);
+		public BindableProperty<bool> Push { get; } = new BindableProperty<bool>(false);
 		public BindableProperty<bool> ShootStart { get; } = new BindableProperty<bool>(false);
 		public BindableProperty<bool> ShootEnd { get; } = new BindableProperty<bool>(false);
 		public BindableProperty<Vector2> AimDirection { get; } = new BindableProperty<Vector2>(Vector2.right);

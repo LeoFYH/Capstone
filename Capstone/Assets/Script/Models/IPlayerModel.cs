@@ -56,6 +56,7 @@ namespace SkateGame
         BindableProperty<float> Acceleration { get; }
         BindableProperty<float> MoveDeceleration { get; }
         BindableProperty<float> MaxSpeed { get; }
+        BindableProperty<float> PushDuration { get; }
 
         /// <summary>
         /// power grind相关
@@ -142,7 +143,7 @@ namespace SkateGame
         public BindableProperty<float> Acceleration { get; } = new BindableProperty<float>(15f);
         public BindableProperty<float> MoveDeceleration { get; } = new BindableProperty<float>(20f);
         public BindableProperty<float> MaxSpeed { get; } = new BindableProperty<float>(5f);
-         
+        public BindableProperty<float> PushDuration { get; } = new BindableProperty<float>(0f);
         // power grind相关
         public BindableProperty<float> PowerGrindDeceleration { get; } = new BindableProperty<float>(1f);
         public BindableProperty<float> PowerGrindDirection { get; } = new BindableProperty<float>(0f);

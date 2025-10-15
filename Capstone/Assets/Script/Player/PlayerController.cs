@@ -62,6 +62,13 @@ namespace SkateGame
             // 初始化分层状态机
             stateMachine = new LayeredStateMachine();
 
+            // Get Animation Duration
+            playerModel.JumpDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@Ollie");
+            playerModel.DoubleJumpDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@KickFlip");
+            playerModel.LandDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@OllieLand");
+            playerModel.DoubleJumpLandDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@KickFlipLand");
+            playerModel.PushDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@Push");
+
             // Movement Layer
             stateMachine.AddState("Idle", new IdleState(this, rb), StateLayer.Movement);
             stateMachine.AddState("Jump", new JumpState(this, rb), StateLayer.Movement);
@@ -77,12 +84,7 @@ namespace SkateGame
             stateMachine.AddState("Grind", new GrindState(this, rb), StateLayer.Action);
             stateMachine.AddState("Grab", new GrabbingState(this, rb), StateLayer.Action);
             stateMachine.AddState("WallRide", new WallRideState(this, rb), StateLayer.Action);
-
-            playerModel.JumpDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@Ollie");
-            playerModel.DoubleJumpDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@KickFlip");
-            playerModel.LandDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@OllieLand");
-            playerModel.DoubleJumpLandDuration.Value = AnimationDuratioSetter.GetClipLength(animator, "oPlayer@KickFlipLand");
-
+            stateMachine.AddState("Push", new PushState(this, rb), StateLayer.Action);
             // 初始各层状态
             stateMachine.SwitchState(StateLayer.Movement, "Idle");
             stateMachine.SwitchState(StateLayer.Action, "None");

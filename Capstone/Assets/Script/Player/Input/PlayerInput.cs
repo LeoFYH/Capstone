@@ -13,6 +13,7 @@ namespace SkateGame
         InputAction _grindAction;
         InputAction _switchItemAction;
         InputAction _trickAction;
+        InputAction _pushAction;
         InputAction _shootStartAction;
         InputAction _shootEndAction;
         InputAction _aimDirectionAction;
@@ -26,6 +27,7 @@ namespace SkateGame
             _grindAction = _inputs.Player.Grind;
             _switchItemAction = _inputs.Player.SwitchItem;
             _trickAction = _inputs.Player.Trick;
+            _pushAction = _inputs.Player.Push;
             _shootStartAction = _inputs.Player.Shoot;
             _shootEndAction = _inputs.Player.Shoot;
             _aimDirectionAction = _inputs.Player.AimDirection;
@@ -45,6 +47,7 @@ namespace SkateGame
                 SwitchItem = _switchItemAction.WasPressedThisFrame(),
                 Trick = _trickAction.IsPressed(),
                 TrickStart= _trickAction.WasPressedThisFrame(),
+                Push = _pushAction.WasPressedThisFrame(),
                 ShootStart = _shootStartAction.WasPressedThisFrame(),
                 ShootEnd = _shootEndAction.WasReleasedThisFrame(),
                 AimDirection = _aimDirectionAction.ReadValue<Vector2>(),
@@ -60,6 +63,7 @@ namespace SkateGame
             inputModel.SwitchItem.Value = Gather().SwitchItem;
             inputModel.Trick.Value = Gather().Trick;
             inputModel.TrickStart.Value = Gather().TrickStart;
+            inputModel.Push.Value = Gather().Push;
             inputModel.ShootStart.Value = Gather().ShootStart;
             inputModel.ShootEnd.Value = Gather().ShootEnd;
 			inputModel.AimDirection.Value = GetAimDirection();
@@ -107,6 +111,7 @@ namespace SkateGame
             public bool SwitchItem;
             public bool Trick;
             public bool TrickStart;
+            public bool Push;
             public bool ShootStart;
             public bool ShootEnd;
             public Vector2 AimDirection;

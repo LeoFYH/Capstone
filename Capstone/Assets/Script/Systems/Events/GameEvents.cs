@@ -60,6 +60,11 @@ namespace SkateGame
     {
         public float HorizontalInput;
     }
+
+    // Push输入事件
+    public struct PushInputEvent
+    {
+    }
     
     // Trick列表变化事件
     public struct TrickListChangedEvent
