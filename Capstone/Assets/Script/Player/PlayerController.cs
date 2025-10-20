@@ -118,10 +118,6 @@ namespace SkateGame
                 StartCoroutine(ClearTricksAfterDelay(5f));
             }
         }
-        private void FixedUpdate()
-        {
-        }
-
         //过几秒自动清空tricklist和grade
         private IEnumerator ClearTricksAfterDelay(float delay)
         {

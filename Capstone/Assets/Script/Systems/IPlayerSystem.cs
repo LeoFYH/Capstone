@@ -92,13 +92,13 @@ namespace SkateGame
                 // (1) 转向时，先减速 → 不能立刻掉头
                 if (Mathf.Sign(currentSpeed) != Mathf.Sign(horizontalInput) && Mathf.Abs(currentSpeed) > 0.1f)
                 {
-                    newSpeed = Mathf.MoveTowards(currentSpeed, 0, playerModel.Config.Value.turnDecel * Time.fixedDeltaTime);
+                    newSpeed = Mathf.MoveTowards(currentSpeed, 0, playerModel.Config.Value.turnDecel * Time.deltaTime);
                 }
                 else
                 {
                     // (2) 同方向，加速逼近目标速度
                     newSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, 
-                    (isGrounded ? playerModel.Config.Value.groundAccel : playerModel.Config.Value.airAccel) * Time.fixedDeltaTime);
+                    (isGrounded ? playerModel.Config.Value.groundAccel : playerModel.Config.Value.airAccel) * Time.deltaTime);
                 }
             }
             // ------------------------
@@ -107,7 +107,7 @@ namespace SkateGame
             else
             {
                 float decel = isGrounded ? playerModel.Config.Value.groundDecel : playerModel.Config.Value.airDecel;
-                newSpeed = Mathf.MoveTowards(currentSpeed, 0, decel * Time.fixedDeltaTime);
+                newSpeed = Mathf.MoveTowards(currentSpeed, 0, decel * Time.deltaTime);
             }
 
             rb.linearVelocity = new Vector2(newSpeed, rb.linearVelocity.y);
@@ -145,7 +145,7 @@ namespace SkateGame
             float targetSpeed = playerModel.Config.Value.maxMoveSpeed * (playerModel.IsFacingRight.Value ? 1 : -1);
             
             float newSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, 
-                    playerModel.Config.Value.pushAccel * Time.fixedDeltaTime);
+                    playerModel.Config.Value.pushAccel * Time.deltaTime);
             rb.linearVelocity = new Vector2(newSpeed, rb.linearVelocity.y);
         }
 
