@@ -40,7 +40,6 @@ public class AirState : AirborneMovementState
     {
         if (playerModel.CanDoubleJump.Value && inputModel.JumpStart.Value)
         {
-            playerModel.CanDoubleJump.Value = false;
             player.stateMachine.SwitchState(StateLayer.Movement, "DoubleJump");
         }
     }
