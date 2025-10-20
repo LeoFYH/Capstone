@@ -58,6 +58,12 @@ namespace SkateGame
 
             // 初始化瞄准时间
             playerModel.MaxAimTime.Value = playerModel.Config.Value.baseMaxAimTime;
+            
+            // 初始化瞄准线 - 确保在第一次瞄准前不显示
+            if (aimLine != null) 
+            {
+                aimLine.enabled = false;
+            }
 
             // 初始化分层状态机
             stateMachine = new LayeredStateMachine();
