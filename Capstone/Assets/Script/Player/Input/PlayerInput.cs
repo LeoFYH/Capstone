@@ -90,11 +90,13 @@ namespace SkateGame
             {
                 if (WaitForInput)
                 {
+                    
                     WaitForInput = false;
                     inputModel.TrickStart.Value = frameInput.TrickStart;
                 }
                 else
                 {
+                   
                     selfContainer.AddAnInput(InputType.W, false);
                 }
             }
@@ -103,11 +105,13 @@ namespace SkateGame
             {
                 if (WaitForInput)
                 {
+                    //Debug.Log("预留：input直接生效");
                     WaitForInput = false;
                     inputModel.Push.Value = frameInput.Push;
                 }
                 else
                 {
+                    //Debug.Log("预留：input存入集合");
                     selfContainer.AddAnInput(InputType.E, false);
                 }
             }
@@ -124,6 +128,7 @@ namespace SkateGame
             var inputModel = this.GetModel<IInputModel>();
             if (pop != null)
             {
+                //Debug.Log("有预留，取出顶部");
                 //有预留，
                 switch (pop.GetInput())
                 {
@@ -138,6 +143,7 @@ namespace SkateGame
             }
             else
             {
+                //Debug.Log("无预留，接受输入");
                 //无预留,打开
                 WaitForInput = true;
             }

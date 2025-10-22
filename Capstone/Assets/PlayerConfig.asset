@@ -23,11 +23,11 @@ MonoBehaviour:
   isLoopPush: 0
   durationPush: 0.6
   ignoreMovementLayerDurationPush: {x: 0, y: 0}
-  recoveryDurationPush: {x: 0, y: 0.6}
+  recoveryDurationPush: {x: 0, y: 0}
   isLoopTrickA: 0
   durationTrickA: 0.5
   ignoreMovementLayerDurationTrickA: {x: 0, y: 0}
-  recoveryDurationTrickA: {x: 0, y: 0.5}
+  recoveryDurationTrickA: {x: 0, y: 0}
   maxJumpForce: 8
   minJumpForce: 0
   doubleJumpForce: 6

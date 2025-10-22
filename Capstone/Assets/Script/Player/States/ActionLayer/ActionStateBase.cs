@@ -40,10 +40,11 @@ public abstract class ActionStateBase : StateBase
         CheckIgnoreMovementLayer();
         CheckRecovering();
 
-        if(playerModel.IsRecovering.Value)
+        if (playerModel.IsRecovering.Value)
         {
             CheckSwitchAction();
         }
+        
         UpdateActionState();
     }
     public sealed override void Exit()
