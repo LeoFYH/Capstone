@@ -44,7 +44,9 @@ namespace SkateGame
         
         public void LoadLevel(int index)
         {
+            levelModel.CurrentLevelIndex = index;
             levelSystem.LoadLevel(index);
+
         }
         
         /// <summary>
@@ -56,6 +58,7 @@ namespace SkateGame
             
             if (nextIndex < levelModel.LevelList.Count)
             {
+                levelModel.CurrentLevelIndex = nextIndex;
                 levelSystem.LoadLevel(nextIndex);
             }
             else
