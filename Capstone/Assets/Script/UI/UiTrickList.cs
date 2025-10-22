@@ -4,13 +4,13 @@ using System.Text;
 using System.Collections;
 using System.Linq;
 using QFramework;
-
+using TMPro;
 namespace SkateGame
 {
     public class UiTrickList : ViewerControllerBase
     {
-        public Text tricksText;     
-        public Text gradeText;
+        public TextMeshProUGUI tricksText;     
+        public TextMeshProUGUI gradeText;
         private ITrickListModel trickModel;
         private IPlayerModel playerModel;
         private ITrickSystem trickSystem;
@@ -45,13 +45,61 @@ namespace SkateGame
             // 检测落地，清空技巧列表
             if (playerModel != null && playerModel.IsGrounded.Value)
             {
+                tricksText.text = "";
+                sum += trickSystem.SumOfScore();
                 
-                    tricksText.text = "";
-                    sum += trickSystem.SumOfScore();
-                    gradeText.text = sum.ToString();
-                    trickSystem.RemoveAllTricks();
-
+                // 根据分数计算等级
+                char grade = CalculateGrade(sum);
+                gradeText.text = grade.ToString();
+                
+                trickSystem.RemoveAllTricks();
             }
+        }
+        
+        /// <summary>
+        /// 根据分数计算等级
+        /// </summary>
+        private char CalculateGrade(int score)
+        {
+            char grade;
+            switch (score)
+            {
+                case >= 100:
+                    grade = 'S'; // 最高等级
+                    break;
+                case >= 80:
+                    grade = 'A';
+                    break;
+                case >= 60:
+                    grade = 'B';
+                    break;
+                case >= 40:
+                    grade = 'C';
+                    break;
+                case >= 20:
+                    grade = 'D';
+                    break;
+                case >= 10:
+                    grade = 'E';
+                    break;
+                default:
+                    grade = 'F'; // 最低等级
+                    break;
+            }
+            
+            Debug.Log($"UiTrickList: 分数 {score} -> 等级 {grade}");
+            return grade;
+        }
+        
+        /// <summary>
+        /// 重置总分（可在Inspector中调用）
+        /// </summary>
+        [ContextMenu("重置总分")]
+        public void ResetSum()
+        {
+            sum = 0;
+            Debug.Log("UiTrickList: 总分已重置为 0");
+            DisplayGrade();
         }
 
 
@@ -77,7 +125,9 @@ namespace SkateGame
         {
             if (gradeText == null || trickModel == null) return;
             
-            gradeText.text = trickModel.Grade.Value.ToString();
+            // 使用当前总分计算等级
+            char currentGrade = CalculateGrade(sum);
+            gradeText.text = currentGrade.ToString();
         }
     }
 }
