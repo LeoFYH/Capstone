@@ -5,16 +5,22 @@ namespace SkateGame
 {
     public class LevelSelectArea : ViewerControllerBase
     {
-        public Canvas levelSelectCanvas;
+        private Canvas levelSelectCanvas;
         public string playerTag = "Player";
         
         protected override void InitializeController()
         {
-            if (levelSelectCanvas != null)
+            // 自动查找名为 "LevelCanvas" 的 Canvas 对象
+            GameObject canvasObject = GameObject.Find("LevelCanvas");
+            if (canvasObject != null)
             {
-                levelSelectCanvas.gameObject.SetActive(false);
+                levelSelectCanvas = canvasObject.GetComponent<Canvas>();
+                if (levelSelectCanvas != null)
+                {
+                    levelSelectCanvas.gameObject.SetActive(false);
+                    Debug.Log("LevelSelectArea: 成功找到并初始化 LevelCanvas");
+                }
             }
-            Debug.Log("LevelSelectArea 初始化");
         }
         
         protected override void OnRealTimeUpdate()

@@ -132,6 +132,34 @@ namespace SkateGame
             InitializeButtons();
         }
         
+        /// <summary>
+        /// 调试关卡配置（可在Inspector中调用）
+        /// </summary>
+        [ContextMenu("调试关卡配置")]
+        public void DebugLevelConfig()
+        {
+            Debug.Log("=== 关卡配置调试信息 ===");
+            Debug.Log($"关卡列表数量: {levelList.Count}");
+            
+            for (int i = 0; i < levelList.Count; i++)
+            {
+                Level level = levelList[i];
+                Debug.Log($"关卡 [{i}]:");
+                Debug.Log($"  名称: {level.Name}");
+                Debug.Log($"  场景名称: {level.SceneName}");
+                Debug.Log($"  索引: {level.Index}");
+                Debug.Log($"  按钮: {(level.button != null ? level.button.name : "未设置")}");
+            }
+            
+            Debug.Log("=== 系统关卡列表 ===");
+            Debug.Log($"系统关卡数量: {levelModel.LevelList.Count}");
+            for (int i = 0; i < levelModel.LevelList.Count; i++)
+            {
+                Level level = levelModel.LevelList[i];
+                Debug.Log($"系统关卡 [{i}]: {level.Name} -> {level.SceneName}");
+            }
+        }
+        
         #endregion
     }
     
