@@ -73,6 +73,13 @@ public class GrindState : ActionStateBase
             return;
         }
         
+        // 如果按下跳跃键，直接跳跃
+        if (inputModel.JumpStart.Value)
+        {
+            player.stateMachine.SwitchState(StateLayer.Action, "None");
+            player.stateMachine.SwitchState(StateLayer.Movement, "Jump");
+            return;
+        }
         // 然后检查currentTrack是否为null
         if (playerModel.CurrentTrack.Value == null)
         {
