@@ -100,10 +100,14 @@ public abstract class ActionStateBase : StateBase
         // 优先Trick
         if(inputModel.TrickStart.Value && !playerModel.IsGrounded.Value)
         {
+           
+            inputModel.TrickStart.Value = false;
             player.stateMachine.SwitchState(StateLayer.Action, "TrickA");
         }
         else if (inputModel.Push.Value && playerModel.IsGrounded.Value)
         {
+            //Debug.Log("正在修改push");
+            inputModel.Push.Value = false;
             player.stateMachine.SwitchState(StateLayer.Action, "Push");
         }
         

@@ -4,6 +4,7 @@ using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Controls;
 using QFramework;
 using System.Linq;
+using UnityEditor.SceneManagement;
 
 namespace SkateGame
 {
@@ -21,6 +22,11 @@ namespace SkateGame
         InputAction _shootEndAction;
         InputAction _aimDirectionAction;
         public IArchitecture GetArchitecture() => GameApp.Interface;
+
+        //这是指input buffer为空，那么就直接更新model值
+        private bool WaitForInput = true;
+
+        private InputContainer selfContainer;
         
         void Awake()
         {
@@ -34,6 +40,11 @@ namespace SkateGame
             _shootStartAction = _actions.FindAction("Player/Shoot");
             _shootEndAction = _actions.FindAction("Player/Shoot");
             _aimDirectionAction = _actions.FindAction("Player/AimDirection");
+            selfContainer = gameObject.AddComponent<InputContainer>();
+
+            var inputModel = this.GetModel<IInputModel>();
+            inputModel.TrickStart.Register(x => { if (!x) UpdateBuffer(); });
+            inputModel.Push.Register(x => { if (!x) UpdateBuffer(); });
             
         }
 
@@ -74,11 +85,63 @@ namespace SkateGame
             inputModel.Grind.Value = frameInput.Grind;
             inputModel.SwitchItem.Value = frameInput.SwitchItem;
             inputModel.Trick.Value = frameInput.Trick;
-            inputModel.TrickStart.Value = frameInput.TrickStart;
-            inputModel.Push.Value = frameInput.Push;
+
+            if (frameInput.TrickStart)
+            {
+                if (WaitForInput)
+                {
+                    WaitForInput = false;
+                    inputModel.TrickStart.Value = frameInput.TrickStart;
+                }
+                else
+                {
+                    selfContainer.AddAnInput(InputType.W, false);
+                }
+            }
+
+            if (frameInput.Push)
+            {
+                if (WaitForInput)
+                {
+                    WaitForInput = false;
+                    inputModel.Push.Value = frameInput.Push;
+                }
+                else
+                {
+                    selfContainer.AddAnInput(InputType.E, false);
+                }
+            }
+           
             inputModel.ShootStart.Value = frameInput.ShootStart;
             inputModel.ShootEnd.Value = frameInput.ShootEnd;
-			inputModel.AimDirection.Value = GetAimDirection();
+            inputModel.AimDirection.Value = GetAimDirection();
+
+        }
+
+        private void UpdateBuffer()
+        {
+            BaseInput pop = selfContainer.PopInput();
+            var inputModel = this.GetModel<IInputModel>();
+            if (pop != null)
+            {
+                //有预留，
+                switch (pop.GetInput())
+                {
+                    case InputType.W:
+                        inputModel.TrickStart.Value =true;
+                        break;
+
+                    case InputType.E:
+                        inputModel.Push.Value =true;
+                        break;
+                }
+            }
+            else
+            {
+                //无预留,打开
+                WaitForInput = true;
+            }
+
         }
 
 		private Vector2 GetAimDirection()
