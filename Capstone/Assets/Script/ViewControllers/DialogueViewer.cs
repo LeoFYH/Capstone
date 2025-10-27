@@ -25,6 +25,9 @@ namespace SkateGame
         [Header("点击按钮")]
         public Button clickButton;
         
+        [Header("选项按钮")]
+        public Button[] buttons = new Button[3];
+        
         // 私有变量
         private List<DialogueObj> ThisDialogueList;
         private int current = 0;
@@ -54,6 +57,9 @@ namespace SkateGame
                 clickButton.onClick.AddListener(Click);
             }
             
+            // 设置选项按钮
+            ClickWithOptions();
+            
             Debug.Log($"DialogueViewer [{NameForDialogue}]: 初始化完成，共 {ThisDialogueList.Count} 条对话");
         }
         
@@ -78,6 +84,10 @@ namespace SkateGame
             {
                 image.sprite = ThisDialogueList[current].image;
             }
+            
+            // 更新选项按钮
+            UpdateOptionsDisplay();
+            
             EndDialogue();
         }
         
@@ -91,6 +101,60 @@ namespace SkateGame
                 int totalCount = dialogueModel.TableForDialogue[NameForDialogue].Count;
                 current = (current + 1) % totalCount;
                 Debug.Log($"DialogueViewer [{NameForDialogue}]: 切换到第 {current + 1}/{totalCount} 条");
+            }
+        }
+        
+        /// <summary>
+        /// 设置选项按钮跳转
+        /// </summary>
+        public void ClickWithOptions()
+        {
+            if (ThisDialogueList == null || ThisDialogueList.Count == 0)
+                return;
+                
+            var currentJumpingList = ThisDialogueList[current].indexForJump;
+            
+            for (int i = 0; i < 3; i++)
+            {
+                if (buttons != null && i < buttons.Length && buttons[i] != null)
+                {
+                    int index = i; // 捕获索引
+                    buttons[i].onClick.RemoveAllListeners();
+                    buttons[i].onClick.AddListener(() => 
+                    {
+                        if (currentJumpingList != null && index < currentJumpingList.Length)
+                        {
+                            current = currentJumpingList[index];
+                            Debug.Log($"DialogueViewer [{NameForDialogue}]: 选项 {index + 1} 跳转到第 {current + 1} 条");
+                        }
+                    });
+                }
+            }
+        }
+        
+        /// <summary>
+        /// 更新选项按钮显示
+        /// </summary>
+        private void UpdateOptionsDisplay()
+        {
+            if (ThisDialogueList == null || current >= ThisDialogueList.Count)
+                return;
+                
+            bool hasChoices = ThisDialogueList[current].hasChoices;
+            
+            // 根据hasChoices显示/隐藏选项按钮
+            for (int i = 0; i < 3; i++)
+            {
+                if (buttons != null && i < buttons.Length && buttons[i] != null)
+                {
+                    buttons[i].gameObject.SetActive(hasChoices);
+                }
+            }
+            
+            // 如果有选项，更新按钮跳转
+            if (hasChoices)
+            {
+                ClickWithOptions();
             }
         }
         
