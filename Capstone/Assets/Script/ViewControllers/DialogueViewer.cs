@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using QFramework;
+using MoreMountains.Feedbacks;
 
 namespace SkateGame
 {
@@ -24,13 +25,22 @@ namespace SkateGame
         
         [Header("点击按钮")]
         public Button clickButton;
+        public MMF_Player clickButtonFadeIn;
+        public MMF_Player clickButtonFadeOut;
         
         [Header("选项按钮")]
         public Button[] buttons = new Button[3];
+        public MMF_Player[] buttonFadeIns = new MMF_Player[3];
+        public MMF_Player[] buttonFadeOuts = new MMF_Player[3];
+        
+        [Header("对话框动画")]
+        public MMF_Player mmfPlayersFadeIn;
+        public MMF_Player mmfPlayersFadeOut;
         
         // 私有变量
         private List<DialogueObj> ThisDialogueList;
         private int current = 0;
+        private int lastCurrent = -1; // 记录上一次的对话索引
         private IDialogueSystem dialogueSystem;
         private IDialogueModel dialogueModel;
         
@@ -57,9 +67,6 @@ namespace SkateGame
                 clickButton.onClick.AddListener(Click);
             }
             
-            // 设置选项按钮
-            ClickWithOptions();
-            
             Debug.Log($"DialogueViewer [{NameForDialogue}]: 初始化完成，共 {ThisDialogueList.Count} 条对话");
         }
         
@@ -73,20 +80,65 @@ namespace SkateGame
             if (current < 0 || current >= ThisDialogueList.Count)
                 current = 0;
             
+            // 检测对话是否改变
+            bool dialogueChanged = (current != lastCurrent);
+            
+            // 如果对话变了
+            if (dialogueChanged)
+            {
+                // 播放对话特效
+                if (mmfPlayersFadeIn != null)
+                    mmfPlayersFadeIn.PlayFeedbacks();
+                
+                // 判断当前对话是否有选项
+                bool hasChoices = ThisDialogueList[current].hasChoices;
+                
+                if (hasChoices)
+                {
+                    // 有选项：显示选项按钮，播放选项按钮特效
+                    if (clickButton != null)
+                        clickButton.gameObject.SetActive(false);
+                    
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (buttons != null && i < buttons.Length && buttons[i] != null)
+                        {
+                            buttons[i].gameObject.SetActive(true);
+                            if (buttonFadeIns != null && i < buttonFadeIns.Length && buttonFadeIns[i] != null)
+                                buttonFadeIns[i].PlayFeedbacks();
+                        }
+                    }
+                    
+                    // 更新选项按钮跳转
+                    ClickWithOptions();
+                }
+                else
+                {
+                    // 无选项：显示普通按钮，播放普通按钮特效
+                    if (clickButton != null)
+                    {
+                        clickButton.gameObject.SetActive(true);
+                        if (clickButtonFadeIn != null)
+                            clickButtonFadeIn.PlayFeedbacks();
+                    }
+                    
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (buttons != null && i < buttons.Length && buttons[i] != null)
+                            buttons[i].gameObject.SetActive(false);
+                    }
+                }
+                
+                lastCurrent = current;
+            }
+            
             // 更新文本
             if (text != null)
-            {
                 text.text = ThisDialogueList[current].text;
-            }
             
             // 更新图片
             if (image != null)
-            {
                 image.sprite = ThisDialogueList[current].image;
-            }
-            
-            // 更新选项按钮
-            UpdateOptionsDisplay();
             
             EndDialogue();
         }
@@ -133,40 +185,6 @@ namespace SkateGame
             }
         }
         
-        /// <summary>
-        /// 更新选项按钮显示
-        /// </summary>
-        private void UpdateOptionsDisplay()
-        {
-            if (ThisDialogueList == null || current >= ThisDialogueList.Count)
-                return;
-                
-            bool hasChoices = ThisDialogueList[current].hasChoices;
-            
-            // 根据hasChoices显示/隐藏普通按钮和选项按钮
-            // 如果有选项，隐藏普通按钮，显示选项按钮
-            // 如果没有选项，显示普通按钮，隐藏选项按钮
-            if (clickButton != null)
-            {
-                clickButton.gameObject.SetActive(!hasChoices);
-            }
-            
-            // 根据hasChoices显示/隐藏选项按钮
-            for (int i = 0; i < 3; i++)
-            {
-                if (buttons != null && i < buttons.Length && buttons[i] != null)
-                {
-                    buttons[i].gameObject.SetActive(hasChoices);
-                }
-            }
-            
-            // 如果有选项，更新按钮跳转
-            if (hasChoices)
-            {
-                ClickWithOptions();
-            }
-        }
-        
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -186,6 +204,7 @@ namespace SkateGame
                 if (current == dialogueModel.TableForDialogue[NameForDialogue].Count - 1)
                 {
                     // 隐藏对话框GameObject
+                    mmfPlayersFadeOut.PlayFeedbacks();
                     this.gameObject.SetActive(false);
                     Debug.Log($"DialogueViewer [{NameForDialogue}]: 对话结束，已隐藏");
                 }
