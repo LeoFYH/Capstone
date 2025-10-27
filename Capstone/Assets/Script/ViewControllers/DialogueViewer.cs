@@ -25,6 +25,9 @@ namespace SkateGame
         [Header("点击按钮")]
         public Button clickButton;
         
+        [Header("选项按钮")]
+        public Button[] buttons = new Button[3];
+        
         // 私有变量
         private List<DialogueObj> ThisDialogueList;
         private int current = 0;
@@ -54,6 +57,9 @@ namespace SkateGame
                 clickButton.onClick.AddListener(Click);
             }
             
+            // 设置选项按钮
+            ClickWithOptions();
+            
             Debug.Log($"DialogueViewer [{NameForDialogue}]: 初始化完成，共 {ThisDialogueList.Count} 条对话");
         }
         
@@ -78,6 +84,11 @@ namespace SkateGame
             {
                 image.sprite = ThisDialogueList[current].image;
             }
+            
+            // 更新选项按钮
+            UpdateOptionsDisplay();
+            
+            EndDialogue();
         }
         
         /// <summary>
@@ -93,6 +104,69 @@ namespace SkateGame
             }
         }
         
+        /// <summary>
+        /// 设置选项按钮跳转
+        /// </summary>
+        public void ClickWithOptions()
+        {
+            if (ThisDialogueList == null || ThisDialogueList.Count == 0)
+                return;
+                
+            var currentJumpingList = ThisDialogueList[current].indexForJump;
+            
+            for (int i = 0; i < 3; i++)
+            {
+                if (buttons != null && i < buttons.Length && buttons[i] != null)
+                {
+                    int index = i; // 捕获索引
+                    buttons[i].GetComponentInChildren<TextMeshProUGUI>().text = ThisDialogueList[current].buttonTexts[i];
+                    buttons[i].onClick.RemoveAllListeners();
+                    buttons[i].onClick.AddListener(() => 
+                    {
+                        if (currentJumpingList != null && index < currentJumpingList.Length)
+                        {
+                            current = currentJumpingList[index];
+                            Debug.Log($"DialogueViewer [{NameForDialogue}]: 选项 {index + 1} 跳转到第 {current + 1} 条");
+                        }
+                    });
+                }
+            }
+        }
+        
+        /// <summary>
+        /// 更新选项按钮显示
+        /// </summary>
+        private void UpdateOptionsDisplay()
+        {
+            if (ThisDialogueList == null || current >= ThisDialogueList.Count)
+                return;
+                
+            bool hasChoices = ThisDialogueList[current].hasChoices;
+            
+            // 根据hasChoices显示/隐藏普通按钮和选项按钮
+            // 如果有选项，隐藏普通按钮，显示选项按钮
+            // 如果没有选项，显示普通按钮，隐藏选项按钮
+            if (clickButton != null)
+            {
+                clickButton.gameObject.SetActive(!hasChoices);
+            }
+            
+            // 根据hasChoices显示/隐藏选项按钮
+            for (int i = 0; i < 3; i++)
+            {
+                if (buttons != null && i < buttons.Length && buttons[i] != null)
+                {
+                    buttons[i].gameObject.SetActive(hasChoices);
+                }
+            }
+            
+            // 如果有选项，更新按钮跳转
+            if (hasChoices)
+            {
+                ClickWithOptions();
+            }
+        }
+        
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -100,6 +174,21 @@ namespace SkateGame
             if (clickButton != null)
             {
                 clickButton.onClick.RemoveListener(Click);
+            }
+        }
+        /// <summary>
+        /// 结束对话，如果是最后一条则隐藏对话框
+        /// </summary>
+        public void EndDialogue()
+        {
+            if (dialogueModel.TableForDialogue.ContainsKey(NameForDialogue))
+            {
+                if (current == dialogueModel.TableForDialogue[NameForDialogue].Count - 1)
+                {
+                    // 隐藏对话框GameObject
+                    this.gameObject.SetActive(false);
+                    Debug.Log($"DialogueViewer [{NameForDialogue}]: 对话结束，已隐藏");
+                }
             }
         }
     }
