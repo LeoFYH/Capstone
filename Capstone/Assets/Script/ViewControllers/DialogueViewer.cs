@@ -119,6 +119,7 @@ namespace SkateGame
                 if (buttons != null && i < buttons.Length && buttons[i] != null)
                 {
                     int index = i; // 捕获索引
+                    buttons[i].GetComponentInChildren<TextMeshProUGUI>().text = ThisDialogueList[current].buttonTexts[i];
                     buttons[i].onClick.RemoveAllListeners();
                     buttons[i].onClick.AddListener(() => 
                     {
@@ -141,6 +142,14 @@ namespace SkateGame
                 return;
                 
             bool hasChoices = ThisDialogueList[current].hasChoices;
+            
+            // 根据hasChoices显示/隐藏普通按钮和选项按钮
+            // 如果有选项，隐藏普通按钮，显示选项按钮
+            // 如果没有选项，显示普通按钮，隐藏选项按钮
+            if (clickButton != null)
+            {
+                clickButton.gameObject.SetActive(!hasChoices);
+            }
             
             // 根据hasChoices显示/隐藏选项按钮
             for (int i = 0; i < 3; i++)
