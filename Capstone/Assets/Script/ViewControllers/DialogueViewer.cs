@@ -78,6 +78,7 @@ namespace SkateGame
             {
                 image.sprite = ThisDialogueList[current].image;
             }
+            EndDialogue();
         }
         
         /// <summary>
@@ -100,6 +101,21 @@ namespace SkateGame
             if (clickButton != null)
             {
                 clickButton.onClick.RemoveListener(Click);
+            }
+        }
+        /// <summary>
+        /// 结束对话，如果是最后一条则隐藏对话框
+        /// </summary>
+        public void EndDialogue()
+        {
+            if (dialogueModel.TableForDialogue.ContainsKey(NameForDialogue))
+            {
+                if (current == dialogueModel.TableForDialogue[NameForDialogue].Count - 1)
+                {
+                    // 隐藏对话框GameObject
+                    this.gameObject.SetActive(false);
+                    Debug.Log($"DialogueViewer [{NameForDialogue}]: 对话结束，已隐藏");
+                }
             }
         }
     }
