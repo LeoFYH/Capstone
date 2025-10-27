@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using QFramework;
 using MoreMountains.Feedbacks;
-
+using Febucci.UI;
 namespace SkateGame
 {
     /// <summary>
@@ -19,7 +19,8 @@ namespace SkateGame
         [Header("UI组件")]
         public TextMeshProUGUI text;
         public Image image;
-        
+        public TextAnimator_TMP textAnimatorPlayer;
+
         [Header("对话列表")]
         public List<DialogueObj> dialogueList = new List<DialogueObj>();
         
@@ -90,6 +91,14 @@ namespace SkateGame
                 if (mmfPlayersFadeIn != null)
                     mmfPlayersFadeIn.PlayFeedbacks();
                 
+                // 更新文本（使用 TextAnimator 打字机效果）
+                if (textAnimatorPlayer != null)
+                    textAnimatorPlayer.SetText(ThisDialogueList[current].text);
+                
+                // 更新图片
+                if (image != null)
+                    image.sprite = ThisDialogueList[current].image;
+                
                 // 判断当前对话是否有选项
                 bool hasChoices = ThisDialogueList[current].hasChoices;
                 
@@ -131,14 +140,6 @@ namespace SkateGame
                 
                 lastCurrent = current;
             }
-            
-            // 更新文本
-            if (text != null)
-                text.text = ThisDialogueList[current].text;
-            
-            // 更新图片
-            if (image != null)
-                image.sprite = ThisDialogueList[current].image;
             
             EndDialogue();
         }
