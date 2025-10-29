@@ -17,6 +17,7 @@ namespace SkateGame
         private ILevelModel levelModel;
         private ILevelSystem levelSystem;
         
+        
         protected override void InitializeController()
         {
             levelModel = this.GetModel<ILevelModel>();
